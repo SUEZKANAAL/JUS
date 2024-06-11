@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Interactive Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"
+    />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"
+    />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <style>
+      html,
+      body,
+      #map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #323232;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- <div id="map" style="width: 100%; height: 400px"></div> -->
+
+    <script>
+      var map = L.map("map").setView([52.2354, 5.3751], 7); // Initial location (center of the world)
+      var tileLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">',
+        }
+      ).addTo(map);
+
+      // var geocoder = L.Control.geocoder().addTo(map);
+
+      // var geocoder = L.Control.geocoder().addTo(map);
+      // geocoder.markGeocode = function (result) {
+      //   var lat = result.center.lat;
+      //   var lng = result.center.lng;
+      //   return [lat, lng];
+      // };
+      // geocoder.options.defaultMarkGeocode(false);
+
+      var selectedMarker = [];
+      var geocoder = L.Control
+        .geocoder
+        //   {
+        //   defaultMarkGeocode: false,
+        // }
+        ()
+        .on("markgeocode", function (e) {
+          // var lat = e.center.lat;
+          var latlng = e.geocode.center;
+
+          selectedMarker = e.geocode;
+
+          var marker = e.geocode.marker;
+
+          var bbox = e.geocode.bbox;
+          var poly = L.polygon([
+            bbox.getSouthEast(),
+            bbox.getNorthEast(),
+            bbox.getNorthWest(),
+            bbox.getSouthWest(),
+          ]).addTo(map);
+          map.fitBounds(poly.getBounds());
+        })
+        .addTo(map);
+
+      // Function to set the map location dynamically
+      function setMapLocation(lat, lon, zoom) {
+        map.setView([lat, lon], zoom);
+      }
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      var drawControl = new L.Control.Draw({
+        edit: {
+          featureGroup: drawnItems,
+          edit: false,
+        },
+        draw: {
+          polygon: false,
+          polyline: false,
+          rectangle: false,
+          circle: false,
+        },
+      });
+      map.addControl(drawControl);
+
+      map.on("draw:created", function (e) {
+        var type = e.layerType,
+          layer = e.layer;
+
+        if (type === "marker") {
+          var latlng = layer.getLatLng();
+          var marker = L.marker(latlng).addTo(drawnItems);
+
+          // Add a popup to the marker
+          layer.bindPopup("This is a marker!");
+        }
+
+        drawnItems.addLayer(layer);
+      });
+
+      //service.pdok.nl/cbs/wijkenbuurten/2022/wfs/v1_0?request=GetFeature&service=WFS&typeName=wijkenbuurten:buurten&srsname=EPSG:4326&bbox=112229.09583039039%2C501762.3673332865%2C112276.09899001439%2C501809.37049291044&version=2.0.0&restrictToRequestBBOX=1&outputFormat=geojson
+
+      https: function getMarkerCoordinates2() {
+        // var coordinates = marker.getLatLng();
+        return drawnItems;
+      }
+
+      function returnGeoCoder() {
+        return selectedMarker;
+      }
+    </script>
+  </body>
+</html>

@@ -1,9 +1,86 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Example</title>
-    </head>
-    <body>
-        <p>Hallooooo Gnieremier</p>
-    </body>
+<head>
+    <title>Leaflet Drawing and Download GeoJSON</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <style>
+        #map {
+            height: 600px;
+        }
+        .leaflet-bar a {
+            cursor: pointer;
+        }
+        #downloadButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 5px 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <button id="downloadButton">Download GeoJSON</button>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // FeatureGroup to store editable layers
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        // Initialize the draw control and pass it the FeatureGroup of editable layers
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            },
+            draw: {
+                polygon: true,
+                polyline: true,
+                rectangle: false,
+                circle: false,
+                marker: true,
+                circlemarker: false
+            }
+        });
+        map.addControl(drawControl);
+
+        // Add created layers to the map
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+        });
+
+        // Function to download GeoJSON
+        function downloadGeoJSON() {
+            var data = drawnItems.toGeoJSON();
+            var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+            var a = document.createElement('a');
+            a.setAttribute('href', 'data:' + convertedData);
+            a.setAttribute('download', 'data.geojson');
+            a.click();
+        }
+
+        // Add event listener to the download button
+        document.getElementById('downloadButton').addEventListener('click', downloadGeoJSON);
+    </script>
+</body>
 </html>
