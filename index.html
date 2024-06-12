@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Leaflet Drawing and Download GeoJSON</title>
+    <title>SATE Download GeoJSON</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
-    <style>
-        #map {
-            height: 600px;
-        }
-        .leaflet-bar a {
-            cursor: pointer;
-        }
-        #downloadButton {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 5px 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
 </head>
 <body>
     <div id="map"></div>
-    <button id="downloadButton">Download GeoJSON</button>
+    <button id="downloadButton">Download geoJSON</button>
+    <div id="buttons">
+        <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Draw Project Area</button>
+        <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Draw Start/End Point</button>
+        <button id="drawNoGoZone"><i class="fas fa-ban"></i> Draw No-Go Zone</button>
+        <button id="drawHulplijn"><i class="fas fa-route"></i> Draw Hulplijn</button>
+        <button id="drawBoorlijn"><i class="fas fa-road"></i> Draw Boorlijn</button>
+    </div>
+    <div id="popup">
+        <h3>Download Complete</h3>
+        <p>Please send the downloaded JSON file to <span id="email"></span>.</p>
+        <button id="closePopup">Close</button>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turf.js/5.1.6/turf.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
     <script>
         // Initialize the map
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        var map = L.map("map").setView([52.2354, 5.3751], 7);
+        var tileLayer = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">',
+            }
+        ).addTo(map);
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+        // add search bar
+        L.Control.geocoder().addTo(map);
 
         // FeatureGroup to store editable layers
         var drawnItems = new L.FeatureGroup();
@@ -52,14 +57,7 @@
             edit: {
                 featureGroup: drawnItems
             },
-            draw: {
-                polygon: true,
-                polyline: true,
-                rectangle: false,
-                circle: false,
-                marker: true,
-                circlemarker: false
-            }
+            draw: false // Disable default draw tools
         });
         map.addControl(drawControl);
 
@@ -67,20 +65,142 @@
         map.on(L.Draw.Event.CREATED, function (event) {
             var layer = event.layer;
             drawnItems.addLayer(layer);
+            layer.type = currentDrawingType; // Set type to distinguish different drawing types
         });
+
+        var currentDrawingType = null;
+        var drawControlProjectArea = new L.Draw.Polygon(map);
+        var drawControlStartEndPoint = new L.Draw.Marker(map);
+        var drawControlNoGoZone = new L.Draw.Polygon(map);
+        var drawControlHulplijn = new L.Draw.Polyline(map);
+        var drawControlBoorlijn = new L.Draw.Polyline(map); // Set color to distinguish boorlijn
+
+        document.getElementById('drawProjectArea').addEventListener('click', function () {
+            currentDrawingType = 'projectgebiedWKT';
+            drawControlProjectArea.enable();
+        });
+
+        document.getElementById('drawStartEndPoint').addEventListener('click', function () {
+            currentDrawingType = 'startEindPuntWKT';
+            drawControlStartEndPoint.enable();
+        });
+
+        document.getElementById('drawNoGoZone').addEventListener('click', function () {
+            currentDrawingType = 'nogoZonesWKT';
+            drawControlNoGoZone.enable();
+        });
+
+        document.getElementById('drawHulplijn').addEventListener('click', function () {
+            currentDrawingType = 'hulplijnenWKT';
+            drawControlHulplijn.enable();
+        });
+
+        document.getElementById('drawBoorlijn').addEventListener('click', function () {
+            currentDrawingType = 'boorlijnenWKT';
+            drawControlBoorlijn.enable();
+        });
+
+        // Coordinate transformation
+        proj4.defs([
+            ['EPSG:4326', '+proj=longlat +datum=WGS84 +no_defs'],
+            ['EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4171,50.3319,465.5524,0.398957,0.343988,-1.8774,4.0725 +no_defs']
+        ]);
+
+        function toRDNew(lat, lng) {
+            return proj4('EPSG:4326', 'EPSG:28992', [lng, lat]);
+        }
+
+        // Function to convert coordinates to WKT format in RD New
+        function toWKT(layer) {
+            if (layer instanceof L.Polygon) {
+                var coords = layer.getLatLngs()[0].map(function (latLng) {
+                    var rdCoords = toRDNew(latLng.lat, latLng.lng);
+                    return rdCoords[0] + ' ' + rdCoords[1];
+                }).join(', ');
+                // Ensure the polygon is closed
+                coords += ', ' + coords.split(', ')[0]; 
+                return 'POLYGON ((' + coords + '))';
+            } else if (layer instanceof L.Polyline) {
+                var coords = layer.getLatLngs().map(function (latLng) {
+                    var rdCoords = toRDNew(latLng.lat, latLng.lng);
+                    return rdCoords[0] + ' ' + rdCoords[1];
+                }).join(', ');
+                return 'LINESTRING (' + coords + ')';
+            } else if (layer instanceof L.Marker) {
+                var rdCoords = toRDNew(layer.getLatLng().lat, layer.getLatLng().lng);
+                return 'POINT (' + rdCoords[0] + ' ' + rdCoords[1] + ')';
+            }
+        }
 
         // Function to download GeoJSON
         function downloadGeoJSON() {
-            var data = drawnItems.toGeoJSON();
-            var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
-            var a = document.createElement('a');
-            a.setAttribute('href', 'data:' + convertedData);
-            a.setAttribute('download', 'data.geojson');
-            a.click();
+            var projectgebiedWKT = null;
+            var startEindPuntWKT = [];
+            var nogoZonesWKT = [];
+            var hulplijnenWKT = [];
+            var boorlijnenWKT = [];
+
+            drawnItems.eachLayer(function (layer) {
+                var wkt = toWKT(layer);
+                if (layer.type === 'projectgebiedWKT') {
+                    projectgebiedWKT = wkt;
+                } else if (layer.type === 'startEindPuntWKT') {
+                    startEindPuntWKT.push(wkt);
+                } else if (layer.type === 'nogoZonesWKT') {
+                    nogoZonesWKT.push(wkt);
+                } else if (layer.type === 'hulplijnenWKT') {
+                    hulplijnenWKT.push(wkt);
+                } else if (layer.type === 'boorlijnenWKT') {
+                    boorlijnenWKT.push(wkt);
+                }
+            });
+
+            if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
+                alert(" Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht (Project area and at least one start/end point are required).");
+                return;
+            }
+
+            var projectName = prompt("Please enter the project name:");
+            if (!projectName) {
+                alert("Projectnaam is verplicht. Project name is required.");
+                return;
+            }
+
+            projectName = projectName.replace(/[^a-zA-Z0-9]/g, '_');
+
+            // Check if the project name is empty after removing spaces and special characters
+            if (projectName.trim() === '') {
+                alert("Project name is required.");
+                return;
+            }
+
+            var geoJSONData = {
+                projectgebiedWKT: projectgebiedWKT,
+                startEindPuntWKT: startEindPuntWKT,
+                nogoZonesWKT: nogoZonesWKT,
+                hulplijnenWKT: hulplijnenWKT,
+                boorlijnenWKT: boorlijnenWKT
+            };
+
+            var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], { type: "application/json" });
+            saveAs(blob, projectName + ".json");
+
+            document.getElementById("popup").style.display = "block";
         }
 
-        // Add event listener to the download button
         document.getElementById('downloadButton').addEventListener('click', downloadGeoJSON);
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+        });
+        
+        // add current location locator button
+        L.control.locate().addTo(map);
+
+        // invisible email
+        var email = "<?php echo 'example@example.com';?>";
+        var emailLink = document.getElementById("email");
+        emailLink.textContent = email;
     </script>
 </body>
 </html>
