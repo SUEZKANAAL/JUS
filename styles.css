@@ -12,6 +12,7 @@ body,
 .leaflet-bar a {
     cursor: pointer;
 }
+
 #downloadButton {
     position: absolute;
     top: 390px;
