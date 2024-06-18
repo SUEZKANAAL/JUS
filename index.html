@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SATE Download GeoJSON</title>
+    <title>SATE Download JSON</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -12,18 +12,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
 </head>
 <body>
-    <div id="map"></div>
-    <button id="downloadButton">Download geoJSON</button>
+    <div id="map" ></div>
+    <button id="downloadButton">Download JSON</button>
     <div id="buttons">
-        <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Draw Project Area</button>
-        <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Draw Start/End Point</button>
-        <button id="drawNoGoZone"><i class="fas fa-ban"></i> Draw No-Go Zone</button>
-        <button id="drawHulplijn"><i class="fas fa-route"></i> Draw Hulplijn</button>
-        <button id="drawBoorlijn"><i class="fas fa-road"></i> Draw Boorlijn</button>
+        <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Teken Projectgebied</button>
+        <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Teken Start/Eind Punten</button>
+        <button id="drawNoGoZone"><i class="fas fa-ban"></i> Teken No-Go Zones</button>
+        <button id="drawHulplijn"><i class="fas fa-route"></i> Teken Hulplijnen</button>
+        <button id="drawBoorlijn"><i class="fas fa-road"></i> Teken Boorlijnen</button>
     </div>
     <div id="popup">
-        <h3>Download Complete</h3>
-        <p>Please send the downloaded JSON file to <span id="email"></span>.</p>
+        <h3>Download Gelukt!</h3>
+        <p>Stuur de JSON naar het volgende email adres voor het maken van een tracé: <span id="email-link"></span>.</p>
         <button id="closePopup">Close</button>
     </div>
 
@@ -34,6 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turf.js/5.1.6/turf.min.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
     <script>
         // Initialize the map
         var map = L.map("map").setView([52.2354, 5.3751], 7);
@@ -156,21 +157,14 @@
             });
 
             if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
-                alert(" Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht (Project area and at least one start/end point are required).");
+                alert("Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.");
                 return;
             }
 
-            var projectName = prompt("Please enter the project name:");
-            if (!projectName) {
-                alert("Projectnaam is verplicht. Project name is required.");
-                return;
-            }
-
+            var projectName = prompt("Voer een projectnaam in:");
             projectName = projectName.replace(/[^a-zA-Z0-9]/g, '_');
-
-            // Check if the project name is empty after removing spaces and special characters
-            if (projectName.trim() === '') {
-                alert("Project name is required.");
+            if (!projectName || projectName.trim() === '') {
+                alert("Projectnaam is verplicht.");
                 return;
             }
 
@@ -198,9 +192,44 @@
         L.control.locate().addTo(map);
 
         // invisible email
-        var email = "<?php echo 'example@example.com';?>";
-        var emailLink = document.getElementById("email");
-        emailLink.textContent = email;
+        (function() {
+            const user = 'example'; // Replace with the actual username part of the email
+            const domain = 'domain.com'; // Replace with the actual domain part of the email
+            const email = user + '@' + domain;
+            const emailLink = document.getElementById('email-link');
+
+            // Set the email address as the text content of the span
+            emailLink.textContent = email;
+
+            // Make the email a clickable mailto link
+            emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+        })();
+
+        // JavaScript to handle the close button
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+        });
+
+        // add map scale
+        L.control.scale().addTo(map);
+
+        // add map coorrdinate display
+        map.on('contextmenu', function(e) {
+            const { lat, lng } = e.latlng;
+            const rdCoords = toRDNew(lat, lng);
+            const popupContent = `
+                <div>
+                    <strong>RD Coordinates</strong><br>
+                    X: ${rdCoords[0]}<br>
+                    y: ${rdCoords[1]}
+                </div>
+            `;
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(popupContent)
+                .openOn(map);
+            });
+        
     </script>
 </body>
 </html>
