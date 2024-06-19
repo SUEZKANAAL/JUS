@@ -83,7 +83,7 @@
         var currentDrawingType = null;
         var drawControlProjectArea = new L.Draw.Polygon(map, {
             shapeOptions: {
-                color: 'black',
+                color: 'blue',
                 fill: false
             }
         });
@@ -96,8 +96,18 @@ var drawControlStartEndPoint = new L.Draw.Marker(map, {
                 color: 'red'
             }
         });
-        var drawControlHulplijn = new L.Draw.Polyline(map);
-        var drawControlBoorlijn = new L.Draw.Polyline(map); // Set color to distinguish boorlijn
+        var drawControlHulplijn = new L.Draw.Polyline(map, {
+            shapeOptions: {
+                color: 'orange'
+            }
+        });
+
+        var drawControlBoorlijn = new L.Draw.Polyline(map, {
+            shapeOptions: {
+                color: 'black'
+            }
+        });
+
 
         document.getElementById('drawProjectArea').addEventListener('click', function () {
             currentDrawingType = 'projectgebiedWKT';
