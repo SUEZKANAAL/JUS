@@ -12,14 +12,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
 </head>
 <body>
+    <header id="banner">
+        <h1>SATE TRACE INTEKENTOOL</h1>
+    </header>
+
     <div id="map" ></div>
-    <button id="downloadButton">Download JSON</button>
+    <div id="map" ></div>
     <div id="buttons">
         <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Teken Projectgebied</button>
         <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Teken Start/Eind Punten</button>
         <button id="drawNoGoZone"><i class="fas fa-ban"></i> Teken No-Go Zones</button>
         <button id="drawHulplijn"><i class="fas fa-route"></i> Teken Hulplijnen</button>
         <button id="drawBoorlijn"><i class="fas fa-road"></i> Teken Boorlijnen</button>
+        <button id="instructionButton">Teken Instructies</button>
+        <button id="downloadButton">Download JSON</button>
     </div>
     <div id="popup">
         <h3>Download Gelukt!</h3>
@@ -88,9 +94,9 @@
             }
         });
         
-var drawControlStartEndPoint = new L.Draw.Marker(map, {
-    icon: redIcon
-});
+        var drawControlStartEndPoint = new L.Draw.Marker(map, {
+            icon: redIcon
+        });
         var drawControlNoGoZone = new L.Draw.Polygon(map, {
             shapeOptions: {
                 color: 'red'
@@ -109,29 +115,51 @@ var drawControlStartEndPoint = new L.Draw.Marker(map, {
         });
 
 
+        var currentDrawControl = null;
+
         document.getElementById('drawProjectArea').addEventListener('click', function () {
+            if (currentDrawControl) {
+                currentDrawControl.disable();
+            }
             currentDrawingType = 'projectgebiedWKT';
             drawControlProjectArea.enable();
+            currentDrawControl = drawControlProjectArea;
         });
 
         document.getElementById('drawStartEndPoint').addEventListener('click', function () {
+            if (currentDrawControl) {
+                currentDrawControl.disable();
+            }
             currentDrawingType = 'startEindPuntWKT';
             drawControlStartEndPoint.enable();
+            currentDrawControl = drawControlStartEndPoint;
         });
 
         document.getElementById('drawNoGoZone').addEventListener('click', function () {
+            if (currentDrawControl) {
+                currentDrawControl.disable();
+            }
             currentDrawingType = 'nogoZonesWKT';
             drawControlNoGoZone.enable();
+            currentDrawControl = drawControlNoGoZone;
         });
 
         document.getElementById('drawHulplijn').addEventListener('click', function () {
+            if (currentDrawControl) {
+                currentDrawControl.disable();
+            }
             currentDrawingType = 'hulplijnenWKT';
             drawControlHulplijn.enable();
+            currentDrawControl = drawControlHulplijn;
         });
 
         document.getElementById('drawBoorlijn').addEventListener('click', function () {
+            if (currentDrawControl) {
+                currentDrawControl.disable();
+            }
             currentDrawingType = 'boorlijnenWKT';
             drawControlBoorlijn.enable();
+            currentDrawControl = drawControlBoorlijn;
         });
 
         // Coordinate transformation
@@ -263,6 +291,20 @@ var drawControlStartEndPoint = new L.Draw.Marker(map, {
                 .setContent(popupContent)
                 .openOn(map);
             });
+    
+    // add instruction button
+    // Instructions to show
+    var instructions = 'De kaart kan als volgt gebruikt worden:\n\nJe kunt de kaart navigeren door te klikken en te slepen, en je kunt in- en uitzoomen met de \'+\' en \'-\' knoppen in de linkerbovenhoek of door met de muis te scrollen.\n\nOok kan je een adres zoeken met de \'zoek\' knop in de rechterbovenhoek.\n\nOm een projectgebied, start- en eindpunten, no-go zones, hulplijnen en boorlijnen te tekenen, klik op de respectievelijke knoppen in de linkerbovenhoek van de kaart en teken vervolgens op de kaart \n\n Om de getekende vormen te downloaden als een JSON-bestand, klik op de \'Download JSON\' knop in de rechterbovenhoek van de kaart.\n\nAls er een popup op de kaart verschijnt en je wilt deze sluiten, klik dan op de "X" knop in de rechterbovenhoek van de popup \n\nDe kaart bevat ook een schaal in de linkerbenedenhoek voor referentie. \n\n Als je ergens op de kaart met de rechtermuisknop klikt, verschijnt er een popup die de RD (Rijksdriehoekscoördinaten) coördinaten van de aangeklikte locatie weergeeft. Het RD-coördinatensysteem is een uniek systeem dat in Nederland wordt gebruikt.\n\nJe kunt ook de huidige locatie van de gebruiker vinden door op de knop \'Locate\' in de rechterbovenhoek van de kaart te klikken.\n\nOm een projectgebied, start- en eindpunten, no-go zones, hulplijnen en boorlijnen te tekenen, klik op de respectievelijke knoppen in de linkerbovenhoek van de kaart';
+    // Function to show instructions
+    function showInstructions() {
+        alert(instructions);
+    }
+
+    // Show instructions when the page loads
+    window.onload = showInstructions;
+
+    // Show instructions when the button is clicked
+    document.getElementById("instructionButton").onclick = showInstructions;
         
     </script>
 </body>
