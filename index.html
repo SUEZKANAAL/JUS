@@ -15,14 +15,15 @@
     <header id="banner">
         <h1>SATE TRACE INTEKENTOOL</h1>
     </header>
+    <button id="toggleButton"></button>
 
     <div id="map" ></div>
     <div id="buttons">
         <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Teken Projectgebied</button>
         <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Teken Start/Eind Punten</button>
         <button id="drawNoGoZone"><i class="fas fa-ban"></i> Teken No-Go Zones</button>
-        <button id="drawHulplijn"><i class="fas fa-route"></i> Teken Hulplijnen</button>
-        <button id="drawBoorlijn"><i class="fas fa-road"></i> Teken Boorlijnen</button>
+        <button id="drawHulplijn" style="display: none;" ><i class="fas fa-route"></i> Teken Hulplijnen</button>
+        <button id="drawBoorlijn" ><i class="fas fa-road"></i> Teken Boorlijnen</button>
         <button id="instructionButton">Teken Instructies</button>
         <button id="downloadButton">Download JSON</button>
     </div>
@@ -42,6 +43,18 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
     <script>
+        var toggleButton = document.getElementById('toggleButton');
+        var drawHulplijn = document.getElementById('drawHulplijn');
+
+        toggleButton.addEventListener('click', function() {
+            if (drawHulplijn.style.display === 'none') {
+                drawHulplijn.style.display = 'block';
+            } else {
+                drawHulplijn.style.display = 'none';
+            }
+        });
+
+
         // Initialize the map
 
         // var tileLayer = L.tileLayer(
@@ -55,24 +68,23 @@
         var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', {
 					origin: [-285401.92,  903401.92],
 					resolutions: [// Levels of Detail: 17
-						3251.206502413005, 1625.6032512065026, 812.8016256032513, 406.40081280162565, 203.20040640081282, 101.60020320040641, 50.800101600203206, 25.400050800101603, 12.700025400050801, 6.350012700025401, 3.1750063500127004, 1.5875031750063502, 0.7937515875031751, 0.39687579375158755, 0.19843789687579377, 0.09921894843789689, 0.04960947421894844
-					]
+						3251.206502413005, 1625.6032512065026, 812.8016256032513, 406.40081280162565, 203.20040640081282, 101.60020320040641, 50.800101600203206, 25.400050800101603, 12.700025400050801, 6.350012700025401, 3.1750063500127004, 1.5875031750063502, 0.7937515875031751, 0.39687579375158755, 0.19843789687579377, 0.09921894843789688, 0.04960947421894844]
+					
 				});
 
         var defaultBaseMap = L.tileLayer('https://services.arcgisonline.nl/arcgis/rest/services/Basiskaarten/Topo/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 17,
             attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>'
         });
 
         var secondBaseMap = L.tileLayer('https://services.arcgisonline.nl/arcgis/rest/services/Luchtfoto/Luchtfoto/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19,
             attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>',
 
         });
                 
         var map = L.map("map", {
                 layers: [defaultBaseMap],
-                crs: RD
+                crs: RD,
+                maxZoom: 14.4,
             }).setView([52.2354, 5.3751], 3);
 
         var baseMaps = {

@@ -14,7 +14,8 @@ html, body {
 #banner h1 {
     margin: 0; /* Remove default margin */
     font-size: 1.5em; /* Make the text larger */
-    color: #ffb700;
+    color: 
+    hsl(0, 0%, 100%);
 }
 #map {
     padding: 0;
@@ -25,6 +26,18 @@ html, body {
     font-size: 14px;
     color: #323232;
 }
+
+#toggleButton{
+    position: absolute; 
+    top: 5px; 
+    right: 5px; 
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%; 
+    border: 0px solid black; 
+    background-color: transparent;
+}
+
 .leaflet-bar a {
     cursor: pointer;
 }
