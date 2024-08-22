@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SATE Download JSON</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="../styles/intekenenStyles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.css" />
+</head>
+<body>
+    <header id="banner">
+        <h1>SATE TRACE INTEKENTOOL</h1>
+    </header>
+    <button id="toggleButton"></button>
+
+    <div id="map" ></div>
+    <div id="buttons">
+        <button id="drawProjectArea"><i class="fas fa-draw-polygon"></i> Teken Projectgebied</button>
+        <button id="drawStartEndPoint"><i class="fas fa-map-marker-alt"></i> Teken Start/Eind Punten</button>
+        <button id="drawNoGoZone"><i class="fas fa-ban"></i> Teken No-Go Zones</button>
+        <button id="drawHulplijn" style="display: none;" ><i class="fas fa-route"></i> Teken Hulplijnen</button>
+        <button id="drawBoorlijn" ><i class="fas fa-road"></i> Teken Boorlijnen</button>
+        <button id="instructionButton"><i class="fas fa-map-marker-question"></i> Teken Instructies</button>
+        <button id="downloadButton"><i class="fas fa-save"></i> Download JSON</button>
+    </div>
+    <div id="popup">
+        <h3>Download Gelukt!</h3>
+        <p>Stuur de JSON naar het volgende email adres voor het maken van een tracé: <span id="email-link"></span>.</p>
+        <button id="closePopup">Close</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.js"></script>
+    <script src="https://unpkg.com/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turf.js/5.1.6/turf.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.81.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
+    <script src="../scripts/intekenen.js"></script>
+</body>
+</html>
