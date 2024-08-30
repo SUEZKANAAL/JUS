@@ -2,19 +2,44 @@ html,
 body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 
-#viewer-map {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-  }
 
-  /* Add this to your viewerStyles.css */
+#viewer-map {
+  height: calc(100vh - 47.2px);
+  width: 100%;
+}
+
+
 #jsonFileInputContainer {
-    position: absolute; /* or 'fixed' */
-    z-index: 1000; /* Ensure this is higher than the map's z-index */
-    top: 75px; /* Adjust as needed */
-    left: 10px; /* Adjust as needed */
+  position: absolute;
+  z-index: 1000;
+  top: 20px;
+  left: 10px;
+}
+
+
+/* popup */
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  min-width: 280px;
+  display: none;
+}
+
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+
+.ol-popup-content {
+  font-size: 12px;
+  line-height: 1.5;
 }

@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
@@ -12,11 +13,14 @@ html, body {
 }
 
 #banner h1 {
-    margin: 0; /* Remove default margin */
-    font-size: 1.5em; /* Make the text larger */
-    color: 
-    hsl(0, 0%, 100%);
+    margin: 0;
+    /* Remove default margin */
+    font-size: 1.5em;
+    /* Make the text larger */
+    color:
+        hsl(0, 0%, 100%);
 }
+
 #map {
     padding: 0;
     margin: 0;
@@ -27,14 +31,14 @@ html, body {
     color: #323232;
 }
 
-#toggleButton{
-    position: absolute; 
-    top: 5px; 
-    right: 5px; 
-    width: 30px; 
-    height: 30px; 
-    border-radius: 50%; 
-    border: 0px solid black; 
+#toggleButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0px solid black;
     background-color: transparent;
 }
 
@@ -50,6 +54,7 @@ html, body {
     padding: 10px;
     border-radius: 5px;
 }
+
 #buttons button {
     display: block;
     margin-bottom: 5px;
@@ -62,7 +67,8 @@ html, body {
 }
 
 #buttons #downloadButton {
-    background-color: #ffb700; /* Red */
+    background-color: #ffb700;
+    /* Red */
 }
 
 #popup {
@@ -76,11 +82,13 @@ html, body {
     padding: 20px;
     border: 2px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+
 #popup h3 {
     margin-top: 0;
 }
+
 #popup button {
     margin-top: 20px;
     padding: 5px 10px;
@@ -89,33 +97,47 @@ html, body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}    
+}
 
 
 .custom-search-control {
-    background-color: #fff; /* Background color */
-    border: 1px solid #ccc; /* Border */
-    border-radius: 5px; /* Border radius */
-    padding: 5px; /* Padding */
+    background-color: #fff;
+    /* Background color */
+    border: 1px solid #ccc;
+    /* Border */
+    border-radius: 5px;
+    /* Border radius */
+    padding: 5px;
+    /* Padding */
 }
 
 .custom-search-control input[type="text"] {
-    width: 200px; /* Adjust the width as needed */
-    padding: 5px; /* Padding */
-    border-radius: 3px; /* Border radius */
-    border: 1px solid #ccc; /* Border */
+    width: 200px;
+    /* Adjust the width as needed */
+    padding: 5px;
+    /* Padding */
+    border-radius: 3px;
+    /* Border radius */
+    border: 1px solid #ccc;
+    /* Border */
 }
 
 .custom-search-control button {
-    background-color: #007bff; /* Button background color */
-    color: #fff; /* Button text color */
-    border: none; /* Remove button border */
-    border-radius: 3px; /* Border radius */
-    padding: 5px 10px; /* Padding */
-    cursor: pointer; /* Cursor style */
+    background-color: #007bff;
+    /* Button background color */
+    color: #fff;
+    /* Button text color */
+    border: none;
+    /* Remove button border */
+    border-radius: 3px;
+    /* Border radius */
+    padding: 5px 10px;
+    /* Padding */
+    cursor: pointer;
+    /* Cursor style */
 }
 
 .custom-search-control button:hover {
-    background-color: #0056b3; /* Button background color on hover */
+    background-color: #0056b3;
+    /* Button background color on hover */
 }
-
