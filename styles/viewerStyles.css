@@ -43,3 +43,14 @@ body {
   font-size: 12px;
   line-height: 1.5;
 }
+
+
+/* Enlarge the layer switcher icon */
+.ol-layerswitcher button {
+  width: 40px;
+  /* Adjust the width as needed */
+  height: 40px;
+  /* Adjust the height as needed */
+  background-size: 35px;
+  /* Adjust the size of the icon within the button */
+}
