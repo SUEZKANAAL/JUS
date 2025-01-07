@@ -77,7 +77,6 @@ function klicStyle(feature) {
     });
 }
 
-
 // // Function to create a visual representation of the feature type in legend
 // function createFeatureIcon(type, color) {
 //     const icon = document.createElement('span');
@@ -387,18 +386,17 @@ map.addControl(layerswitcher);
 
 
 
-// add a scalebar
-var scaleControl = new ol.control.Scale({
-    bar: true,
-    minWidth: 200,
-});
+// // add a scalebar
+// var scaleControl = new ol.control.Scale({
+//     bar: true,
+//     minWidth: 200,
+// });
 
 
 map.addControl(scaleControl);
 
 
 // click on map and show features
-
 const popup = document.getElementById('popup');
 const popupCloser = document.getElementById('popup-closer');
 const popupContent = document.getElementById('popup-content');

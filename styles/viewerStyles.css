@@ -5,18 +5,9 @@ body {
   overflow: hidden;
 }
 
-
 #viewer-map {
   height: calc(100vh - 47.2px);
   width: 100%;
-}
-
-
-#jsonFileInputContainer {
-  position: absolute;
-  z-index: 1000;
-  top: 20px;
-  left: 10px;
 }
 
 
@@ -45,12 +36,150 @@ body {
 }
 
 
-/* Enlarge the layer switcher icon */
+/* Custom size and icon for the layer switcher button */
 .ol-layerswitcher button {
-  width: 40px;
-  /* Adjust the width as needed */
-  height: 40px;
-  /* Adjust the height as needed */
-  background-size: 35px;
-  /* Adjust the size of the icon within the button */
+  width: 80px;
+  height: 80px;
+  background-size: 60px;
+  /* Adjust the size of the icon */
+  background-color: black;
+  /* Adjust the background color */
+  background-image: url('../images/legendaIcoon.png');
+  /* Use your custom icon */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Optional: Add a hover effect for the button */
+.ol-layerswitcher button:hover {
+  background-color: #333;
+  /* Change background color on hover */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+}
+
+
+/* File input container positioned in the bottom-left corner */
+#jsonFileInputContainer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background-color: #2c2c2c;
+  color: white;
+  z-index: 1000;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+  width: 200px;
+  /* Adjusted default width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Heading styling */
+#jsonFileInputContainer h3 {
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 1em;
+  text-align: center;
+}
+
+/* Styling for the file input container */
+#jsonFileInputContainer .input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: #3a3a3a;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  /* Match container width */
+}
+
+/* Styling for the actual file input */
+#jsonFileInputContainer input[type="file"] {
+  color: white;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  /* Fit within the container */
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Hide the default file input button */
+#jsonFileInputContainer input[type="file"]::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+/* Custom styling for the "Choose File" button */
+#jsonFileInputContainer input[type="file"]::before {
+  content: "Choose File";
+  display: inline-block;
+  color: white;
+  background-color: #ffb700;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Hover effect for the "Choose File" button */
+#jsonFileInputContainer input[type="file"]:hover::before {
+  background-color: #ffc857;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  #jsonFileInputContainer {
+    bottom: 5px;
+    /* Reduce distance from bottom */
+    left: 5px;
+    /* Reduce distance from left */
+    padding: 5px;
+    /* Smaller padding */
+    width: 150px;
+    /* Reduce width */
+  }
+
+  #jsonFileInputContainer h3 {
+    font-size: 0.8em;
+    /* Smaller heading font size */
+  }
+
+  #jsonFileInputContainer input[type="file"]::before {
+    font-size: 10px;
+    /* Smaller button font size */
+    padding: 4px 6px;
+    /* Smaller button padding */
+  }
+
+  #jsonFileInputContainer .input-container {
+    padding: 5px;
+    /* Reduce padding */
+  }
+}
+
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+
+  /* Adjust size for screens smaller than 768px (e.g., tablets, mobile) */
+  .ol-layerswitcher button {
+    width: 60px;
+    height: 60px;
+    background-size: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Adjust size for screens smaller than 480px (e.g., small mobile devices) */
+  .ol-layerswitcher button {
+    width: 50px;
+    height: 50px;
+    background-size: 35px;
+  }
 }

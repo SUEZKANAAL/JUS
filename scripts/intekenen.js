@@ -333,3 +333,5 @@ window.onload = showInstructions;
 
 // Show instructions when the button is clicked
 document.getElementById("instructionButton").onclick = showInstructions;
+
+

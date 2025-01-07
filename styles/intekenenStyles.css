@@ -5,21 +5,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-#banner {
-    background-color: #515151;
-    color: white;
-    padding: 10px;
-    text-align: center;
-}
-
-#banner h1 {
-    margin: 0;
-    /* Remove default margin */
-    font-size: 1.5em;
-    /* Make the text larger */
-    color:
-        hsl(0, 0%, 100%);
-}
 
 #map {
     padding: 0;
@@ -46,25 +31,52 @@ body {
     cursor: pointer;
 }
 
-#buttons {
-    position: absolute;
-    top: 270px;
-    left: 5px;
+/* Sidebar menu styling */
+#buttons.menu {
+    position: fixed;
+    bottom: 20px;
+    /* Distance from the bottom of the screen */
+    left: 10px;
+    /* Distance from the left side of the screen */
+    width: 250px;
+    background-color: #2c2c2c;
+    color: white;
     z-index: 1000;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-#buttons button {
-    display: block;
-    margin-bottom: 5px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background: white;
-    cursor: pointer;
-    font-size: 16px;
+#buttons.menu h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
 }
+
+#buttons.menu button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #3a3a3a;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+}
+
+#buttons.menu button i {
+    margin-right: 10px;
+}
+
+#buttons.menu button:hover {
+    background-color: #ffb700;
+    color: black;
+}
+
 
 #buttons #downloadButton {
     background-color: #ffb700;
@@ -140,4 +152,56 @@ body {
 .custom-search-control button:hover {
     background-color: #0056b3;
     /* Button background color on hover */
+}
+
+/* Media query for tablets and smaller screens (max-width: 768px) */
+@media (max-width: 768px) {
+    #buttons.menu {
+        bottom: 15px;
+        left: 10px;
+        width: 200px;
+        padding: 12px;
+        font-size: 14px;
+        /* Smaller font for buttons */
+    }
+
+    #buttons.menu h3 {
+        font-size: 1em;
+        /* Smaller heading font size */
+    }
+
+    #buttons.menu button {
+        font-size: 14px;
+        /* Smaller font size for buttons */
+        padding: 8px;
+        /* Smaller padding for buttons */
+    }
+}
+
+/* Media query for mobile screens (max-width: 480px) */
+@media (max-width: 480px) {
+    #buttons.menu {
+        bottom: 10px;
+        left: 5px;
+        width: 180px;
+        padding: 10px;
+        /* Further reduce width and padding */
+    }
+
+    #buttons.menu h3 {
+        font-size: 0.9em;
+        /* Even smaller heading font size */
+    }
+
+    #buttons.menu button {
+        font-size: 12px;
+        /* Smaller button font size */
+        padding: 6px;
+        /* Smaller padding for buttons */
+    }
+
+    #buttons.menu button i {
+        margin-right: 8px;
+        /* Reduce icon margin */
+    }
 }
