@@ -5,6 +5,10 @@ body {
   overflow: hidden;
 }
 
+h1.navbar-brand a {
+  text-decoration: none;
+}
+
 #viewer-map {
   height: calc(100vh - 47.2px);
   width: 100%;
