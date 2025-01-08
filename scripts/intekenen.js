@@ -218,6 +218,109 @@ function toWKT(layer) {
     }
 }
 
+// // Function to download GeoJSON
+// function downloadGeoJSON() {
+//     var projectgebiedWKT = null;
+//     var startEindPuntWKT = [];
+//     var nogoZonesWKT = [];
+//     var hulplijnenWKT = [];
+//     var boorlijnenWKT = [];
+
+//     drawnItems.eachLayer(function (layer) {
+//         var wkt = toWKT(layer);
+//         if (layer.type === "projectgebiedWKT") {
+//             projectgebiedWKT = wkt;
+//         } else if (layer.type === "startEindPuntWKT") {
+//             startEindPuntWKT.push(wkt);
+//         } else if (layer.type === "nogoZonesWKT") {
+//             nogoZonesWKT.push(wkt);
+//         } else if (layer.type === "hulplijnenWKT") {
+//             hulplijnenWKT.push(wkt);
+//         } else if (layer.type === "boorlijnenWKT") {
+//             boorlijnenWKT.push(wkt);
+//         }
+//     });
+
+//     if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Fout',
+//             text: 'Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.',
+//             confirmButtonText: 'Ok'
+//         });
+//         return;
+//     }
+
+//     var projectName = prompt("Voer een projectnaam in:");
+//     projectName = projectName.replace(/[^a-zA-Z0-9]/g, "_");
+//     if (!projectName || projectName.trim() === "") {
+//         alert("Projectnaam is verplicht.");
+//         return;
+//     }
+
+//     var geoJSONData = {
+//         projectgebiedWKT: projectgebiedWKT,
+//         startEindPuntWKT: startEindPuntWKT,
+//         nogoZonesWKT: nogoZonesWKT,
+//         hulplijnenWKT: hulplijnenWKT,
+//         boorlijnenWKT: boorlijnenWKT,
+//     };
+
+//     var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
+//         type: "application/json",
+//     });
+//     saveAs(blob, projectName + ".json");
+
+//     document.getElementById("popup").style.display = "block";
+// }
+
+// document
+//     .getElementById("downloadButton")
+//     .addEventListener("click", downloadGeoJSON);
+
+// document.getElementById("closePopup").addEventListener("click", function () {
+//     document.getElementById("popup").style.display = "none";
+// });
+
+
+
+// // invisible email
+// (function () {
+//     const user = "smartengineering-klm"; // Replace with the actual username part of the email
+//     const domain = "vangelder"; // Replace with the actual domain part of the email
+//     var tld = "com";
+//     const email = user + "@" + domain + "." + tld;
+//     const emailLink = document.getElementById("email-link");
+
+//     // Set the email address as the text content of the span
+//     emailLink.textContent = email;
+
+//     // Make the email a clickable mailto link
+//     emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+// })();
+
+// // JavaScript to handle the close button
+// document.getElementById("closePopup").addEventListener("click", function () {
+//     document.getElementById("popup").style.display = "none";
+// });
+
+// // add map scale
+// L.control.scale().addTo(map);
+
+// // add map coorrdinate display
+// map.on("contextmenu", function (e) {
+//     const { lat, lng } = e.latlng;
+//     const rdCoords = toRDNew(lat, lng);
+//     const popupContent = `
+//         <div>
+//             <strong>RD Coordinates</strong><br>
+//             X: ${rdCoords[0]}<br>
+//             y: ${rdCoords[1]}
+//         </div>
+//     `;
+//     L.popup().setLatLng(e.latlng).setContent(popupContent).openOn(map);
+// });
+
 // Function to download GeoJSON
 function downloadGeoJSON() {
     var projectgebiedWKT = null;
@@ -241,97 +344,115 @@ function downloadGeoJSON() {
         }
     });
 
+    // Validate if necessary layers exist
     if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
-        alert(
-            "Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht."
-        );
+        Swal.fire({
+            icon: 'error',
+            title: 'Fout',
+            text: 'Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.',
+            confirmButtonText: 'Ok'
+        });
         return;
     }
 
-    var projectName = prompt("Voer een projectnaam in:");
-    projectName = projectName.replace(/[^a-zA-Z0-9]/g, "_");
-    if (!projectName || projectName.trim() === "") {
-        alert("Projectnaam is verplicht.");
-        return;
-    }
+    // Ask for project name via SweetAlert modal
+    Swal.fire({
+        title: 'Voer een projectnaam in:',
+        input: 'text',
+        inputPlaceholder: 'Projectnaam...',
+        showCancelButton: true,
+        cancelButtonText: 'Annuleren',
+        confirmButtonText: 'Opslaan',
+        inputValidator: (value) => {
+            if (!value || value.trim() === "") {
+                return 'Projectnaam is verplicht!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var projectName = result.value.replace(/[^a-zA-Z0-9]/g, "_");
 
-    var geoJSONData = {
-        projectgebiedWKT: projectgebiedWKT,
-        startEindPuntWKT: startEindPuntWKT,
-        nogoZonesWKT: nogoZonesWKT,
-        hulplijnenWKT: hulplijnenWKT,
-        boorlijnenWKT: boorlijnenWKT,
-    };
+            // Create GeoJSON data
+            var geoJSONData = {
+                projectgebiedWKT: projectgebiedWKT,
+                startEindPuntWKT: startEindPuntWKT,
+                nogoZonesWKT: nogoZonesWKT,
+                hulplijnenWKT: hulplijnenWKT,
+                boorlijnenWKT: boorlijnenWKT,
+            };
 
-    var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
-        type: "application/json",
+            // Create a Blob with the GeoJSON data
+            var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
+                type: "application/json",
+            });
+
+            // Download the file
+            saveAs(blob, projectName + ".json");
+
+            // Show success message and ask if the user wants to send the JSON by email
+            Swal.fire({
+                icon: 'success',
+                title: 'Bestand gedownload!',
+                text: 'Het GeoJSON-bestand is succesvol gedownload.',
+                showCancelButton: true,
+                cancelButtonText: 'Later',
+                confirmButtonText: 'Verstuur via e-mail',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Open a modal to send the email
+                    sendEmailWithAttachment(projectName, blob);
+                }
+            });
+        }
     });
-    saveAs(blob, projectName + ".json");
-
-    document.getElementById("popup").style.display = "block";
 }
 
-document
-    .getElementById("downloadButton")
-    .addEventListener("click", downloadGeoJSON);
+// Function to open an email modal
+function sendEmailWithAttachment(projectName, fileBlob) {
+    // Pre-fill email address
+    const user = "smartengineering-klm"; // Replace with the actual username part of the email
+    const domain = "vangelder"; // Replace with the actual domain part of the email
+    const tld = "com";
+    const email = `${user}@${domain}.${tld}`;
 
+    // Convert blob to data URL
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+        const fileContent = fileReader.result.split(',')[1]; // Extract base64 data
+        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${projectName}&body=Geachte%20SUE,%0A%0ABij%20deze%20doe%20ik%20een%20aanvraag%20voor%20een%20automatisch%20tracé%20voor%20het%20project%20${projectName}.%0A%0AAttentie:%20Voeg%20alstublieft%20het%20gedownloade%20JSON-bestand%20als%20bijlage%20bij%20deze%20e-mail.%20Anders%20kunnen%20wij%20uw%20aanvraag%20niet%20verwerken.%20Het%20bestand%20vindt%20u%20terug%20in%20uw%20downloads-map%20onder%20de%20naam%20${projectName}.json.%0A%0AMet%20vriendelijke%20groet,%0A[Uw%20Naam]`;
+
+        // Open the email client with the prefilled information
+        window.location.href = mailtoLink;
+    };
+    fileReader.readAsDataURL(fileBlob);
+}
+
+// Event listener to trigger downloadGeoJSON function
+document.getElementById("downloadButton").addEventListener("click", downloadGeoJSON);
+
+// Handling popup close button (optional for visual purposes)
 document.getElementById("closePopup").addEventListener("click", function () {
     document.getElementById("popup").style.display = "none";
 });
+
+
 
 // add current location locator button
 L.control.locate().addTo(map);
 
-// invisible email
-(function () {
-    const user = "smartengineering-klm"; // Replace with the actual username part of the email
-    const domain = "vangelder"; // Replace with the actual domain part of the email
-    var tld = "com";
-    const email = user + "@" + domain + "." + tld;
-    const emailLink = document.getElementById("email-link");
+// // add instruction button
+// // Instructions to show
+// var instructions =
+//     "De kaart kan als volgt gebruikt worden:\n\nJe kunt de kaart navigeren door te klikken en te slepen, en je kunt in- en uitzoomen met de '+' en '-' knoppen in de linkerbovenhoek of door met de muis te scrollen.\n\nOok kan je een adres zoeken met de 'zoek' knop in de rechterbovenhoek.\n\nOm een projectgebied, start- en eindpunten, no-go zones, hulplijnen en boorlijnen te tekenen, klik op de respectievelijke knoppen in de linkerbovenhoek van de kaart en teken vervolgens op de kaart \n\n Om de getekende vormen te downloaden als een JSON-bestand, klik op de 'Download JSON' knop in de rechterbovenhoek van de kaart.\n\nDe kaart bevat ook een schaal in de linkerbenedenhoek voor referentie. \n\n Als je ergens op de kaart met de rechtermuisknop klikt, verschijnt er een popup die de RD (Rijksdriehoekscoördinaten) coördinaten van de aangeklikte locatie weergeeft. \n\nJe kunt ook de huidige locatie van de gebruiker vinden door op de knop 'Locate' in de rechterbovenhoek van de kaart te klikken.";
+// // Function to show instructions
+// function showInstructions() {
+//     alert(instructions);
+// }
 
-    // Set the email address as the text content of the span
-    emailLink.textContent = email;
+// // Show instructions when the page loads
+// window.onload = showInstructions;
 
-    // Make the email a clickable mailto link
-    emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
-})();
-
-// JavaScript to handle the close button
-document.getElementById("closePopup").addEventListener("click", function () {
-    document.getElementById("popup").style.display = "none";
-});
-
-// add map scale
-L.control.scale().addTo(map);
-
-// add map coorrdinate display
-map.on("contextmenu", function (e) {
-    const { lat, lng } = e.latlng;
-    const rdCoords = toRDNew(lat, lng);
-    const popupContent = `
-        <div>
-            <strong>RD Coordinates</strong><br>
-            X: ${rdCoords[0]}<br>
-            y: ${rdCoords[1]}
-        </div>
-    `;
-    L.popup().setLatLng(e.latlng).setContent(popupContent).openOn(map);
-});
-
-// add instruction button
-// Instructions to show
-var instructions =
-    "De kaart kan als volgt gebruikt worden:\n\nJe kunt de kaart navigeren door te klikken en te slepen, en je kunt in- en uitzoomen met de '+' en '-' knoppen in de linkerbovenhoek of door met de muis te scrollen.\n\nOok kan je een adres zoeken met de 'zoek' knop in de rechterbovenhoek.\n\nOm een projectgebied, start- en eindpunten, no-go zones, hulplijnen en boorlijnen te tekenen, klik op de respectievelijke knoppen in de linkerbovenhoek van de kaart en teken vervolgens op de kaart \n\n Om de getekende vormen te downloaden als een JSON-bestand, klik op de 'Download JSON' knop in de rechterbovenhoek van de kaart.\n\nDe kaart bevat ook een schaal in de linkerbenedenhoek voor referentie. \n\n Als je ergens op de kaart met de rechtermuisknop klikt, verschijnt er een popup die de RD (Rijksdriehoekscoördinaten) coördinaten van de aangeklikte locatie weergeeft. \n\nJe kunt ook de huidige locatie van de gebruiker vinden door op de knop 'Locate' in de rechterbovenhoek van de kaart te klikken.";
-// Function to show instructions
-function showInstructions() {
-    alert(instructions);
-}
-
-// Show instructions when the page loads
-window.onload = showInstructions;
-
-// Show instructions when the button is clicked
-document.getElementById("instructionButton").onclick = showInstructions;
+// // Show instructions when the button is clicked
+// document.getElementById("instructionButton").onclick = showInstructions;
 
 
