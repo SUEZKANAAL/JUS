@@ -42,7 +42,7 @@ var baseLayerGroup = new ol.layer.Group({
 const map = new ol.Map({
     target: "viewer-map",
     view: view,
-    layers: [baseLayerGroup],
+    layers: [baseLayerGroup]
 });
 
 function klicStyle(feature) {
@@ -393,7 +393,7 @@ map.addControl(layerswitcher);
 // });
 
 
-map.addControl(scaleControl);
+//map.addControl(scaleControl);
 
 
 // click on map and show features
@@ -407,8 +407,41 @@ popupCloser.onclick = function () {
     return false;
 };
 
+// map.on('singleclick', function (evt) {
+//     evt.preventDefault(); // Prevent the default double-click zoom
+//     const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+//         return feature;
+//     });
+
+//     if (feature) {
+//         const coordinates = evt.coordinate;
+//         const properties = feature.getProperties();
+//         delete properties.geometry;
+
+//         const propertiesStr = Object.keys(properties).map(key => `${key}: ${properties[key]}`).join('<br>');
+//         popupContent.innerHTML = propertiesStr;
+//         popup.style.display = 'block';
+//         const overlay = new ol.Overlay({
+//             element: popup,
+//             positioning: 'bottom-center',
+//             stopEvent: false,
+//             offset: [0, -10]
+//         });
+//         map.addOverlay(overlay);
+//         overlay.setPosition(coordinates);
+//     } else {
+//         popup.style.display = 'none';
+//     }
+// });
+
 map.on('singleclick', function (evt) {
-    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    evt.preventDefault(); // Prevent default behavior
+
+    let layerName = '';
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+        if (layer) {
+            layerName = layer.get('title') || 'Unnamed Layer'; // Assuming layers have a 'title' property
+        }
         return feature;
     });
 
@@ -417,21 +450,30 @@ map.on('singleclick', function (evt) {
         const properties = feature.getProperties();
         delete properties.geometry;
 
-        const propertiesStr = Object.keys(properties).map(key => `${key}: ${properties[key]}`).join('<br>');
-        popupContent.innerHTML = propertiesStr;
+        const propertiesStr = Object.keys(properties)
+            .map(key => `${key}: ${properties[key]}`)
+            .join('<br>');
+
+        // Add layer name as the title in the popup
+        const layerTitle = `<strong>${layerName}</strong><br>`;
+        popupContent.innerHTML = layerTitle + propertiesStr;
+
         popup.style.display = 'block';
+
         const overlay = new ol.Overlay({
             element: popup,
             positioning: 'bottom-center',
             stopEvent: false,
-            offset: [0, -10]
+            offset: [0, -10],
         });
+
         map.addOverlay(overlay);
         overlay.setPosition(coordinates);
     } else {
         popup.style.display = 'none';
     }
 });
+
 
 
 
