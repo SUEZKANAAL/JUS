@@ -419,7 +419,7 @@ function sendEmailWithAttachment(projectName, fileBlob) {
     const fileReader = new FileReader();
     fileReader.onload = function () {
         const fileContent = fileReader.result.split(',')[1]; // Extract base64 data
-        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${projectName}&body=Geachte%20SUE,%0A%0ABij%20deze%20doe%20ik%20een%20aanvraag%20voor%20een%20automatisch%20tracé%20voor%20het%20project%20${projectName}.%0A%0AAttentie:%20Voeg%20alstublieft%20het%20gedownloade%20JSON-bestand%20als%20bijlage%20bij%20deze%20e-mail.%20Anders%20kunnen%20wij%20uw%20aanvraag%20niet%20verwerken.%20Het%20bestand%20vindt%20u%20terug%20in%20uw%20downloads-map%20onder%20de%20naam%20${projectName}.json.%0A%0AMet%20vriendelijke%20groet,%0A[Uw%20Naam]`;
+        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${projectName}&body=Beste Medewerker van %20SUE,%0A%0ABij%20deze%20doe%20ik%20een%20aanvraag%20voor%20een%20automatisch%20tracé%20voor%20het%20project%20${projectName}.%0A%0AAttentie:%20Voeg%20alstublieft%20het%20gedownloade%20JSON-bestand%20als%20bijlage%20bij%20deze%20e-mail.%20Anders%20kunnen%20wij%20uw%20aanvraag%20niet%20verwerken.%20Het%20bestand%20vindt%20u%20terug%20in%20uw%20downloads-map%20onder%20de%20naam%20${projectName}.json.%0A%0AMet%20vriendelijke%20groet,%0A[Uw%20Naam]`;
 
         // Open the email client with the prefilled information
         window.location.href = mailtoLink;
