@@ -1,5 +1,62 @@
 @charset "UTF-8";
 
+/* added custom css manual section*/
+
+
+.video-container {
+  margin: 20px auto;
+  /* Centers the container horizontally */
+  display: flex;
+  /* Ensures flexbox behavior */
+  justify-content: center;
+  /* Centers the video within the container */
+}
+
+video {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.image-text-section {
+  margin-top: 20px;
+}
+
+.image-text-pair {
+  display: flex;
+  /* Aligns image and text side by side */
+  flex-direction: row;
+  /* Default row alignment */
+  align-items: center;
+  /* Aligns items vertically within the row */
+  justify-content: center;
+  /* Centers the pair horizontally */
+  gap: 20px;
+  /* Adds space between image and text */
+  margin-bottom: 30px;
+  /* Adds spacing between pairs */
+}
+
+.image-container img {
+  max-width: 300px;
+  /* Limits image width */
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.text-container {
+  max-width: 400px;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+  /* Aligns the text to the left for better readability */
+}
+
+
 /*!
 * Start Bootstrap - Agency v7.0.12 (https://startbootstrap.com/theme/agency)
 * Copyright 2013-2023 Start Bootstrap
