@@ -2,6 +2,18 @@
 
 /* added custom css manual section*/
 
+.image-container-center img {
+  max-width: 80%;
+  /* Limits the width to 80% of the container */
+  height: auto;
+  /* Maintains the image's aspect ratio */
+  margin: 0 auto;
+  /* Centers the image horizontally */
+  display: block;
+  /* Ensures the image is treated as a block element */
+  text-align: center;
+  /* Centers the content in some contexts */
+}
 
 .video-container {
   margin: 20px auto;
