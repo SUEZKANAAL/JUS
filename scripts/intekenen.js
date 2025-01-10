@@ -359,60 +359,121 @@ function downloadGeoJSON() {
     Swal.fire({
         title: 'Projectinformatie invoeren',
         html: `
-        <label for="projectName">Projectnaam:</label><br>
-        <input id="projectName" class="swal2-input" placeholder="Projectnaam..."><br>
-        <label for="klicFile">KLIC-bestand:</label><br>
-        <select id="klicFile" class="swal2-input">
-            <option value="zelf opsturen">Zelf opsturen</option>
-            <option value="aanvragen">Aanvragen</option>
-        </select><br>
-        <label for="gelbreedte">Gelbreedte (max 10 meter):</label><br>
-        <input id="gelbreedte" type="number" class="swal2-input" step="0.1" max="10" value="5"><br>
-        
-        <label for="geslotenVerharding">Gesloten verharding (0-100):</label><br>
-        <input id="geslotenVerharding" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value"><br>
-        <span id="geslotenVerhardingValue">50</span>%<br>
-        
-        <label for="openVerharding">Open verharding (0-100):</label><br>
-        <input id="openVerharding" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('openVerhardingValue').textContent = this.value"><br>
-        <span id="openVerhardingValue">50</span>%<br>
-        
-        <label for="halfVerhard">Half verhard (0-100):</label><br>
-        <input id="halfVerhard" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('halfVerhardValue').textContent = this.value"><br>
-        <span id="halfVerhardValue">50</span>%<br>
-        
-        <label for="onverhard">Onverhard (0-100):</label><br>
-        <input id="onverhard" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('onverhardValue').textContent = this.value"><br>
-        <span id="onverhardValue">50</span>%<br>
-        
-        <label for="groenvoorzieningLage">Groenvoorziening (gras/lage beplanting, 0-100):</label><br>
-        <input id="groenvoorzieningLage" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('groenvoorzieningLageValue').textContent = this.value"><br>
-        <span id="groenvoorzieningLageValue">50</span>%<br>
-        
-        <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken/bomen, 0-100):</label><br>
-        <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value"><br>
-        <span id="groenvoorzieningHoogValue">50</span>%<br>
-        
-        <label for="nogo">NoGo (0-100):</label><br>
-        <input id="nogo" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('nogoValue').textContent = this.value"><br>
-        <span id="nogoValue">50</span>%<br>
-        
-        <label for="klicDrukte">KLIC (kabeldrukte, 0-100):</label><br>
-        <input id="klicDrukte" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('klicDrukteValue').textContent = this.value"><br>
-        <span id="klicDrukteValue">50</span>%<br>
-        
-        <label for="ongunstigNogo">Ongunstig NoGo (0-100):</label><br>
-        <input id="ongunstigNogo" type="range" min="0" max="100" value="50" step="1" 
-            oninput="document.getElementById('ongunstigNogoValue').textContent = this.value"><br>
-        <span id="ongunstigNogoValue">50</span>%<br>
+        <style>
+            .form-container {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .form-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            .form-row label {
+                flex: 1;
+                margin-right: 10px;
+                text-align: center;
+            }
+            .form-row input[type="range"] {
+                flex: 2;
+                margin: 0 10px;
+            }
+            .form-row span {
+                width: 40px;
+                text-align: center;
+            }
+            .swal2-input {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+        </style>
+        <div class="form-container">
+            <div class="form-row">
+                <label for="projectName">Projectnaam:</label>
+            </div>
+            <div class="form-row">
+                <input id="projectName" class="swal2-input" placeholder="Projectnaam...">
+            </div>
+            <div class="form-row">
+                <label for="klicFile">KLIC-bestand:</label>
+                </div>
+                <div class="form-row">
+                <select id="klicFile" class="swal2-input">
+                    <option value="zelf opsturen">Zelf opsturen</option>
+                    <option value="aanvragen">Aanvragen</option>
+                </select>
+                </div>
+            </div>
+
+            <div>
+            <div class="form-row">
+                <label for="gelbreedte">Gelbreedte (max 10 meter):</label>
+            </div>
+            <div class="form-row">
+                <input id="gelbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
+            </div>
+            
+            <div class="form-row">
+                <label for="geslotenVerharding">Gesloten verharding:</label>
+                <input id="geslotenVerharding" type="range" min="0" max="100" value="34" step="1" 
+                    oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value">
+                <span id="geslotenVerhardingValue">34</span>%
+            </div>
+            <div class="form-row">
+                <label for="openVerharding">Open verharding:</label>
+                <input id="openVerharding" type="range" min="0" max="100" value="15" step="1" 
+                    oninput="document.getElementById('openVerhardingValue').textContent = this.value">
+                <span id="openVerhardingValue">15</span>%
+            </div>
+            <div class="form-row">
+                <label for="halfVerhard">Half verhard:</label>
+                <input id="halfVerhard" type="range" min="0" max="100" value="10" step="1" 
+                    oninput="document.getElementById('halfVerhardValue').textContent = this.value">
+                <span id="halfVerhardValue">10</span>%
+            </div>
+            <div class="form-row">
+                <label for="onverhard">Onverhard:</label>
+                <input id="onverhard" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('onverhardValue').textContent = this.value">
+                <span id="onverhardValue">8</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningLage">Groenvoorziening (gras/lage beplanting):</label>
+                <input id="groenvoorzieningLage" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('groenvoorzieningLageValue').textContent = this.value">
+                <span id="groenvoorzieningLageValue">8</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken/bomen):</label>
+                <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
+                <span id="groenvoorzieningHoogValue">12</span>%
+            </div>
+            <div class="form-row">
+                <label for="nogo">Moeilijk Begaanbaar:</label>
+                <input id="nogo" type="range" min="0" max="100" value="4" step="1" 
+                    oninput="document.getElementById('nogoValue').textContent = this.value">
+                <span id="nogoValue">4</span>%
+            </div>
+            <div class="form-row">
+                <label for="klicDrukte">KLIC (kabeldrukte):</label>
+                <input id="klicDrukte" type="range" min="0" max="100" value="40" step="1" 
+                    oninput="document.getElementById('klicDrukteValue').textContent = this.value">
+                <span id="klicDrukteValue">40</span>%
+            </div>
+            <div class="form-row">
+                <label for="ongunstigNogo">Ongunstig NoGo:</label>
+                <input id="ongunstigNogo" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
+                <span id="ongunstigNogoValue">45</span>%
+            </div>
+        </div>
     `,
         showCancelButton: true,
         cancelButtonText: 'Annuleren',
