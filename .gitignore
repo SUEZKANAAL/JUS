@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 !libs/ol-ext/dist/
-!/libs/v10.0.0-package/dist/ol.js
+!/libs/v10.0.0-package/dist/
