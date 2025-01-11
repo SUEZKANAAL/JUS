@@ -269,6 +269,9 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 else if (fileName.includes('ongunstig_zone')) {
                     groupName = 'Ongunstig Zone';
                 }
+                else if (fileName.includes('klic')) {
+                    groupName = 'Klic';
+                }
                 else {
                     groupName = 'Other';
                 }
@@ -329,6 +332,9 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
 
         // 5. Ongunstig Zone
         map.addLayer(layerGroups['Ongunstig Zone']);
+
+        // 5. Klic
+        map.addLayer(layerGroups['Klic']);
 
         // Calculate the combined extent of all vector layers
         let combinedExtent = ol.extent.createEmpty();
