@@ -281,8 +281,6 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                     });
                 }
                 //layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
-                layerGroups[groupName].getLayers().insertAt(0, vectorLayer); // Insert at the first position
-
 
                 // Set the default visibility based on the predefined list
                 if (groupsToTurnOnByDefault.includes(groupName)) {
