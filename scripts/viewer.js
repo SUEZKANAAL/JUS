@@ -216,6 +216,12 @@ function getFeatureStyle(file, feature) {
 }
 
 const layerGroups = {}; // Initialize an object to hold layer groups
+const groupsToTurnOnByDefault = [
+    'Trace Kosten',
+    'Trace Lengte',
+    'Trace Doorlooptijd',
+    'Ingetekende Features' // Add more groups here as needed
+];
 
 document.getElementById('jsonFileInput').addEventListener('change', function (event) {
     const files = event.target.files;
@@ -275,6 +281,19 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                     });
                 }
                 layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
+                // Set the default visibility based on the predefined list
+                if (groupsToTurnOnByDefault.includes(groupName)) {
+                    vectorLayer.setVisible(true);  // Turn the layer on by default
+                } else {
+                    vectorLayer.setVisible(false);  // Keep it off by default
+                }
+
+                // Set the default visibility for the group
+                if (groupsToTurnOnByDefault.includes(groupName)) {
+                    layerGroups[groupName].setVisible(true);  // Turn the group on by default
+                } else {
+                    layerGroups[groupName].setVisible(false);  // Turn the group off by default
+                }
                 resolve(); // Resolve the promise after adding the layer to the group
             };
             reader.onerror = reject; // Reject the promise on read error
