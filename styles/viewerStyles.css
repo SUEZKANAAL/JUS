@@ -27,16 +27,32 @@ h1.navbar-brand a {
   display: none;
 }
 
-.ol-popup-closer {
+/* .ol-popup-closer {
   text-decoration: none;
   position: absolute;
   top: 2px;
   right: 8px;
-}
+} */
 
 .ol-popup-content {
   font-size: 12px;
   line-height: 1.5;
+}
+
+.ol-popup-closer {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-decoration: none;
+  font-size: 16px;
+  color: black;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ol-popup-closer:hover {
+  color: red;
 }
 
 

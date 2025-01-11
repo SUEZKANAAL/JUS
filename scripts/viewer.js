@@ -45,6 +45,8 @@ const map = new ol.Map({
     layers: [baseLayerGroup]
 });
 
+
+// styling functions for features
 function klicStyle(feature) {
     const gmlId = feature.get('gml_id');
     const styles = {
@@ -137,13 +139,13 @@ function createCircleStyle(color_rgb_list = [0, 0, 255], transperancy = 1) {
     });
 }
 
-function createPolygonStyle(color_rgb_list = [0, 0, 255], transperancy = 0.3) {
+function createPolygonStyle(color_rgb_list = [0, 0, 255], transperancy = 0.3, width = 2) {
     rgba_color_outline = `rgba(${color_rgb_list[0]}, ${color_rgb_list[1]}, ${color_rgb_list[2]}, 1)`
     rgba_color_fill = `rgba(${color_rgb_list[0]}, ${color_rgb_list[1]}, ${color_rgb_list[2]}, ${transperancy})`
     return new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: rgba_color_outline,
-            width: 2,
+            width: width,
         }),
 
         fill: new ol.style.Fill({
@@ -164,96 +166,6 @@ function createLineStyle(color_rgb_list = [0, 0, 255], transperancy = 1) {
 
 var color_index = 0;
 
-// document.getElementById('jsonFileInput').addEventListener('change', function (event) {
-//     const files = event.target.files;
-//     const layergroups = {};
-
-//     const processFile = (file) => {
-//         const reader = new FileReader();
-//         reader.onload = function (e) {
-//             const features = new ol.format.GeoJSON().readFeatures(e.target.result, {
-//                 dataProjection: 'EPSG:29882',
-//                 featureProjection: map.getView().getProjection()
-//             });
-
-//             // Create a vector source and layer for this GeoJSON
-//             const vectorSource = new ol.source.Vector({
-//                 features: features
-//             });
-//             const vectorLayer = new ol.layer.Vector({
-//                 source: vectorSource,
-//                 title: file.name,
-//                 style: function (feature) {
-//                     let firstFeature = vectorSource.getFeatures()[0];
-//                     let color = firstFeature.get('color');
-//                     if (!color) {
-//                         color = getRandomColor();
-//                         feature.set('color', color); // Store the color in the feature's properties
-//                     }
-//                     else {
-//                         feature.set('color', color);
-//                     }
-
-//                     switch (file.name) {
-//                         case 'klic.geojson': // styling should be changed based on gml id 
-//                             return klicStyle(feature);
-//                         case 'Start_Eind_Punt.geojson':
-//                             return createCircleStyle(color = [255, 0, 0], transparancy = 1.0);
-//                         case "Doorlooptijd.geojson":
-//                         case 'Trace_Doorlooptijd_smooth.geojson':
-//                             return createLineStyle(color = [0, 0, 255], transparancy = 1.0); // blue
-//                         case 'Kosten.geojson':
-//                         case 'Trace_Kosten_smooth.geojson':
-//                             return createLineStyle(color = [255, 0, 0], transparancy = 1.0); // red
-//                         case 'Lengte.geojson':
-//                         case 'Trace_Lengte_smooth.geojson':
-//                             return createLineStyle(color = [0, 255, 0], transparancy = 1.0); // Green
-//                         case 'Projectgebied.geojson':
-//                             return createPolygonStyle(color = [0, 0, 0], transparancy = 0)//black
-//                     }
-
-//                     // Determine the geometry type of the feature
-//                     const geometryType = feature.getGeometry().getType();
-//                     // Check if the feature is a point and apply circle styling
-//                     if ((geometryType === 'Point' || geometryType === 'MultiPoint') && file.name !== 'Start_Eind_Punt.geojson') {
-//                         return createCircleStyle(color);
-//                     }
-//                     // Check if the feature is a point and apply circle styling
-//                     if ((geometryType === 'Polygon' || geometryType === 'MultiPolygon') && file.name !== 'Projectgebied.geojson') {
-//                         return createPolygonStyle(color);
-//                     }
-//                     // Check if the feature is a point and apply circle styling
-//                     if ((geometryType === 'LineString' || geometryType === 'MultiLineString') && file.name !== 'Trace_Doorlooptijd_smooth.geojson' && file.name !== 'Trace_Kosten_smooth.geojson' && file.name !== 'Trace_Lengte_smooth.geojson') {
-//                         return createLineStyle(color);
-//                     }
-
-//                 }
-
-//             });
-
-//             map.addLayer(vectorLayer);
-
-//             // Calculate the extent of the features
-//             const extent = vectorSource.getExtent();
-
-//             // Check if the extent is valid (not infinite)
-//             if (extent && !ol.extent.isEmpty(extent)) {
-//                 // Zoom to the extent of the layer with animation
-//                 map.getView().fit(extent, {
-//                     duration: 1000, // Animation duration in milliseconds
-//                     padding: [50, 50, 50, 50] // Padding around the extent [top, right, bottom, left] in pixels
-//                 });
-//             }
-
-//         };
-//         reader.readAsText(file);
-//     };
-
-//     for (let i = 0; i < files.length; i++) {
-//         processFile(files[i]);
-//     }
-
-// });
 
 var layerColors = {};
 
@@ -271,22 +183,26 @@ function getFeatureStyle(file, feature) {
         layerColors[layerName] = color;
     }
 
-    switch (file.name) {
-        case 'klic.geojson': // styling should be changed based on gml id 
+    switch (true) {
+        case file.name === 'klic.geojson': // styling should be changed based on gml id 
             return klicStyle(feature);
-        case 'Start_Eind_Punt.geojson':
+        case file.name === 'Start_Eind_Punt.geojson':
             return createCircleStyle([255, 0, 0], 1.0);
-        case "Doorlooptijd.geojson":
-        case 'Trace_Doorlooptijd_smooth.geojson':
+        case file.name === "Doorlooptijd.geojson":
+        case file.name === 'Trace_Doorlooptijd_smooth.geojson':
             return createLineStyle([0, 0, 255], 1.0); // blue
-        case 'Kosten.geojson':
-        case 'Trace_Kosten_smooth.geojson':
+        case file.name === 'Kosten.geojson':
+        case file.name === 'Trace_Kosten_smooth.geojson':
             return createLineStyle([255, 0, 0], 1.0); // red
-        case 'Lengte.geojson':
-        case 'Trace_Lengte_smooth.geojson':
-            return createLineStyle([0, 255, 0], 1.0); // Green
-        case 'Projectgebied.geojson':
-            return createPolygonStyle([0, 0, 0], 0); //black
+        case file.name === 'Lengte.geojson':
+        case file.name === 'Trace_Lengte_smooth.geojson':
+            return createLineStyle([0, 255, 0], 1.0); // green
+        case file.name === 'Projectgebied.geojson':
+            return createPolygonStyle([0, 0, 0], 0); // black
+        case file.name.includes('boorlijn'):
+            return createLineStyle([0, 0, 0], 3.0); // black
+        case file.name === 'Ongunstig_zone.geojson':
+            return createPolygonStyle([255, 165, 0], 0.3, 1); // orange
         default:
             const geometryType = feature.getGeometry().getType();
             if (geometryType === 'Point' || geometryType === 'MultiPoint') {
@@ -318,21 +234,34 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                     source: vectorSource,
                     title: file.name.split('.')[0],
                     style: function (feature) {
-                        // Assuming getFeatureStyle is defined elsewhere
                         return getFeatureStyle(file, feature, vectorSource);
                     }
                 });
-
-                // Determine the group name (customize this logic as needed)
-                const fileName = file.name.split('.')[0]; // Example: Use the part of the file name before the first dot
-                if (fileName.includes('Doorlooptijd')) {
-                    groupName = 'Trace Doorlooptijd'; // Example: Group all files with 'Trace' in the name
+                // assign lyers to groups
+                const fileName = file.name.split('.')[0].toLowerCase();
+                if (fileName.includes('doorlooptijd') && fileName.includes('kruising') || fileName.includes('nabijgelegen')) {
+                    groupName = 'Kruisingen Trace Doorlooptijd';
                 }
-                else if (fileName.includes('Kosten')) {
-                    groupName = 'Trace Kosten'; // Example: Group all files with 'Trace' in the name
+                else if (fileName.includes('kosten') && fileName.includes('kruising')) {
+                    groupName = 'Kruisingen Trace kosten';
                 }
-                else if (fileName.includes('Lengte')) {
-                    groupName = 'Trace Lengte'; // Example: Group all files with 'Trace' in the name
+                else if (fileName.includes('lengte') && fileName.includes('kruising')) {
+                    groupName = 'Kruisingen Trace lengte';
+                }
+                else if (fileName.includes('doorlooptijd')) {
+                    groupName = 'Trace Doorlooptijd';
+                }
+                else if (fileName.includes('kosten')) {
+                    groupName = 'Trace Kosten';
+                }
+                else if (fileName.includes('lengte')) {
+                    groupName = 'Trace Lengte';
+                }
+                else if (fileName.includes('boorlijnen') || fileName.includes('hulplijnen') || fileName.includes('nogozones') || fileName.includes('projectgebied') || fileName.includes('start_eind_punt')) {
+                    groupName = 'Ingetekende Features';
+                }
+                else if (fileName.includes('ongunstig_zone')) {
+                    groupName = 'Ongunstig Zone';
                 }
                 else {
                     groupName = 'Other';
@@ -352,6 +281,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
             reader.readAsText(file);
         });
     };
+
 
     // Process all files and wait for all to complete
     Promise.all(Array.from(files).map(file => processFile(file))).then(() => {
@@ -401,7 +331,15 @@ const popup = document.getElementById('popup');
 const popupCloser = document.getElementById('popup-closer');
 const popupContent = document.getElementById('popup-content');
 
-popupCloser.onclick = function () {
+// popupCloser.onclick = function () {
+//     popup.style.display = 'none';
+//     popupCloser.blur();
+//     return false;
+// };
+
+popupCloser.onclick = function (event) {
+    event.preventDefault(); // Prevent default link behavior
+    event.stopPropagation(); // Stop the click event from propagating to the map
     popup.style.display = 'none';
     popupCloser.blur();
     return false;
@@ -434,8 +372,52 @@ popupCloser.onclick = function () {
 //     }
 // });
 
+// map.on('singleclick', function (evt) {
+//     evt.preventDefault(); // Prevent default behavior
+
+//     let layerName = '';
+//     const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+//         if (layer) {
+//             layerName = layer.get('title') || 'Unnamed Layer'; // Assuming layers have a 'title' property
+//         }
+//         return feature;
+//     });
+
+//     if (feature) {
+//         const coordinates = evt.coordinate;
+//         const properties = feature.getProperties();
+//         delete properties.geometry;
+
+//         const propertiesStr = Object.keys(properties)
+//             .map(key => `${key}: ${properties[key]}`)
+//             .join('<br>');
+
+//         // Add layer name as the title in the popup
+//         const layerTitle = `<strong>${layerName}</strong><br>`;
+//         popupContent.innerHTML = layerTitle + propertiesStr;
+
+//         popup.style.display = 'block';
+
+//         const overlay = new ol.Overlay({
+//             element: popup,
+//             positioning: 'bottom-center',
+//             stopEvent: false,
+//             offset: [0, -10],
+//         });
+
+//         map.addOverlay(overlay);
+//         overlay.setPosition(coordinates);
+//     } else {
+//         popup.style.display = 'none';
+//     }
+// });
+
 map.on('singleclick', function (evt) {
-    evt.preventDefault(); // Prevent default behavior
+    // Check if the click occurred inside the popup or its close button
+    const target = evt.originalEvent.target;
+    if (popup.contains(target)) {
+        return; // Exit if the click originated from the popup or its children
+    }
 
     let layerName = '';
     const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
@@ -473,6 +455,7 @@ map.on('singleclick', function (evt) {
         popup.style.display = 'none';
     }
 });
+
 
 
 
