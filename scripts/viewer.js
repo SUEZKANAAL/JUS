@@ -280,7 +280,10 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                         title: groupName // Optional: Set a title for the group
                     });
                 }
-                layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
+                //layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
+                layerGroups[groupName].getLayers().insertAt(0, vectorLayer); // Insert at the first position
+
+
                 // Set the default visibility based on the predefined list
                 if (groupsToTurnOnByDefault.includes(groupName)) {
                     vectorLayer.setVisible(true);  // Turn the layer on by default
@@ -294,6 +297,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 } else {
                     layerGroups[groupName].setVisible(false);  // Turn the group off by default
                 }
+
                 resolve(); // Resolve the promise after adding the layer to the group
             };
             reader.onerror = reject; // Reject the promise on read error
@@ -305,7 +309,27 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
     // Process all files and wait for all to complete
     Promise.all(Array.from(files).map(file => processFile(file))).then(() => {
         // Once all files are processed, add the groups to the map
-        Object.values(layerGroups).forEach(group => map.addLayer(group));
+        //Object.values(layerGroups).forEach(group => map.addLayer(group));
+        // add group in correct order innstead of random order
+        // 1. Ingetekende Features (turn this group on by default)
+        map.addLayer(layerGroups['Ingetekende Features']);
+
+        // 2. Trace groups: Trace Kosten, Trace Lengte, Trace Doorlooptijd
+        map.addLayer(layerGroups['Trace Kosten']);
+        map.addLayer(layerGroups['Trace Lengte']);
+        map.addLayer(layerGroups['Trace Doorlooptijd']);
+
+        // 3. Kruisingen Trace groups
+        map.addLayer(layerGroups['Kruisingen Trace Doorlooptijd']);
+        map.addLayer(layerGroups['Kruisingen Trace kosten']);
+        map.addLayer(layerGroups['Kruisingen Trace lengte']);
+
+        // 4. Other group
+        map.addLayer(layerGroups['Other']);
+
+        // 5. Ongunstig Zone
+        map.addLayer(layerGroups['Ongunstig Zone']);
+
         // Calculate the combined extent of all vector layers
         let combinedExtent = ol.extent.createEmpty();
         Object.values(layerGroups).forEach(group => {
