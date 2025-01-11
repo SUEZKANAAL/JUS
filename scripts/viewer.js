@@ -46,22 +46,42 @@ const map = new ol.Map({
 });
 
 
-// styling functions for features
+// styling functions for features https://wetten.overheid.nl/BWBR0027409/2017-02-15 Kleurgebruik per thema
 function klicStyle(feature) {
     const gmlId = feature.get('gml_id');
+    const thema = feature.get('thema');
     const styles = {
         'datatransport': { color: 'rgba(0, 255, 0, 1.0)', width: 2 },
         'ElektriciteitskabelMs': { color: 'rgba(200, 0, 0, 1.0)', width: 2 },
         'ElektriciteitskabelLs': { color: 'rgba(150, 0, 0, 1.0)', width: 2 },
         'OlieGasChemicalienPijpleidingLD': { color: 'rgba(255, 215, 80, 1.0)', width: 2 },
-        'OlieGasChemicalienPijpleidingHD': { color: 'rgba(255, 175, 60, 1.0)', width: 2 }
+        'OlieGasChemicalienPijpleidingHD': { color: 'rgba(255, 175, 60, 1.0)', width: 2 },
+        'buisleidingGevaarlijkeInhoud': {},
+        'gasHogeDruk': { color: 'rgba(255, 175, 60, 1.0)', width: 2 },
+        'gasLageDruk': { color: 'rgba(255, 215, 80, 1.0)', width: 2 },
+        'hoogspanning': { color: 'rgba(255, 0, 0, 1.0)', width: 2 },
+        'laagspanning': { color: 'rgba(150, 0, 0, 1.0)', width: 2 },
+        'landelijkHoogspanningsnet': { color: 'rgba(255, 0, 0, 1.0)', width: 2 },
+        'middenspanning': { color: 'rgba(200, 0, 0, 1.0)', width: 2 },
+        'overig': { color: 'rgba(0, 0, 0, 1.0)', width: 2 },
+        'rioolOnderOverOfOnderdruk': { color: 'rgba(128, 0, 128, 1.0)', width: 2 },
+        'rioolVrijverval': { color: 'rgba(186, 56, 168, 1.0)', width: 2 },
+        'water': { color: 'rgba(0, 0, 255, 1.0)', width: 2 },
     };
 
-    let selectedStyle = { color: '#0000FF', width: 2 }; // Default style
+    let selectedStyle = { color: '#808080', width: 2 }; // Default style
 
     if (gmlId) {
         for (const [key, style] of Object.entries(styles)) {
             if (gmlId.includes(key.replace(/Ms|Ls|LD|HD$/, '')) && gmlId.includes(key.slice(-2))) {
+                selectedStyle = style;
+                break;
+            }
+        }
+    }
+    else if (thema) {
+        for (const [key, style] of Object.entries(styles)) {
+            if (thema.includes(key)) {
                 selectedStyle = style;
                 break;
             }
@@ -314,6 +334,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
         // Once all files are processed, add the groups to the map
         //Object.values(layerGroups).forEach(group => map.addLayer(group));
         // add group in correct order innstead of random order
+
         // 1. Ingetekende Features (turn this group on by default)
         map.addLayer(layerGroups['Ingetekende Features']);
 
