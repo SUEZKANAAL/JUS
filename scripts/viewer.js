@@ -474,30 +474,30 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
     Promise.all(filePromises)
         .then(() => {
             //Once all files are processed, add the groups to the map
-            //Object.values(layerGroups).forEach(group => map.addLayer(group));
-            // add group in correct order innstead of random order
+            // Object.values(layerGroups).forEach(group => map.addLayer(group));
 
-            // 1. Ingetekende Features (turn this group on by default)
-            map.addLayer(layerGroups['Ingetekende Features']);
+            // Once all files are processed, add the groups to the map in the specific order
+            const groupOrder = [
+                'Ingetekende Features',
+                'Trace Kosten',
+                'Trace Lengte',
+                'Trace Doorlooptijd',
+                'Kruisingen Trace Doorlooptijd',
+                'Kruisingen Trace kosten',
+                'Kruisingen Trace lengte',
+                'Other',
+                'Ongunstig Zone',
+                'Klic'
+            ];
 
-            // 2. Trace groups: Trace Kosten, Trace Lengte, Trace Doorlooptijd
-            map.addLayer(layerGroups['Trace Kosten']);
-            map.addLayer(layerGroups['Trace Lengte']);
-            map.addLayer(layerGroups['Trace Doorlooptijd']);
-
-            // 3. Kruisingen Trace groups
-            map.addLayer(layerGroups['Kruisingen Trace Doorlooptijd']);
-            map.addLayer(layerGroups['Kruisingen Trace kosten']);
-            map.addLayer(layerGroups['Kruisingen Trace lengte']);
-
-            // 4. Other group
-            map.addLayer(layerGroups['Other']);
-
-            // 5. Ongunstig Zone
-            map.addLayer(layerGroups['Ongunstig Zone']);
-
-            // 5. Klic
-            map.addLayer(layerGroups['Klic']);
+            // Add groups to the map in the correct order if they exist in layerGroups
+            groupOrder.forEach(groupName => {
+                if (layerGroups[groupName]) {
+                    map.addLayer(layerGroups[groupName]);
+                } else {
+                    console.log(`Group '${groupName}' not found, skipping.`);
+                }
+            });
 
             // Calculate the combined extent of all vector layers
             let combinedExtent = ol.extent.createEmpty();
