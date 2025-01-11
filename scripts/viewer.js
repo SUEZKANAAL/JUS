@@ -243,8 +243,143 @@ const groupsToTurnOnByDefault = [
     'Ingetekende Features' // Add more groups here as needed
 ];
 
+// document.getElementById('jsonFileInput').addEventListener('change', function (event) {
+//     const files = event.target.files;
+
+//     const processFile = (file) => {
+//         return new Promise((resolve, reject) => {
+//             const reader = new FileReader();
+//             reader.onload = function (e) {
+//                 const features = new ol.format.GeoJSON().readFeatures(e.target.result, {
+//                     dataProjection: 'EPSG:29882',
+//                     featureProjection: map.getView().getProjection()
+//                 });
+
+//                 const vectorSource = new ol.source.Vector({ features: features });
+//                 const vectorLayer = new ol.layer.Vector({
+//                     source: vectorSource,
+//                     title: file.name.split('.')[0],
+//                     style: function (feature) {
+//                         return getFeatureStyle(file, feature, vectorSource);
+//                     }
+//                 });
+//                 // assign lyers to groups
+//                 const fileName = file.name.split('.')[0].toLowerCase();
+//                 if (fileName.includes('doorlooptijd') && fileName.includes('kruising') || fileName.includes('nabijgelegen')) {
+//                     groupName = 'Kruisingen Trace Doorlooptijd';
+//                 }
+//                 else if (fileName.includes('kosten') && fileName.includes('kruising')) {
+//                     groupName = 'Kruisingen Trace kosten';
+//                 }
+//                 else if (fileName.includes('lengte') && fileName.includes('kruising')) {
+//                     groupName = 'Kruisingen Trace lengte';
+//                 }
+//                 else if (fileName.includes('doorlooptijd')) {
+//                     groupName = 'Trace Doorlooptijd';
+//                 }
+//                 else if (fileName.includes('kosten')) {
+//                     groupName = 'Trace Kosten';
+//                 }
+//                 else if (fileName.includes('lengte')) {
+//                     groupName = 'Trace Lengte';
+//                 }
+//                 else if (fileName.includes('boorlijnen') || fileName.includes('hulplijnen') || fileName.includes('nogozones') || fileName.includes('projectgebied') || fileName.includes('start_eind_punt')) {
+//                     groupName = 'Ingetekende Features';
+//                 }
+//                 else if (fileName.includes('ongunstig_zone')) {
+//                     groupName = 'Ongunstig Zone';
+//                 }
+//                 else if (fileName.includes('klic')) {
+//                     groupName = 'Klic';
+//                 }
+//                 else {
+//                     groupName = 'Other';
+//                 }
+
+//                 if (!layerGroups[groupName]) {
+//                     // If the group doesn't exist, create it
+//                     layerGroups[groupName] = new ol.layer.Group({
+//                         layers: [],
+//                         title: groupName // Optional: Set a title for the group
+//                     });
+//                 }
+//                 //layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
+//                 layerGroups[groupName].getLayers().insertAt(0, vectorLayer); // Insert at the first position
+
+
+//                 // Set the default visibility based on the predefined list
+//                 if (groupsToTurnOnByDefault.includes(groupName)) {
+//                     vectorLayer.setVisible(true);  // Turn the layer on by default
+//                 } else {
+//                     vectorLayer.setVisible(false);  // Keep it off by default
+//                 }
+
+//                 // Set the default visibility for the group
+//                 if (groupsToTurnOnByDefault.includes(groupName)) {
+//                     layerGroups[groupName].setVisible(true);  // Turn the group on by default
+//                 } else {
+//                     layerGroups[groupName].setVisible(false);  // Turn the group off by default
+//                 }
+
+//                 resolve(); // Resolve the promise after adding the layer to the group
+//             };
+//             reader.onerror = reject; // Reject the promise on read error
+//             reader.readAsText(file);
+//         });
+//     };
+
+
+//     // Process all files and wait for all to complete
+//     Promise.all(Array.from(files).map(file => processFile(file))).then(() => {
+//         // Once all files are processed, add the groups to the map
+//         //Object.values(layerGroups).forEach(group => map.addLayer(group));
+//         // add group in correct order innstead of random order
+
+//         // 1. Ingetekende Features (turn this group on by default)
+//         map.addLayer(layerGroups['Ingetekende Features']);
+
+//         // 2. Trace groups: Trace Kosten, Trace Lengte, Trace Doorlooptijd
+//         map.addLayer(layerGroups['Trace Kosten']);
+//         map.addLayer(layerGroups['Trace Lengte']);
+//         map.addLayer(layerGroups['Trace Doorlooptijd']);
+
+//         // 3. Kruisingen Trace groups
+//         map.addLayer(layerGroups['Kruisingen Trace Doorlooptijd']);
+//         map.addLayer(layerGroups['Kruisingen Trace kosten']);
+//         map.addLayer(layerGroups['Kruisingen Trace lengte']);
+
+//         // 4. Other group
+//         map.addLayer(layerGroups['Other']);
+
+//         // 5. Ongunstig Zone
+//         map.addLayer(layerGroups['Ongunstig Zone']);
+
+//         // 5. Klic
+//         map.addLayer(layerGroups['Klic']);
+
+//         // Calculate the combined extent of all vector layers
+//         let combinedExtent = ol.extent.createEmpty();
+//         Object.values(layerGroups).forEach(group => {
+//             group.getLayers().forEach(layer => {
+//                 if (layer instanceof ol.layer.Vector) {
+//                     ol.extent.extend(combinedExtent, layer.getSource().getExtent());
+//                 }
+//             });
+//         });
+
+//         // Check if the extent is valid before zooming
+//         if (isFinite(combinedExtent[0]) && isFinite(combinedExtent[1]) && isFinite(combinedExtent[2]) && isFinite(combinedExtent[3])) {
+//             // Zoom to the combined extent with a padding
+//             map.getView().fit(combinedExtent, { padding: [50, 50, 50, 50], duration: 1000 });
+//         }
+//     }).catch(error => console.error("Error processing files:", error));
+// });
+
 document.getElementById('jsonFileInput').addEventListener('change', function (event) {
     const files = event.target.files;
+
+    // Filter out only GeoJSON files
+    const geojsonFiles = Array.from(files).filter(file => file.name.endsWith('.geojson'));
 
     const processFile = (file) => {
         return new Promise((resolve, reject) => {
@@ -263,8 +398,12 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                         return getFeatureStyle(file, feature, vectorSource);
                     }
                 });
-                // assign lyers to groups
+
+                // Assign layers to groups based on file name
                 const fileName = file.name.split('.')[0].toLowerCase();
+                let groupName;
+
+                // Assign group names based on file name (same logic as before)
                 if (fileName.includes('doorlooptijd') && fileName.includes('kruising') || fileName.includes('nabijgelegen')) {
                     groupName = 'Kruisingen Trace Doorlooptijd';
                 }
@@ -303,11 +442,11 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                         title: groupName // Optional: Set a title for the group
                     });
                 }
-                //layerGroups[groupName].getLayers().push(vectorLayer); // Add the layer to the group
-                layerGroups[groupName].getLayers().insertAt(0, vectorLayer); // Insert at the first position
 
+                // Insert the layer at the first position in the group
+                layerGroups[groupName].getLayers().insertAt(0, vectorLayer);
 
-                // Set the default visibility based on the predefined list
+                // Set the default visibility for the layer based on predefined groups
                 if (groupsToTurnOnByDefault.includes(groupName)) {
                     vectorLayer.setVisible(true);  // Turn the layer on by default
                 } else {
@@ -328,52 +467,58 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
         });
     };
 
+    // Process all GeoJSON files in the folder
+    const filePromises = geojsonFiles.map(processFile);
 
-    // Process all files and wait for all to complete
-    Promise.all(Array.from(files).map(file => processFile(file))).then(() => {
-        // Once all files are processed, add the groups to the map
-        //Object.values(layerGroups).forEach(group => map.addLayer(group));
-        // add group in correct order innstead of random order
+    // Once all files are processed, add the groups to the map
+    Promise.all(filePromises)
+        .then(() => {
+            //Once all files are processed, add the groups to the map
+            //Object.values(layerGroups).forEach(group => map.addLayer(group));
+            // add group in correct order innstead of random order
 
-        // 1. Ingetekende Features (turn this group on by default)
-        map.addLayer(layerGroups['Ingetekende Features']);
+            // 1. Ingetekende Features (turn this group on by default)
+            map.addLayer(layerGroups['Ingetekende Features']);
 
-        // 2. Trace groups: Trace Kosten, Trace Lengte, Trace Doorlooptijd
-        map.addLayer(layerGroups['Trace Kosten']);
-        map.addLayer(layerGroups['Trace Lengte']);
-        map.addLayer(layerGroups['Trace Doorlooptijd']);
+            // 2. Trace groups: Trace Kosten, Trace Lengte, Trace Doorlooptijd
+            map.addLayer(layerGroups['Trace Kosten']);
+            map.addLayer(layerGroups['Trace Lengte']);
+            map.addLayer(layerGroups['Trace Doorlooptijd']);
 
-        // 3. Kruisingen Trace groups
-        map.addLayer(layerGroups['Kruisingen Trace Doorlooptijd']);
-        map.addLayer(layerGroups['Kruisingen Trace kosten']);
-        map.addLayer(layerGroups['Kruisingen Trace lengte']);
+            // 3. Kruisingen Trace groups
+            map.addLayer(layerGroups['Kruisingen Trace Doorlooptijd']);
+            map.addLayer(layerGroups['Kruisingen Trace kosten']);
+            map.addLayer(layerGroups['Kruisingen Trace lengte']);
 
-        // 4. Other group
-        map.addLayer(layerGroups['Other']);
+            // 4. Other group
+            map.addLayer(layerGroups['Other']);
 
-        // 5. Ongunstig Zone
-        map.addLayer(layerGroups['Ongunstig Zone']);
+            // 5. Ongunstig Zone
+            map.addLayer(layerGroups['Ongunstig Zone']);
 
-        // 5. Klic
-        map.addLayer(layerGroups['Klic']);
+            // 5. Klic
+            map.addLayer(layerGroups['Klic']);
 
-        // Calculate the combined extent of all vector layers
-        let combinedExtent = ol.extent.createEmpty();
-        Object.values(layerGroups).forEach(group => {
-            group.getLayers().forEach(layer => {
-                if (layer instanceof ol.layer.Vector) {
-                    ol.extent.extend(combinedExtent, layer.getSource().getExtent());
-                }
+            // Calculate the combined extent of all vector layers
+            let combinedExtent = ol.extent.createEmpty();
+            Object.values(layerGroups).forEach(group => {
+                group.getLayers().forEach(layer => {
+                    if (layer instanceof ol.layer.Vector) {
+                        ol.extent.extend(combinedExtent, layer.getSource().getExtent());
+                    }
+                });
             });
-        });
 
-        // Check if the extent is valid before zooming
-        if (isFinite(combinedExtent[0]) && isFinite(combinedExtent[1]) && isFinite(combinedExtent[2]) && isFinite(combinedExtent[3])) {
-            // Zoom to the combined extent with a padding
-            map.getView().fit(combinedExtent, { padding: [50, 50, 50, 50], duration: 1000 });
-        }
-    }).catch(error => console.error("Error processing files:", error));
+            // Check if the extent is valid before zooming
+            if (isFinite(combinedExtent[0]) && isFinite(combinedExtent[1]) && isFinite(combinedExtent[2]) && isFinite(combinedExtent[3])) {
+                // Zoom to the combined extent with a padding
+                map.getView().fit(combinedExtent, { padding: [50, 50, 50, 50], duration: 1000 });
+            }
+        }).catch(error => console.error("Error processing files:", error));
 });
+
+
+
 
 
 // Add a layer switcher to the map
