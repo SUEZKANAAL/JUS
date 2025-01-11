@@ -528,7 +528,7 @@ function downloadGeoJSON() {
                 title: 'Bestand gedownload!',
                 text: 'Het GeoJSON-bestand is succesvol gedownload.',
                 showCancelButton: true,
-                cancelButtonText: 'Later',
+                cancelButtonText: 'Annuleren',
                 confirmButtonText: 'Verstuur via e-mail',
             }).then((result) => {
                 if (result.isConfirmed) {
