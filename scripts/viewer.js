@@ -60,6 +60,7 @@ map.addControl(legendControl);
 
 
 
+
 // styling functions for features https://wetten.overheid.nl/BWBR0027409/2017-02-15 Kleurgebruik per thema
 function klicStyle(feature) {
     const gmlId = feature.get('gml_id');
@@ -566,6 +567,7 @@ function getGeometryTypeFromLayer(layer) {
 
     if (features.length > 0) {
         const geometry = features[0].getGeometry(); // Get geometry of the first feature
+        console.log
 
         if (geometry) {
             // Dynamically return the geometry type
@@ -575,6 +577,15 @@ function getGeometryTypeFromLayer(layer) {
                 return 'LineString';
             } else if (geometry instanceof ol.geom.Polygon) {
                 return 'Polygon';
+            }
+            else if (geometry instanceof ol.geom.MultiPoint) {
+                return 'MultiPoint';
+            }
+            else if (geometry instanceof ol.geom.MultiLineString) {
+                return 'MultiLineString';
+            }
+            else if (geometry instanceof ol.geom.MultiPolygon) {
+                return 'MultiPolygon';
             }
         }
     }
