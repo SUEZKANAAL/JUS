@@ -473,6 +473,30 @@ function downloadGeoJSON() {
                     oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
                 <span id="ongunstigNogoValue">45</span>%
             </div>
+            <div class="form-row">
+                <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
+                <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
+                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>(m)
+            </div>
+            <div class="form-row">
+                <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
+                <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
+                <span id="GasHogeDrukValue">0.6</span>(m)
+            </div>
+             <div class="form-row">
+                <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
+                <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
+                <span id="GasLageDrukValue">0.6</span>(m)
+            </div>
+            <div class="form-row">
+                <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
+                <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('HoogspanningValue').textContent = this.value">
+                <span id="HoogspanningValue">0.6</span>(m)
+            </div>
         </div>
     `,
         showCancelButton: true,
@@ -497,6 +521,10 @@ function downloadGeoJSON() {
                 nogo: document.getElementById('nogo').value,
                 klicDrukte: document.getElementById('klicDrukte').value,
                 ongunstigNogo: document.getElementById('ongunstigNogo').value,
+                BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
+                GasHogeDruk: document.getElementById('GasHogeDruk').value,
+                GasLageDruk: document.getElementById('GasLageDruk').value,
+                Hoogspanning: document.getElementById('Hoogspanning').value,
             };
         }
     }).then((result) => {
@@ -559,6 +587,10 @@ function generateEmailBody(data) {
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
             - Ongunstig NoGo: ${data.ongunstigNogo}%
+            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud} meter
+            - Gas Hoge Druk: ${data.GasHogeDruk} meter
+            - Gas Lage Druk: ${data.GasLageDruk} meter
+            - Hoogspanning: ${data.Hoogspanning} meter
             
             Attentie: Voeg alstublieft het gedownloade JSON-bestand als bijlage bij deze e-mail. Anders kunnen wij uw aanvraag niet verwerken.
             
