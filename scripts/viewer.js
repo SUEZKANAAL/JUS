@@ -45,6 +45,20 @@ const map = new ol.Map({
     layers: [baseLayerGroup]
 });
 
+// Define a new legend
+var legend = new ol.legend.Legend({
+    title: 'Legend',
+    margin: 5,
+    className: "legend"
+});
+var legendControl = new ol.control.Legend({
+    legend: legend,
+    collapsible: true,
+    collapsed: false,
+});
+map.addControl(legendControl);
+
+
 
 // styling functions for features https://wetten.overheid.nl/BWBR0027409/2017-02-15 Kleurgebruik per thema
 function klicStyle(feature) {
@@ -479,15 +493,15 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
             // Once all files are processed, add the groups to the map in the specific order
             const groupOrder = [
                 'Ingetekende Features',
+                'Ongunstig Zone',
+                'Klic',
                 'Trace Kosten',
                 'Trace Lengte',
                 'Trace Doorlooptijd',
                 'Kruisingen Trace Doorlooptijd',
                 'Kruisingen Trace kosten',
                 'Kruisingen Trace lengte',
-                'Other',
-                'Ongunstig Zone',
-                'Klic'
+                'Other'
             ];
 
             // Add groups to the map in the correct order if they exist in layerGroups
@@ -498,6 +512,33 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                     console.log(`Group '${groupName}' not found, skipping.`);
                 }
             });
+
+
+            // Add layers in the group to the legend
+            groupOrder.forEach(groupName => {
+                if (layerGroups[groupName]) {
+                    layerGroups[groupName].getLayers().forEach(layer => {
+                        const layerTitle = layer.get('title');
+                        const layerStyle = layer.getStyle();
+                        console.log(layerTitle, layerStyle);
+                        // Check if the layer has a title and style
+                        if (layerTitle && layerStyle) {
+                            // get the geometry
+                            const geometryType = getGeometryTypeFromLayer(layer)
+                            console.log(geometryType);
+                            // Add the layer to the legend
+                            legend.addItem({
+                                title: layerTitle,
+                                typeGeom: geometryType, // Dynamically detect geometry type
+                                style: layerStyle,
+                            });
+                        } else {
+                            console.log('Layer missing title or style:', layer);
+                        }
+                    });
+                }
+            });
+
 
             // Calculate the combined extent of all vector layers
             let combinedExtent = ol.extent.createEmpty();
@@ -518,7 +559,28 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
 });
 
 
+// Function to get geometry type from the first feature in the layer
+function getGeometryTypeFromLayer(layer) {
+    const source = layer.getSource(); // Get the source of the vector layer
+    const features = source.getFeatures(); // Get all features in the layer
 
+    if (features.length > 0) {
+        const geometry = features[0].getGeometry(); // Get geometry of the first feature
+
+        if (geometry) {
+            // Dynamically return the geometry type
+            if (geometry instanceof ol.geom.Point) {
+                return 'Point';
+            } else if (geometry instanceof ol.geom.LineString) {
+                return 'LineString';
+            } else if (geometry instanceof ol.geom.Polygon) {
+                return 'Polygon';
+            }
+        }
+    }
+
+    return 'Unknown'; // Default if no valid geometry is found
+}
 
 
 // Add a layer switcher to the map
@@ -528,6 +590,8 @@ var layerswitcher = new ol.control.LayerSwitcher({
 
 });
 map.addControl(layerswitcher);
+
+
 
 
 
