@@ -56,12 +56,11 @@ const map = new ol.Map({
 var legend = new ol.legend.Legend({
     title: 'Legenda',
     margin: 5,
-    className: "legend"
 });
 var legendControl = new ol.control.Legend({
     legend: legend,
     collapsible: true,
-    collapsed: false,
+    collapsed: true,
 });
 map.addControl(legendControl);
 

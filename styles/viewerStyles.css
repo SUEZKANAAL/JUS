@@ -10,7 +10,7 @@ h1.navbar-brand a {
 }
 
 #viewer-map {
-  height: calc(100vh - 47.2px);
+  height: calc(100vh - 15vh);
   width: 100%;
 }
 
@@ -55,17 +55,13 @@ h1.navbar-brand a {
   color: red;
 }
 
-
 /* Custom size and icon for the layerswitcher button */
 .ol-layerswitcher button {
   width: 80px;
   height: 80px;
   background-size: 60px;
-  /* Adjust the size of the icon */
   background-color: black;
-  /* Adjust the background color */
   background-image: url('../images/legendaIcoon.png');
-  /* Use your custom icon */
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -73,35 +69,9 @@ h1.navbar-brand a {
 /* Optional: Add a hover effect for the button */
 .ol-layerswitcher button:hover {
   background-color: #333;
-  /* Change background color on hover */
   cursor: pointer;
-  /* Change cursor to pointer on hover */
 }
 
-/* Style the legend to position it on the left */
-.ol-legend {
-  position: absolute;
-  top: 70px;
-  left: 20px;
-  z-index: 1000;
-  padding: 10px;
-  border-radius: 4px;
-  min-width: 200px;
-}
-
-/* Optional: Customize the title of the legend */
-.ol-legend .ol-legend-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* Optional: Customize legend rows */
-.ol-legend .ol-legend-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
 
 /* File input container positioned in the bottom-left corner */
 #jsonFileInputContainer {
@@ -180,7 +150,7 @@ h1.navbar-brand a {
   #jsonFileInputContainer {
     bottom: 5px;
     /* Reduce distance from bottom */
-    left: 5px;
+    left: 50%;
     /* Reduce distance from left */
     padding: 5px;
     /* Smaller padding */
@@ -195,14 +165,11 @@ h1.navbar-brand a {
 
   #jsonFileInputContainer input[type="file"]::before {
     font-size: 10px;
-    /* Smaller button font size */
     padding: 4px 6px;
-    /* Smaller button padding */
   }
 
   #jsonFileInputContainer .input-container {
     padding: 5px;
-    /* Reduce padding */
   }
 }
 
@@ -212,9 +179,13 @@ h1.navbar-brand a {
 
   /* Adjust size for screens smaller than 768px (e.g., tablets, mobile) */
   .ol-layerswitcher button {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     background-size: 45px;
+  }
+
+  .ol-legend {
+    top: 50vh;
   }
 }
 
@@ -222,8 +193,12 @@ h1.navbar-brand a {
 
   /* Adjust size for screens smaller than 480px (e.g., small mobile devices) */
   .ol-layerswitcher button {
-    width: 50px;
-    height: 50px;
-    background-size: 35px;
+    width: 40px;
+    height: 40px;
+    background-size: 40px;
+  }
+
+  .ol-legend {
+    top: 50vh;
   }
 }
