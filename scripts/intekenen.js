@@ -577,7 +577,7 @@ function generateEmailBody(data) {
             
             Projectinformatie:
             - KLIC-bestand: ${data.klicFile}
-            - Gelbreedte: ${data.gelbreedte} meter
+            - Geulbreedte: ${data.gelbreedte} meter
             - Gesloten verharding: ${data.geslotenVerharding}%
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
@@ -593,9 +593,8 @@ function generateEmailBody(data) {
             - Hoogspanning: ${data.Hoogspanning} meter
             
             Attentie: Voeg alstublieft het gedownloade JSON-bestand als bijlage bij deze e-mail. Anders kunnen wij uw aanvraag niet verwerken.
+
             
-            Met vriendelijke groet,
-            [Uw Naam]
         `.replace(/\n/g, "%0A");
 }
 
