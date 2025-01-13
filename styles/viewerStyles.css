@@ -149,18 +149,13 @@ h1.navbar-brand a {
 @media (max-width: 768px) {
   #jsonFileInputContainer {
     bottom: 5px;
-    /* Reduce distance from bottom */
     left: 50%;
-    /* Reduce distance from left */
     padding: 5px;
-    /* Smaller padding */
     width: 150px;
-    /* Reduce width */
   }
 
   #jsonFileInputContainer h3 {
     font-size: 0.8em;
-    /* Smaller heading font size */
   }
 
   #jsonFileInputContainer input[type="file"]::before {
