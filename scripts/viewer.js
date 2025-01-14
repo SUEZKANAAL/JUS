@@ -289,7 +289,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                     groupName = 'Klic';
                 }
                 else {
-                    groupName = 'Other';
+                    groupName = 'Overig';
                 }
 
                 if (!layerGroups[groupName]) {
@@ -344,7 +344,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 'Kruisingen Trace Doorlooptijd',
                 'Kruisingen Trace kosten',
                 'Kruisingen Trace lengte',
-                'Other'
+                'Overig'
             ];
 
             // Add groups to the map in the correct order if they exist in layerGroups
