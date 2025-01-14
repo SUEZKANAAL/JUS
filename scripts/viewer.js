@@ -47,7 +47,7 @@ var Luchtfoto = new ol.layer.Tile({
     origin: [-285401.9200000018, 903401.9200000018],
 })
 
-
+// TODO add more layers and be able to click the attributes
 var bgtLayer = new ol.layer.Tile({
     title: 'BGT',
     type: 'base',
@@ -68,7 +68,6 @@ var bgtLayer = new ol.layer.Tile({
         wrapX: false
     })
 })
-
 
 var brtLayer = new ol.layer.Tile({
     title: 'BRT',
@@ -91,7 +90,6 @@ var brtLayer = new ol.layer.Tile({
     })
 })
 
-
 var osmLayer = new ol.layer.Tile({
     title: 'OpenStreetMap',
     type: 'base',
@@ -103,7 +101,7 @@ var osmLayer = new ol.layer.Tile({
 // create basemap layer group
 var baseLayerGroup = new ol.layer.Group({
     title: "Base maps",
-    layers: [rdNewLayer, Luchtfoto, bgtLayer, osmLayer, brtLayer, bagLayer]
+    layers: [rdNewLayer, Luchtfoto, bgtLayer, osmLayer, brtLayer]
 });
 
 
