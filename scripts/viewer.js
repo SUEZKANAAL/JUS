@@ -140,7 +140,7 @@ function klicStyle(feature) {
         'ElektriciteitskabelLs': { color: 'rgba(150, 0, 0, 1.0)', width: 2 },
         'OlieGasChemicalienPijpleidingLD': { color: 'rgba(255, 215, 80, 1.0)', width: 2 },
         'OlieGasChemicalienPijpleidingHD': { color: 'rgba(255, 175, 60, 1.0)', width: 2 },
-        'buisleidingGevaarlijkeInhoud': {},
+        'buisleidingGevaarlijkeInhoud': { color: 'rgba(255, 127, 0, 1.0)', width: 2 },
         'gasHogeDruk': { color: 'rgba(255, 175, 60, 1.0)', width: 2 },
         'gasLageDruk': { color: 'rgba(255, 215, 80, 1.0)', width: 2 },
         'hoogspanning': { color: 'rgba(255, 0, 0, 1.0)', width: 2 },
@@ -253,10 +253,21 @@ function getFeatureStyle(file, feature) {
     }
 
     switch (true) {
-        case file.name === 'klic.geojson': // styling should be changed based on gml id 
-            return klicStyle(feature);
+        // Input features styling
+        case file.name === 'NoGoZones.geojson':
+            return createPolygonStyle([255, 0, 0], 0.3, 1); // red
         case file.name === 'Start_Eind_Punt.geojson':
-            return createCircleStyle([255, 0, 0], 1.0);
+            return createCircleStyle([255, 0, 0], 1.0); //red
+        case file.name === 'Projectgebied.geojson':
+            return createPolygonStyle([0, 0, 0], 0); // black
+        case file.name === 'Hulplijnen.geojson':
+            return createLineStyle([211, 211, 211], 1.0); // grey
+
+        //Klic styling
+        case file.name === 'klic.geojson': // styling should be changed based on gml id / theme
+            return klicStyle(feature);
+
+        // trace styling
         case file.name === "Doorlooptijd.geojson":
         case file.name === 'Trace_Doorlooptijd_smooth.geojson':
             return createLineStyle([0, 0, 255], 1.0); // blue
@@ -266,12 +277,41 @@ function getFeatureStyle(file, feature) {
         case file.name === 'Lengte.geojson':
         case file.name === 'Trace_Lengte_smooth.geojson':
             return createLineStyle([0, 255, 0], 1.0); // green
-        case file.name === 'Projectgebied.geojson':
-            return createPolygonStyle([0, 0, 0], 0); // black
+
+        // boorlijn styling
         case file.name.includes('boorlijn'):
             return createLineStyle([0, 0, 0], 3.0); // black
+
+        // ongusntig zone styling
         case file.name === 'Ongunstig_zone.geojson':
             return createPolygonStyle([255, 165, 0], 0.3, 1); // orange
+
+        //BGT styling
+        case file.name === 'Wegdeel_bgt.geojson':
+            return createPolygonStyle([211, 211, 211], 0.3, 1); // grey
+        case file.name === 'Waterdeel_bgt.geojson':
+            return createPolygonStyle([0, 0, 139], 0.3, 1); // Blue
+        case file.name === 'VegetatieObject_bgt.geojson':
+            return createCircleStyle([34, 139, 34], 0.3, 1); // Green
+        case file.name === 'Scheiding_bgt.geojson':
+            return createPolygonStyle([0, 0, 0,], 0.3, 1); // black
+        case file.name === 'Pand_bgt.geojson':
+            return createPolygonStyle([139, 0, 0], 0.3, 1); // red
+        case file.name === 'OverigBouwwerk_bgt.geojson':
+            return createPolygonStyle([255, 102, 102], 0.3, 1); // light red
+        case file.name === 'Overbruggingsdeel_bgt.geojson':
+            return createPolygonStyle([169, 169, 169], 0.3, 1); // Steel Blue
+        case file.name === 'OndersteunendWegdeel_bgt.geojson':
+            return createPolygonStyle([210, 180, 140], 0.3, 1); // Tan
+        case file.name === 'OndersteunendWaterdeel_bgt.geojson':
+            return createPolygonStyle([0, 191, 255], 0.3, 1); // Deep Sky Blue
+        case file.name === 'OnbegroeidTerreindeel_bgt.geojson':
+            return createPolygonStyle([244, 164, 96], 0.3, 1); // Sandy Brown
+        case file.name === 'Kunstwerkdeel_bgt.geojson':
+            return createPolygonStyle([220, 20, 60], 0.3, 1); // Crimson
+        case file.name === 'BegroeidTerreindeel_bgt.geojson':
+            return createPolygonStyle([50, 205, 50], 0.3, 1); // Lime Green
+
         default:
             const geometryType = feature.getGeometry().getType();
             if (geometryType === 'Point' || geometryType === 'MultiPoint') {
@@ -323,13 +363,16 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 let groupName;
 
                 // Assign group names based on file name (same logic as before)
-                if (fileName.includes('doorlooptijd') && fileName.includes('kruising') || fileName.includes('nabijgelegen')) {
+                if ((fileName.includes('doorlooptijd') && fileName.includes('kruising')) || (fileName.includes('doorlooptijd') && fileName.includes('nabijgelegen'))) {
                     groupName = 'Kruisingen Trace Doorlooptijd';
                 }
-                else if (fileName.includes('kosten') && fileName.includes('kruising')) {
+                else if (fileName.includes('bgt')) {
+                    groupName = 'BGT';
+                }
+                else if (fileName.includes('kosten') && fileName.includes('kruising') || (fileName.includes('kosten') && fileName.includes('nabijgelegen'))) {
                     groupName = 'Kruisingen Trace kosten';
                 }
-                else if (fileName.includes('lengte') && fileName.includes('kruising')) {
+                else if (fileName.includes('lengte') && fileName.includes('kruising') || (fileName.includes('lengte') && fileName.includes('nabijgelegen'))) {
                     groupName = 'Kruisingen Trace lengte';
                 }
                 else if (fileName.includes('doorlooptijd')) {
@@ -398,6 +441,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
             // Once all files are processed, add the groups to the map in the specific order
             const groupOrder = [
                 'Ingetekende Features',
+                'BGT',
                 'Ongunstig Zone',
                 'Klic',
                 'Trace Kosten',
@@ -422,21 +466,45 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
             // Add layers in the group to the legend
             groupOrder.forEach(groupName => {
                 if (layerGroups[groupName]) {
+                    legend.addItem({ title: groupName, typeGeom: null, style: null });
                     layerGroups[groupName].getLayers().forEach(layer => {
-                        const layerTitle = layer.get('title');
+                        const layerTitle = layer.get('title').replaceAll('_', ' ');
                         const layerStyle = layer.getStyle();
-                        console.log(layerTitle, layerStyle);
+                        const addedThemes = new Set(); // Set to store unique klic themes
+
                         // Check if the layer has a title and style
                         if (layerTitle && layerStyle) {
-                            // get the geometry
-                            const geometryType = getGeometryTypeFromLayer(layer)
-                            console.log(geometryType);
-                            // Add the layer to the legend
-                            legend.addItem({
-                                title: layerTitle,
-                                typeGeom: geometryType, // Dynamically detect geometry type
-                                style: layerStyle,
-                            });
+                            const geometryType = getGeometryTypeFromLayer(layer)// get the geometry for unique styling icon
+
+                            // If it's the 'klic' group, handle the custom styling for each feature theme
+                            if (groupName === 'Klic') {
+                                const source = layer.getSource(); // Get the source of the vector layer
+                                const features = source.getFeatures(); // Get all features in the layer
+                                features.forEach(feature => {
+                                    console.log(feature);
+                                    const theme = feature.get('thema'); // Get the 'thema' attribute
+                                    // Only add the theme if it hasn't been added yet
+                                    if (theme && !addedThemes.has(theme)) {
+                                        addedThemes.add(theme);
+                                        //retrieve klic stylee from the style function
+                                        const featureStyle = klicStyle(feature)
+                                        // Now we add the theme and style to the legend
+                                        legend.addItem({
+                                            title: theme,
+                                            typeGeom: geometryType, // Dynamically detect geometry type
+                                            style: featureStyle
+                                        });
+                                    }
+                                });
+                            } else {
+                                // For non-"klic" groups, add items normally
+                                legend.addItem({
+                                    title: layerTitle,
+                                    typeGeom: geometryType,
+                                    style: layerStyle,
+                                });
+                            }
+
                         } else {
                             console.log('Layer missing title or style:', layer);
                         }
@@ -471,8 +539,6 @@ function getGeometryTypeFromLayer(layer) {
 
     if (features.length > 0) {
         const geometry = features[0].getGeometry(); // Get geometry of the first feature
-        console.log
-
         if (geometry) {
             // Dynamically return the geometry type
             if (geometry instanceof ol.geom.Point) {
