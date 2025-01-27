@@ -401,6 +401,12 @@ function downloadGeoJSON() {
                 <input id="projectName" class="swal2-input" placeholder="Projectnaam...">
             </div>
             <div class="form-row">
+                <label for="projectNumber">Projectnummer:</label>
+            </div>
+            <div class="form-row">
+                <input id="projectNumber" class="swal2-input" placeholder="Projectnummer...">
+            </div>
+            <div class="form-row">
                 <label for="klicFile">KLIC-bestand:</label>
                 </div>
                 <div class="form-row">
@@ -504,12 +510,15 @@ function downloadGeoJSON() {
         confirmButtonText: 'Opslaan',
         preConfirm: () => {
             const projectName = document.getElementById('projectName').value.trim();
-            if (!projectName) {
-                Swal.showValidationMessage('Projectnaam is verplicht!');
+            const projectNumber = document.getElementById('projectNumber').value.trim();
+            if (!projectName || !projectNumber) {
+                Swal.showValidationMessage('Projectnaamen Projectnummer zijn verplicht!');
                 return null;
             }
+
             return {
                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 klicFile: document.getElementById('klicFile').value,
                 gelbreedte: document.getElementById('gelbreedte').value,
                 geslotenVerharding: document.getElementById('geslotenVerharding').value,
@@ -576,6 +585,8 @@ function generateEmailBody(data) {
             Bij deze doe ik een aanvraag voor een automatisch tracé voor het project ${data.projectName}.
             
             Projectinformatie:
+            - Projectnaam: ${data.projectName}
+            - Projectnummer: ${data.projectNumber}
             - KLIC-bestand: ${data.klicFile}
             - Geulbreedte: ${data.gelbreedte} meter
             - Gesloten verharding: ${data.geslotenVerharding}%
