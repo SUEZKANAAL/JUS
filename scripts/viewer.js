@@ -277,6 +277,8 @@ function getFeatureStyle(file, feature) {
         case file.name === 'Lengte.geojson':
         case file.name === 'Trace_Lengte_smooth.geojson':
             return createLineStyle([0, 255, 0], 1.0); // green
+        case file.name === 'trace.geojson':
+            return createLineStyle([255, 0, 0], 1.0); // red
 
         // boorlijn styling
         case file.name.includes('boorlijn'):
@@ -393,6 +395,12 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 else if (fileName.includes('klic')) {
                     groupName = 'Klic';
                 }
+                else if ((fileName.includes('kruising')) || fileName.includes('nabijgelegen')) {
+                    groupName = 'Kruisingen';
+                }
+                else if ((fileName.includes('trace'))) {
+                    groupName = 'Trace';
+                }
                 else {
                     groupName = 'Overig';
                 }
@@ -447,11 +455,23 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 'Trace Kosten',
                 'Trace Lengte',
                 'Trace Doorlooptijd',
+                'Trace',
                 'Kruisingen Trace Doorlooptijd',
                 'Kruisingen Trace kosten',
                 'Kruisingen Trace lengte',
+                'Kruisingen',
                 'Overig'
             ];
+
+            const groupOrderStandAlone = [
+                'Ingetekende Features',
+                'BGT',
+                'Ongunstig Zone',
+                'Klic',
+                'Trace',
+                'Kruisingen',
+                'Overig'
+            ]
 
             // Add groups to the map in the correct order if they exist in layerGroups
             groupOrder.forEach(groupName => {
