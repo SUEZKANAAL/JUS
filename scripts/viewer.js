@@ -331,6 +331,7 @@ const groupsToTurnOnByDefault = [
     'Trace Kosten',
     'Trace Lengte',
     'Trace Doorlooptijd',
+    'Trace',
     'Ingetekende Features' // Add more groups here as needed
 ];
 
