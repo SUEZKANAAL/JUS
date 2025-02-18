@@ -419,10 +419,10 @@ function downloadGeoJSON() {
 
             <div>
             <div class="form-row">
-                <label for="gelbreedte">Gelbreedte (max 10 meter):</label>
+                <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
             </div>
             <div class="form-row">
-                <input id="gelbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
+                <input id="geulbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
             </div>
             
             <div class="form-row">
@@ -520,7 +520,7 @@ function downloadGeoJSON() {
                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 klicFile: document.getElementById('klicFile').value,
-                gelbreedte: document.getElementById('gelbreedte').value,
+                geulbreedte: document.getElementById('geulbreedte').value,
                 geslotenVerharding: document.getElementById('geslotenVerharding').value,
                 openVerharding: document.getElementById('openVerharding').value,
                 halfVerhard: document.getElementById('halfVerhard').value,
@@ -588,7 +588,7 @@ function generateEmailBody(data) {
             - Projectnaam: ${data.projectName}
             - Projectnummer: ${data.projectNumber}
             - KLIC-bestand: ${data.klicFile}
-            - Geulbreedte: ${data.gelbreedte} meter
+            - Geulbreedte: ${data.geulbreedte} meter
             - Gesloten verharding: ${data.geslotenVerharding}%
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
