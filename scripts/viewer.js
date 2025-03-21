@@ -129,6 +129,36 @@ map.addControl(legendControl);
 
 
 // ----------------------------- STYLING FUNCTIONS-----------------------------
+function OrientatiemeldingSyle(feature) {
+    const kleurField = feature.get('kleur');
+    const styles = {
+        'Geel': { color: 'rgb(255, 255, 122, 0.7)', width: 2 },
+        'Groen': { color: 'rgb(153, 255, 127, 0.7)', width: 2 },
+        'Oranje': { color: 'rgb(255, 154, 66, 0.7)', width: 2 },
+        'Rood': { color: 'rgb(255, 80, 80, 0.7)', width: 2 }
+    };
+
+    let selectedStyle = { color: '#808080', width: 2 }; // Default style
+
+    if (kleurField) {
+        for (const [key, style] of Object.entries(styles)) {
+            if (kleurField.includes(key.slice(-2))) {
+                selectedStyle = style;
+                break;
+            }
+        }
+    }
+    return new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: selectedStyle.color,
+        }),
+        stroke: new ol.style.Stroke({
+            color: selectedStyle.color,
+            width: selectedStyle.width,
+        }),
+    });
+}
+
 
 // styling functions for features https://wetten.overheid.nl/BWBR0027409/2017-02-15 Kleurgebruik per thema
 function klicStyle(feature) {
@@ -267,6 +297,10 @@ function getFeatureStyle(file, feature) {
         case file.name === 'klic.geojson': // styling should be changed based on gml id / theme
             return klicStyle(feature);
 
+        // orientatiemelding styling
+        case file.name.includes('Orientatiemelding'):
+            return OrientatiemeldingSyle(feature);
+
         // trace styling
         case file.name === "Doorlooptijd.geojson":
         case file.name === 'Trace_Doorlooptijd_smooth.geojson':
@@ -332,7 +366,6 @@ const groupsToTurnOnByDefault = [
     'Trace Lengte',
     'Trace Doorlooptijd',
     'Trace',
-    'Ingetekende Features' // Add more groups here as needed
 ];
 
 // ----------------------------- ADD GEOJSON FOLDER TO MAP -----------------------------
@@ -371,6 +404,9 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 }
                 else if (fileName.includes('bgt')) {
                     groupName = 'BGT';
+                }
+                else if (fileName.includes('orientatiemelding')) {
+                    groupName = 'Orientatiemelding Qterra';
                 }
                 else if (fileName.includes('kosten') && fileName.includes('kruising') || (fileName.includes('kosten') && fileName.includes('nabijgelegen'))) {
                     groupName = 'Kruisingen Trace kosten';
@@ -453,6 +489,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 'BGT',
                 'Ongunstig Zone',
                 'Klic',
+                'Orientatiemelding Qterra',
                 'Trace Kosten',
                 'Trace Lengte',
                 'Trace Doorlooptijd',
@@ -468,6 +505,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                 'Ingetekende Features',
                 'BGT',
                 'Ongunstig Zone',
+                'Orientatiemelding Qterra',
                 'Klic',
                 'Trace',
                 'Kruisingen',
@@ -517,7 +555,27 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
                                         });
                                     }
                                 });
-                            } else {
+                            }
+                            else if (groupName === 'Orientatiemelding Qterra') {
+                                const source = layer.getSource(); // Get the source of the vector layer
+                                const features = source.getFeatures(); // Get all features in the layer
+                                features.forEach(feature => {
+                                    const theme = feature.get('kleur'); // Get the 'thema' attribute
+                                    // Only add the theme if it hasn't been added yet
+                                    if (theme && !addedThemes.has(theme)) {
+                                        addedThemes.add(theme);
+                                        //retrieve klic stylee from the style function
+                                        const featureStyle = OrientatiemeldingSyle(feature)
+                                        // Now we add the theme and style to the legend
+                                        legend.addItem({
+                                            title: theme,
+                                            typeGeom: geometryType, // Dynamically detect geometry type
+                                            style: featureStyle
+                                        });
+                                    }
+                                });
+                            }
+                            else {
                                 // For non-"klic" groups, add items normally
                                 legend.addItem({
                                     title: layerTitle,
