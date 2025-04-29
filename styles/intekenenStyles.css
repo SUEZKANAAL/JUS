@@ -15,7 +15,7 @@ h1.navbar-brand a {
 #map {
     padding: 0;
     margin: 0;
-    height: calc(100vh - 100px);
+    height: calc(100vh + 15vh);
     width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
@@ -164,7 +164,7 @@ h1.navbar-brand a {
 @media (max-width: 768px) {
     #buttons.menu {
         bottom: 15px;
-        left: 10px;
+        left: 50%;
         width: 200px;
         padding: 12px;
         font-size: 14px;

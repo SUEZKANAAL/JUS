@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+!libs/ol-ext/dist/
+!/libs/v10.0.0-package/dist/

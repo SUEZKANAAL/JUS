@@ -357,20 +357,190 @@ function downloadGeoJSON() {
 
     // Ask for project name via SweetAlert modal
     Swal.fire({
-        title: 'Voer een projectnaam in:',
-        input: 'text',
-        inputPlaceholder: 'Projectnaam...',
+        title: 'Projectinformatie invoeren',
+        html: `
+        <style>
+            .form-container {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .form-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            .form-row label {
+                flex: 1;
+                margin-right: 10px;
+                text-align: center;
+            }
+            .form-row input[type="range"] {
+                flex: 2;
+                margin: 0 10px;
+            }
+            .form-row span {
+                width: 40px;
+                text-align: center;
+            }
+            .swal2-input {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+        </style>
+        <div class="form-container">
+            <div class="form-row">
+                <label for="projectName">Projectnaam:</label>
+            </div>
+            <div class="form-row">
+                <input id="projectName" class="swal2-input" placeholder="Projectnaam...">
+            </div>
+            <div class="form-row">
+                <label for="projectNumber">Projectnummer:</label>
+            </div>
+            <div class="form-row">
+                <input id="projectNumber" class="swal2-input" placeholder="Projectnummer...">
+            </div>
+            <div class="form-row">
+                <label for="klicFile">KLIC-bestand:</label>
+                </div>
+                <div class="form-row">
+                <select id="klicFile" class="swal2-input">
+                    <option value="zelf opsturen">Zelf opsturen</option>
+                    <option value="aanvragen">Aanvragen</option>
+                </select>
+                </div>
+            </div>
+
+            <div>
+            <div class="form-row">
+                <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
+            </div>
+            <div class="form-row">
+                <input id="geulbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
+            </div>
+            
+            <div class="form-row">
+                <label for="geslotenVerharding">Gesloten verharding:</label>
+                <input id="geslotenVerharding" type="range" min="0" max="100" value="34" step="1" 
+                    oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value">
+                <span id="geslotenVerhardingValue">34</span>%
+            </div>
+            <div class="form-row">
+                <label for="openVerharding">Open verharding:</label>
+                <input id="openVerharding" type="range" min="0" max="100" value="15" step="1" 
+                    oninput="document.getElementById('openVerhardingValue').textContent = this.value">
+                <span id="openVerhardingValue">15</span>%
+            </div>
+            <div class="form-row">
+                <label for="halfVerhard">Half verhard:</label>
+                <input id="halfVerhard" type="range" min="0" max="100" value="10" step="1" 
+                    oninput="document.getElementById('halfVerhardValue').textContent = this.value">
+                <span id="halfVerhardValue">10</span>%
+            </div>
+            <div class="form-row">
+                <label for="onverhard">Onverhard:</label>
+                <input id="onverhard" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('onverhardValue').textContent = this.value">
+                <span id="onverhardValue">8</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningLage">Groenvoorziening (gras/lage beplanting):</label>
+                <input id="groenvoorzieningLage" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('groenvoorzieningLageValue').textContent = this.value">
+                <span id="groenvoorzieningLageValue">8</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken/bomen):</label>
+                <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
+                <span id="groenvoorzieningHoogValue">12</span>%
+            </div>
+            <div class="form-row">
+                <label for="nogo">Moeilijk Begaanbaar:</label>
+                <input id="nogo" type="range" min="0" max="100" value="4" step="1" 
+                    oninput="document.getElementById('nogoValue').textContent = this.value">
+                <span id="nogoValue">4</span>%
+            </div>
+            <div class="form-row">
+                <label for="klicDrukte">KLIC (kabeldrukte):</label>
+                <input id="klicDrukte" type="range" min="0" max="100" value="40" step="1" 
+                    oninput="document.getElementById('klicDrukteValue').textContent = this.value">
+                <span id="klicDrukteValue">40</span>%
+            </div>
+            <div class="form-row">
+                <label for="ongunstigNogo">Ongunstig NoGo:</label>
+                <input id="ongunstigNogo" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
+                <span id="ongunstigNogoValue">45</span>%
+            </div>
+            <div class="form-row">
+                <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
+                <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
+                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>(m)
+            </div>
+            <div class="form-row">
+                <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
+                <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
+                <span id="GasHogeDrukValue">0.6</span>(m)
+            </div>
+             <div class="form-row">
+                <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
+                <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
+                <span id="GasLageDrukValue">0.6</span>(m)
+            </div>
+            <div class="form-row">
+                <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
+                <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('HoogspanningValue').textContent = this.value">
+                <span id="HoogspanningValue">0.6</span>(m)
+            </div>
+        </div>
+    `,
         showCancelButton: true,
         cancelButtonText: 'Annuleren',
         confirmButtonText: 'Opslaan',
-        inputValidator: (value) => {
-            if (!value || value.trim() === "") {
-                return 'Projectnaam is verplicht!';
+        preConfirm: () => {
+            const projectName = document.getElementById('projectName').value.trim();
+            const projectNumber = document.getElementById('projectNumber').value.trim();
+            if (!projectName || !projectNumber) {
+                Swal.showValidationMessage('Projectnaamen Projectnummer zijn verplicht!');
+                return null;
             }
+
+            return {
+                projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                klicFile: document.getElementById('klicFile').value,
+                geulbreedte: document.getElementById('geulbreedte').value,
+                geslotenVerharding: document.getElementById('geslotenVerharding').value,
+                openVerharding: document.getElementById('openVerharding').value,
+                halfVerhard: document.getElementById('halfVerhard').value,
+                onverhard: document.getElementById('onverhard').value,
+                groenvoorzieningLage: document.getElementById('groenvoorzieningLage').value,
+                groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog').value,
+                nogo: document.getElementById('nogo').value,
+                klicDrukte: document.getElementById('klicDrukte').value,
+                ongunstigNogo: document.getElementById('ongunstigNogo').value,
+                BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
+                GasHogeDruk: document.getElementById('GasHogeDruk').value,
+                GasLageDruk: document.getElementById('GasLageDruk').value,
+                Hoogspanning: document.getElementById('Hoogspanning').value,
+            };
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            var projectName = result.value.replace(/[^a-zA-Z0-9]/g, "_");
+            // generate json and tigger download
+            var projectName = result.value.projectName.replace(/[^a-zA-Z0-9]/g, "_");
+            const data = result.value;
 
             // Create GeoJSON data
             var geoJSONData = {
@@ -395,20 +565,52 @@ function downloadGeoJSON() {
                 title: 'Bestand gedownload!',
                 text: 'Het GeoJSON-bestand is succesvol gedownload.',
                 showCancelButton: true,
-                cancelButtonText: 'Later',
+                cancelButtonText: 'Annuleren',
                 confirmButtonText: 'Verstuur via e-mail',
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Open a modal to send the email
-                    sendEmailWithAttachment(projectName, blob);
+                    emailBody = generateEmailBody(data);
+                    sendEmailWithAttachment(projectName, blob, emailBody, data);
                 }
             });
         }
     });
 }
 
+function generateEmailBody(data) {
+    return `
+        Beste Medewerker van SUE,
+            
+            Bij deze doe ik een aanvraag voor een automatisch tracé voor het project ${data.projectName}.
+            
+            Projectinformatie:
+            - Projectnaam: ${data.projectName}
+            - Projectnummer: ${data.projectNumber}
+            - KLIC-bestand: ${data.klicFile}
+            - Geulbreedte: ${data.geulbreedte} meter
+            - Gesloten verharding: ${data.geslotenVerharding}%
+            - Open verharding: ${data.openVerharding}%
+            - Half verhard: ${data.halfVerhard}%
+            - Onverhard: ${data.onverhard}%
+            - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLage}%
+            - Groenvoorziening (heesters/struiken/bomen): ${data.groenvoorzieningHoog}%
+            - NoGo: ${data.nogo}%
+            - KLIC (kabeldrukte): ${data.klicDrukte}%
+            - Ongunstig NoGo: ${data.ongunstigNogo}%
+            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud} meter
+            - Gas Hoge Druk: ${data.GasHogeDruk} meter
+            - Gas Lage Druk: ${data.GasLageDruk} meter
+            - Hoogspanning: ${data.Hoogspanning} meter
+            
+            Attentie: Voeg alstublieft het gedownloade JSON-bestand als bijlage bij deze e-mail. Anders kunnen wij uw aanvraag niet verwerken.
+
+            
+        `.replace(/\n/g, "%0A");
+}
+
 // Function to open an email modal
-function sendEmailWithAttachment(projectName, fileBlob) {
+function sendEmailWithAttachment(projectName, fileBlob, emailBody, data) {
     // Pre-fill email address
     const user = "smartengineering-klm"; // Replace with the actual username part of the email
     const domain = "vangelder"; // Replace with the actual domain part of the email
@@ -419,7 +621,7 @@ function sendEmailWithAttachment(projectName, fileBlob) {
     const fileReader = new FileReader();
     fileReader.onload = function () {
         const fileContent = fileReader.result.split(',')[1]; // Extract base64 data
-        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${projectName}&body=Beste Medewerker van %20SUE,%0A%0ABij%20deze%20doe%20ik%20een%20aanvraag%20voor%20een%20automatisch%20tracé%20voor%20het%20project%20${projectName}.%0A%0AAttentie:%20Voeg%20alstublieft%20het%20gedownloade%20JSON-bestand%20als%20bijlage%20bij%20deze%20e-mail.%20Anders%20kunnen%20wij%20uw%20aanvraag%20niet%20verwerken.%20Het%20bestand%20vindt%20u%20terug%20in%20uw%20downloads-map%20onder%20de%20naam%20${projectName}.json.%0A%0AMet%20vriendelijke%20groet,%0A[Uw%20Naam]`;
+        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${data.projectName}&body=${emailBody}`;
 
         // Open the email client with the prefilled information
         window.location.href = mailtoLink;
