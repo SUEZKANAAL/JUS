@@ -441,11 +441,27 @@ function downloadGeoJSON() {
 
             // Create GeoJSON data
             var geoJSONData = {
+                projectName : projectName + data.projectNumber,
+                geulbreedte: data.geulbreedte,
                 projectgebiedWKT: projectgebiedWKT,
                 startEindPuntWKT: startEindPuntWKT,
                 nogoZonesWKT: nogoZonesWKT,
                 hulplijnenWKT: hulplijnenWKT,
                 boorlijnenWKT: boorlijnenWKT,
+                klicFile: data.klicFile,
+                geslotenVerharding: data.geslotenVerharding,
+                openVerharding: data.openVerharding,
+                halfVerhard: data.halfVerhard,
+                onverhard: data.onverhard,
+                groenvoorzieningLage: data.groenvoorzieningLage,
+                groenvoorzieningHoog: data.groenvoorzieningHoog,
+                nogo: data.nogo,
+                klicDrukte: data.klicDrukte,
+                ongunstigNogo: data.ongunstigNogo,
+                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+                GasHogeDruk: data.GasHogeDruk,
+                GasLageDruk: data.GasLageDruk,
+                Hoogspanning: data.Hoogspanning,                
             };
 
             // Create a Blob with the GeoJSON data
