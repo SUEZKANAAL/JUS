@@ -218,109 +218,6 @@ function toWKT(layer) {
     }
 }
 
-// // Function to download GeoJSON
-// function downloadGeoJSON() {
-//     var projectgebiedWKT = null;
-//     var startEindPuntWKT = [];
-//     var nogoZonesWKT = [];
-//     var hulplijnenWKT = [];
-//     var boorlijnenWKT = [];
-
-//     drawnItems.eachLayer(function (layer) {
-//         var wkt = toWKT(layer);
-//         if (layer.type === "projectgebiedWKT") {
-//             projectgebiedWKT = wkt;
-//         } else if (layer.type === "startEindPuntWKT") {
-//             startEindPuntWKT.push(wkt);
-//         } else if (layer.type === "nogoZonesWKT") {
-//             nogoZonesWKT.push(wkt);
-//         } else if (layer.type === "hulplijnenWKT") {
-//             hulplijnenWKT.push(wkt);
-//         } else if (layer.type === "boorlijnenWKT") {
-//             boorlijnenWKT.push(wkt);
-//         }
-//     });
-
-//     if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Fout',
-//             text: 'Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.',
-//             confirmButtonText: 'Ok'
-//         });
-//         return;
-//     }
-
-//     var projectName = prompt("Voer een projectnaam in:");
-//     projectName = projectName.replace(/[^a-zA-Z0-9]/g, "_");
-//     if (!projectName || projectName.trim() === "") {
-//         alert("Projectnaam is verplicht.");
-//         return;
-//     }
-
-//     var geoJSONData = {
-//         projectgebiedWKT: projectgebiedWKT,
-//         startEindPuntWKT: startEindPuntWKT,
-//         nogoZonesWKT: nogoZonesWKT,
-//         hulplijnenWKT: hulplijnenWKT,
-//         boorlijnenWKT: boorlijnenWKT,
-//     };
-
-//     var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
-//         type: "application/json",
-//     });
-//     saveAs(blob, projectName + ".json");
-
-//     document.getElementById("popup").style.display = "block";
-// }
-
-// document
-//     .getElementById("downloadButton")
-//     .addEventListener("click", downloadGeoJSON);
-
-// document.getElementById("closePopup").addEventListener("click", function () {
-//     document.getElementById("popup").style.display = "none";
-// });
-
-
-
-// // invisible email
-// (function () {
-//     const user = "smartengineering-klm"; // Replace with the actual username part of the email
-//     const domain = "vangelder"; // Replace with the actual domain part of the email
-//     var tld = "com";
-//     const email = user + "@" + domain + "." + tld;
-//     const emailLink = document.getElementById("email-link");
-
-//     // Set the email address as the text content of the span
-//     emailLink.textContent = email;
-
-//     // Make the email a clickable mailto link
-//     emailLink.innerHTML = `<a href="mailto:${email}">${email}</a>`;
-// })();
-
-// // JavaScript to handle the close button
-// document.getElementById("closePopup").addEventListener("click", function () {
-//     document.getElementById("popup").style.display = "none";
-// });
-
-// // add map scale
-// L.control.scale().addTo(map);
-
-// // add map coorrdinate display
-// map.on("contextmenu", function (e) {
-//     const { lat, lng } = e.latlng;
-//     const rdCoords = toRDNew(lat, lng);
-//     const popupContent = `
-//         <div>
-//             <strong>RD Coordinates</strong><br>
-//             X: ${rdCoords[0]}<br>
-//             y: ${rdCoords[1]}
-//         </div>
-//     `;
-//     L.popup().setLatLng(e.latlng).setContent(popupContent).openOn(map);
-// });
-
 // Function to download GeoJSON
 function downloadGeoJSON() {
     var projectgebiedWKT = null;
@@ -450,16 +347,22 @@ function downloadGeoJSON() {
                 <span id="onverhardValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningLage">Groenvoorziening (gras/lage beplanting):</label>
-                <input id="groenvoorzieningLage" type="range" min="0" max="100" value="8" step="1" 
-                    oninput="document.getElementById('groenvoorzieningLageValue').textContent = this.value">
-                <span id="groenvoorzieningLageValue">8</span>%
+                <label for="groenvoorzieningLaag">Groenvoorziening (gras/lage beplanting):</label>
+                <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
+                <span id="groenvoorzieningLaagValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken/bomen):</label>
+                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken):</label>
                 <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
                     oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
                 <span id="groenvoorzieningHoogValue">12</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningBos">Groenvoorziening (bebossing):</label>
+                <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
+                <span id="groenvoorzieningBosValue">12</span>%
             </div>
             <div class="form-row">
                 <label for="nogo">Moeilijk Begaanbaar:</label>
@@ -478,6 +381,18 @@ function downloadGeoJSON() {
                 <input id="ongunstigNogo" type="range" min="0" max="100" value="45" step="1" 
                     oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
                 <span id="ongunstigNogoValue">45</span>%
+            </div>
+            <div class="form-row">
+                <label for="waterkering">Waterkering:</label>
+                <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('waterkeringValue').textContent = this.value">
+                <span id="waterkeringValue">45</span>%
+            </div>
+            <div class="form-row">
+                <label for="natura2000">Natura2000:</label>
+                <input id="natura2000" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('natura2000Value').textContent = this.value">
+                <span id="natura2000Value">45</span>%
             </div>
             <div class="form-row">
                 <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
@@ -525,11 +440,14 @@ function downloadGeoJSON() {
                 openVerharding: document.getElementById('openVerharding').value,
                 halfVerhard: document.getElementById('halfVerhard').value,
                 onverhard: document.getElementById('onverhard').value,
-                groenvoorzieningLage: document.getElementById('groenvoorzieningLage').value,
+                groenvoorzieningLaag: document.getElementById('groenvoorzieningLaag').value,
                 groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog').value,
+                groenvoorzieningBos: document.getElementById('groenvoorzieningBos').value,
                 nogo: document.getElementById('nogo').value,
                 klicDrukte: document.getElementById('klicDrukte').value,
                 ongunstigNogo: document.getElementById('ongunstigNogo').value,
+                waterkering: document.getElementById('waterkering').value,
+                natura2000: document.getElementById('natura2000').value,
                 BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
                 GasHogeDruk: document.getElementById('GasHogeDruk').value,
                 GasLageDruk: document.getElementById('GasLageDruk').value,
@@ -539,16 +457,34 @@ function downloadGeoJSON() {
     }).then((result) => {
         if (result.isConfirmed) {
             // generate json and tigger download
-            var projectName = result.value.projectName.replace(/[^a-zA-Z0-9]/g, "_");
             const data = result.value;
 
             // Create GeoJSON data
             var geoJSONData = {
+                projectName : data.projectName + data.projectNumber,
+                geulbreedte: data.geulbreedte,
                 projectgebiedWKT: projectgebiedWKT,
                 startEindPuntWKT: startEindPuntWKT,
                 nogoZonesWKT: nogoZonesWKT,
                 hulplijnenWKT: hulplijnenWKT,
                 boorlijnenWKT: boorlijnenWKT,
+                klicFile: data.klicFile,
+                geslotenVerharding: data.geslotenVerharding,
+                openVerharding: data.openVerharding,
+                halfVerhard: data.halfVerhard,
+                onverhard: data.onverhard,
+                groenvoorzieningLaag: data.groenvoorzieningLaag,
+                groenvoorzieningHoog: data.groenvoorzieningHoog,
+                groenvoorzieningBos: data.groenvoorzieningBos,
+                nogo: data.nogo,
+                klicDrukte: data.klicDrukte,
+                ongunstigNogo: data.ongunstigNogo,
+                waterkering: data.waterkering,
+                natura2000: data.natura2000,
+                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+                GasHogeDruk: data.GasHogeDruk,
+                GasLageDruk: data.GasLageDruk,
+                Hoogspanning: data.Hoogspanning,                
             };
 
             // Create a Blob with the GeoJSON data
@@ -557,7 +493,7 @@ function downloadGeoJSON() {
             });
 
             // Download the file
-            saveAs(blob, projectName + ".json");
+            saveAs(blob, data.projectName + data.projectNumber + ".json");
 
             // Show success message and ask if the user wants to send the JSON by email
             Swal.fire({
@@ -593,7 +529,7 @@ function generateEmailBody(data) {
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
             - Onverhard: ${data.onverhard}%
-            - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLage}%
+            - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLaag}%
             - Groenvoorziening (heesters/struiken/bomen): ${data.groenvoorzieningHoog}%
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
@@ -637,24 +573,5 @@ document.getElementById("closePopup").addEventListener("click", function () {
     document.getElementById("popup").style.display = "none";
 });
 
-
-
 // add current location locator button
 L.control.locate().addTo(map);
-
-// // add instruction button
-// // Instructions to show
-// var instructions =
-//     "De kaart kan als volgt gebruikt worden:\n\nJe kunt de kaart navigeren door te klikken en te slepen, en je kunt in- en uitzoomen met de '+' en '-' knoppen in de linkerbovenhoek of door met de muis te scrollen.\n\nOok kan je een adres zoeken met de 'zoek' knop in de rechterbovenhoek.\n\nOm een projectgebied, start- en eindpunten, no-go zones, hulplijnen en boorlijnen te tekenen, klik op de respectievelijke knoppen in de linkerbovenhoek van de kaart en teken vervolgens op de kaart \n\n Om de getekende vormen te downloaden als een JSON-bestand, klik op de 'Download JSON' knop in de rechterbovenhoek van de kaart.\n\nDe kaart bevat ook een schaal in de linkerbenedenhoek voor referentie. \n\n Als je ergens op de kaart met de rechtermuisknop klikt, verschijnt er een popup die de RD (Rijksdriehoekscoördinaten) coördinaten van de aangeklikte locatie weergeeft. \n\nJe kunt ook de huidige locatie van de gebruiker vinden door op de knop 'Locate' in de rechterbovenhoek van de kaart te klikken.";
-// // Function to show instructions
-// function showInstructions() {
-//     alert(instructions);
-// }
-
-// // Show instructions when the page loads
-// window.onload = showInstructions;
-
-// // Show instructions when the button is clicked
-// document.getElementById("instructionButton").onclick = showInstructions;
-
-
