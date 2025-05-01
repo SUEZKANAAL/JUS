@@ -376,13 +376,7 @@ function downloadGeoJSON() {
                     oninput="document.getElementById('klicDrukteValue').textContent = this.value">
                 <span id="klicDrukteValue">40</span>%
             </div>
-            <div class="form-row">
-                <label for="ongunstigNogo">Ongunstig NoGo:</label>
-                <input id="ongunstigNogo" type="range" min="0" max="100" value="45" step="1" 
-                    oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
-                <span id="ongunstigNogoValue">45</span>%
-            </div>
-            <div class="form-row">
+           <div class="form-row">
                 <label for="waterkering">Waterkering:</label>
                 <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
                     oninput="document.getElementById('waterkeringValue').textContent = this.value">
@@ -445,7 +439,6 @@ function downloadGeoJSON() {
                 groenvoorzieningBos: document.getElementById('groenvoorzieningBos').value,
                 nogo: document.getElementById('nogo').value,
                 klicDrukte: document.getElementById('klicDrukte').value,
-                ongunstigNogo: document.getElementById('ongunstigNogo').value,
                 waterkering: document.getElementById('waterkering').value,
                 natura2000: document.getElementById('natura2000').value,
                 BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
@@ -478,7 +471,6 @@ function downloadGeoJSON() {
                 groenvoorzieningBos: data.groenvoorzieningBos,
                 nogo: data.nogo,
                 klicDrukte: data.klicDrukte,
-                ongunstigNogo: data.ongunstigNogo,
                 waterkering: data.waterkering,
                 natura2000: data.natura2000,
                 BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
@@ -531,9 +523,9 @@ function generateEmailBody(data) {
             - Onverhard: ${data.onverhard}%
             - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLaag}%
             - Groenvoorziening (heesters/struiken/bomen): ${data.groenvoorzieningHoog}%
+            - Groenvoorziening (bebossing): ${data.groenvoorzieningBos}%
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
-            - Ongunstig NoGo: ${data.ongunstigNogo}%
             - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud} meter
             - Gas Hoge Druk: ${data.GasHogeDruk} meter
             - Gas Lage Druk: ${data.GasLageDruk} meter
