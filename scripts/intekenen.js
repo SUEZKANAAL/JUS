@@ -347,16 +347,22 @@ function downloadGeoJSON() {
                 <span id="onverhardValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningLage">Groenvoorziening (gras/lage beplanting):</label>
-                <input id="groenvoorzieningLage" type="range" min="0" max="100" value="8" step="1" 
-                    oninput="document.getElementById('groenvoorzieningLageValue').textContent = this.value">
-                <span id="groenvoorzieningLageValue">8</span>%
+                <label for="groenvoorzieningLaag">Groenvoorziening (gras/lage beplanting):</label>
+                <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
+                <span id="groenvoorzieningLaagValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken/bomen):</label>
+                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken):</label>
                 <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
                     oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
                 <span id="groenvoorzieningHoogValue">12</span>%
+            </div>
+            <div class="form-row">
+                <label for="groenvoorzieningBos">Groenvoorziening (bebossing):</label>
+                <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
+                <span id="groenvoorzieningBosValue">12</span>%
             </div>
             <div class="form-row">
                 <label for="nogo">Moeilijk Begaanbaar:</label>
@@ -375,6 +381,18 @@ function downloadGeoJSON() {
                 <input id="ongunstigNogo" type="range" min="0" max="100" value="45" step="1" 
                     oninput="document.getElementById('ongunstigNogoValue').textContent = this.value">
                 <span id="ongunstigNogoValue">45</span>%
+            </div>
+            <div class="form-row">
+                <label for="waterkering">Waterkering:</label>
+                <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('waterkeringValue').textContent = this.value">
+                <span id="waterkeringValue">45</span>%
+            </div>
+            <div class="form-row">
+                <label for="natura2000">Natura2000:</label>
+                <input id="natura2000" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('natura2000Value').textContent = this.value">
+                <span id="natura2000Value">45</span>%
             </div>
             <div class="form-row">
                 <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
@@ -422,11 +440,14 @@ function downloadGeoJSON() {
                 openVerharding: document.getElementById('openVerharding').value,
                 halfVerhard: document.getElementById('halfVerhard').value,
                 onverhard: document.getElementById('onverhard').value,
-                groenvoorzieningLage: document.getElementById('groenvoorzieningLage').value,
+                groenvoorzieningLaag: document.getElementById('groenvoorzieningLaag').value,
                 groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog').value,
+                groenvoorzieningBos: document.getElementById('groenvoorzieningBos').value,
                 nogo: document.getElementById('nogo').value,
                 klicDrukte: document.getElementById('klicDrukte').value,
                 ongunstigNogo: document.getElementById('ongunstigNogo').value,
+                waterkering: document.getElementById('waterkering').value,
+                natura2000: document.getElementById('natura2000').value,
                 BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
                 GasHogeDruk: document.getElementById('GasHogeDruk').value,
                 GasLageDruk: document.getElementById('GasLageDruk').value,
@@ -436,12 +457,11 @@ function downloadGeoJSON() {
     }).then((result) => {
         if (result.isConfirmed) {
             // generate json and tigger download
-            var projectName = result.value.projectName.replace(/[^a-zA-Z0-9]/g, "_");
             const data = result.value;
 
             // Create GeoJSON data
             var geoJSONData = {
-                projectName : projectName + data.projectNumber,
+                projectName : data.projectName + data.projectNumber,
                 geulbreedte: data.geulbreedte,
                 projectgebiedWKT: projectgebiedWKT,
                 startEindPuntWKT: startEindPuntWKT,
@@ -453,11 +473,14 @@ function downloadGeoJSON() {
                 openVerharding: data.openVerharding,
                 halfVerhard: data.halfVerhard,
                 onverhard: data.onverhard,
-                groenvoorzieningLage: data.groenvoorzieningLage,
+                groenvoorzieningLaag: data.groenvoorzieningLaag,
                 groenvoorzieningHoog: data.groenvoorzieningHoog,
+                groenvoorzieningBos: data.groenvoorzieningBos,
                 nogo: data.nogo,
                 klicDrukte: data.klicDrukte,
                 ongunstigNogo: data.ongunstigNogo,
+                waterkering: data.waterkering,
+                natura2000: data.natura2000,
                 BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
                 GasHogeDruk: data.GasHogeDruk,
                 GasLageDruk: data.GasLageDruk,
@@ -470,7 +493,7 @@ function downloadGeoJSON() {
             });
 
             // Download the file
-            saveAs(blob, projectName + ".json");
+            saveAs(blob, data.projectName + data.projectNumber + ".json");
 
             // Show success message and ask if the user wants to send the JSON by email
             Swal.fire({
@@ -506,7 +529,7 @@ function generateEmailBody(data) {
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
             - Onverhard: ${data.onverhard}%
-            - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLage}%
+            - Groenvoorziening (gras/lage beplanting): ${data.groenvoorzieningLaag}%
             - Groenvoorziening (heesters/struiken/bomen): ${data.groenvoorzieningHoog}%
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
