@@ -454,7 +454,7 @@ function downloadGeoJSON() {
 
             // Create GeoJSON data
             var geoJSONData = {
-                projectName : data.projectName + data.projectNumber,
+                projectName : data.projectName + '_' + data.projectNumber,
                 geulbreedte: data.geulbreedte,
                 projectgebiedWKT: projectgebiedWKT,
                 startEindPuntWKT: startEindPuntWKT,
@@ -485,7 +485,7 @@ function downloadGeoJSON() {
             });
 
             // Download the file
-            saveAs(blob, data.projectName + data.projectNumber + ".json");
+            saveAs(blob, data.projectName + '_' + data.projectNumber + ".json");
 
             // Show success message and ask if the user wants to send the JSON by email
             Swal.fire({
