@@ -499,7 +499,7 @@ function downloadGeoJSON() {
                 if (result.isConfirmed) {
                     // Open a modal to send the email
                     emailBody = generateEmailBody(data);
-                    sendEmailWithAttachment(projectName, blob, emailBody, data);
+                    sendEmailWithAttachment(data.projectName, blob, emailBody);
                 }
             });
         }
@@ -538,7 +538,7 @@ function generateEmailBody(data) {
 }
 
 // Function to open an email modal
-function sendEmailWithAttachment(projectName, fileBlob, emailBody, data) {
+function sendEmailWithAttachment(projectName, fileBlob, emailBody) {
     // Pre-fill email address
     const user = "smartengineering-klm"; // Replace with the actual username part of the email
     const domain = "vangelder"; // Replace with the actual domain part of the email
@@ -548,8 +548,7 @@ function sendEmailWithAttachment(projectName, fileBlob, emailBody, data) {
     // Convert blob to data URL
     const fileReader = new FileReader();
     fileReader.onload = function () {
-        const fileContent = fileReader.result.split(',')[1]; // Extract base64 data
-        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${data.projectName}&body=${emailBody}`;
+        const mailtoLink = `mailto:${email}?subject=Automatisch%20Tracé%20Aanvraag%20SUE%20voor%20project:${projectName}&body=${emailBody}`;
 
         // Open the email client with the prefilled information
         window.location.href = mailtoLink;
