@@ -313,7 +313,16 @@ function downloadGeoJSON() {
                 </select>
                 </div>
             </div>
-
+            <div class="form-row">
+                <label for="PrivaatBedrijfWegen">Privaat en bedrijf wegen:</label>
+                </div>
+                <div class="form-row">
+                <select id="PrivaatBedrijfWegen" class="swal2-input">
+                    <option value="false">Niet gebruiken</option>
+                    <option value="true">Wel gebruiken</option>
+                </select>
+                </div>
+            </div>
             <div>
             <div class="form-row">
                 <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
@@ -429,6 +438,7 @@ function downloadGeoJSON() {
                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 klicFile: document.getElementById('klicFile').value,
+                PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
                 geulbreedte: document.getElementById('geulbreedte').value,
                 geslotenVerharding: document.getElementById('geslotenVerharding').value,
                 openVerharding: document.getElementById('openVerharding').value,
@@ -462,6 +472,7 @@ function downloadGeoJSON() {
                 hulplijnenWKT: hulplijnenWKT,
                 boorlijnenWKT: boorlijnenWKT,
                 klicFile: data.klicFile,
+                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
                 geslotenVerharding: data.geslotenVerharding,
                 openVerharding: data.openVerharding,
                 halfVerhard: data.halfVerhard,
