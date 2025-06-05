@@ -527,7 +527,8 @@ function generateEmailBody(data) {
             - Projectnaam: ${data.projectName}
             - Projectnummer: ${data.projectNumber}
             - KLIC-bestand: ${data.klicFile}
-            - Geulbreedte: ${data.geulbreedte} meter
+            - Privaat/bedrijf wegen: ${data.PrivaatBedrijfWegen}
+            - Geulbreedte: ${data.geulbreedte}m
             - Gesloten verharding: ${data.geslotenVerharding}%
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
@@ -537,10 +538,10 @@ function generateEmailBody(data) {
             - Groenvoorziening (bebossing): ${data.groenvoorzieningBos}%
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
-            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud} meter
-            - Gas Hoge Druk: ${data.GasHogeDruk} meter
-            - Gas Lage Druk: ${data.GasLageDruk} meter
-            - Hoogspanning: ${data.Hoogspanning} meter
+            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud}m
+            - Gas HD: ${data.GasHogeDruk}m
+            - Gas LD: ${data.GasLageDruk}m
+            - Hoogspanning: ${data.Hoogspanning}m
             
             Attentie: Voeg alstublieft het gedownloade JSON-bestand als bijlage bij deze e-mail. Anders kunnen wij uw aanvraag niet verwerken.
 
