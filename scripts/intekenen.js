@@ -274,7 +274,7 @@ function downloadGeoJSON() {
             .form-row label {
                 flex: 3;
                 margin-right: 10px;
-                text-align: center;
+                text-align: left;
             }
             .form-row input[type="range"] {
                 flex: 3;
