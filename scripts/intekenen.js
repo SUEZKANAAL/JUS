@@ -255,13 +255,14 @@ function downloadGeoJSON() {
     // Ask for project name via SweetAlert modal
     Swal.fire({
         title: 'Projectinformatie invoeren',
+        width: '600px',
         html: `
         <style>
             .form-container {
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
-                max-width: 600px;
+                max-width: 1600px;
                 margin: 0 auto;
             }
             .form-row {
@@ -271,12 +272,12 @@ function downloadGeoJSON() {
                 margin-bottom: 10px;
             }
             .form-row label {
-                flex: 1;
+                flex: 3;
                 margin-right: 10px;
-                text-align: center;
+                text-align: left;
             }
             .form-row input[type="range"] {
-                flex: 2;
+                flex: 3;
                 margin: 0 10px;
             }
             .form-row span {
@@ -313,7 +314,16 @@ function downloadGeoJSON() {
                 </select>
                 </div>
             </div>
-
+            <div class="form-row">
+                <label for="PrivaatBedrijfWegen">Privaat en bedrijf wegen:</label>
+                </div>
+                <div class="form-row">
+                <select id="PrivaatBedrijfWegen" class="swal2-input">
+                    <option value="false">Niet gebruiken</option>
+                    <option value="true">Wel gebruiken</option>
+                </select>
+                </div>
+            </div>
             <div>
             <div class="form-row">
                 <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
@@ -347,19 +357,19 @@ function downloadGeoJSON() {
                 <span id="onverhardValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningLaag">Groenvoorziening (gras/lage beplanting):</label>
+                <label for="groenvoorzieningLaag">Groenvoorziening<br>(gras/lage beplanting):</label>
                 <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
                     oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
                 <span id="groenvoorzieningLaagValue">8</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken):</label>
+                <label for="groenvoorzieningHoog">Groenvoorziening<br>(heesters/struiken):</label>
                 <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
                     oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
                 <span id="groenvoorzieningHoogValue">12</span>%
             </div>
             <div class="form-row">
-                <label for="groenvoorzieningBos">Groenvoorziening (bebossing):</label>
+                <label for="groenvoorzieningBos">Groenvoorziening<br>(bebossing):</label>
                 <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
                     oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
                 <span id="groenvoorzieningBosValue">12</span>%
@@ -392,25 +402,25 @@ function downloadGeoJSON() {
                 <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
                 <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
                     oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
-                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>(m)
+                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>m
             </div>
             <div class="form-row">
                 <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
                 <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
                     oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
-                <span id="GasHogeDrukValue">0.6</span>(m)
+                <span id="GasHogeDrukValue">0.6</span>m
             </div>
              <div class="form-row">
                 <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
                 <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
                     oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
-                <span id="GasLageDrukValue">0.6</span>(m)
+                <span id="GasLageDrukValue">0.6</span>m
             </div>
             <div class="form-row">
                 <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
                 <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
                     oninput="document.getElementById('HoogspanningValue').textContent = this.value">
-                <span id="HoogspanningValue">0.6</span>(m)
+                <span id="HoogspanningValue">0.6</span>m
             </div>
         </div>
     `,
@@ -429,6 +439,7 @@ function downloadGeoJSON() {
                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
                 klicFile: document.getElementById('klicFile').value,
+                PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
                 geulbreedte: document.getElementById('geulbreedte').value,
                 geslotenVerharding: document.getElementById('geslotenVerharding').value,
                 openVerharding: document.getElementById('openVerharding').value,
@@ -462,6 +473,7 @@ function downloadGeoJSON() {
                 hulplijnenWKT: hulplijnenWKT,
                 boorlijnenWKT: boorlijnenWKT,
                 klicFile: data.klicFile,
+                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
                 geslotenVerharding: data.geslotenVerharding,
                 openVerharding: data.openVerharding,
                 halfVerhard: data.halfVerhard,
@@ -516,7 +528,8 @@ function generateEmailBody(data) {
             - Projectnaam: ${data.projectName}
             - Projectnummer: ${data.projectNumber}
             - KLIC-bestand: ${data.klicFile}
-            - Geulbreedte: ${data.geulbreedte} meter
+            - Privaat/bedrijf wegen: ${data.PrivaatBedrijfWegen}
+            - Geulbreedte: ${data.geulbreedte}m
             - Gesloten verharding: ${data.geslotenVerharding}%
             - Open verharding: ${data.openVerharding}%
             - Half verhard: ${data.halfVerhard}%
@@ -526,10 +539,10 @@ function generateEmailBody(data) {
             - Groenvoorziening (bebossing): ${data.groenvoorzieningBos}%
             - NoGo: ${data.nogo}%
             - KLIC (kabeldrukte): ${data.klicDrukte}%
-            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud} meter
-            - Gas Hoge Druk: ${data.GasHogeDruk} meter
-            - Gas Lage Druk: ${data.GasLageDruk} meter
-            - Hoogspanning: ${data.Hoogspanning} meter
+            - BuisLeiding Gevaarlijke Inhoud: ${data.BuisLeidingGevaarlijkeInhoud}m
+            - Gas HD: ${data.GasHogeDruk}m
+            - Gas LD: ${data.GasLageDruk}m
+            - Hoogspanning: ${data.Hoogspanning}m
             
             Attentie: Voeg alstublieft het gedownloade JSON-bestand als bijlage bij deze e-mail. Anders kunnen wij uw aanvraag niet verwerken.
 
