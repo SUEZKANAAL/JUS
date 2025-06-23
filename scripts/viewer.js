@@ -304,13 +304,13 @@ function getFeatureStyle(file, feature) {
         // trace styling
         case file.name === "Doorlooptijd.geojson":
         case file.name === 'Trace_Doorlooptijd_smooth.geojson':
-            return createLineStyle([0, 0, 255], 1.0); // blue
+            return createLineStyle([0, 255, 0], 1.0); // green
         case file.name === 'Kosten.geojson':
         case file.name === 'Trace_Kosten_smooth.geojson':
             return createLineStyle([255, 0, 0], 1.0); // red
         case file.name === 'Lengte.geojson':
         case file.name === 'Trace_Lengte_smooth.geojson':
-            return createLineStyle([0, 255, 0], 1.0); // green
+            return createLineStyle([0, 0, 255], 1.0); // blue
         case file.name === 'trace.geojson':
             return createLineStyle([255, 0, 0], 1.0); // red
 
