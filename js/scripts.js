@@ -7,6 +7,7 @@
 // Scripts
 // 
 
+
 // Run on page load
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("accessToken");

@@ -118,7 +118,7 @@
             localStorage.setItem("role", parseJwt(data.access_token).role); // optional: role stored for quick checks
 
             // Redirect to dashboard or projects page
-            window.location.href = "./pages/projecten-overview.html";
+            window.location.href = "/pages/projecten-overview.html";
           } catch (err) {
             errorDiv.innerText = err.message;
             errorDiv.classList.remove("d-none");
