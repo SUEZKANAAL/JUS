@@ -102,17 +102,73 @@
       </button>
     </div>
 
-    <!-- Project container -->
-    <section class="container project-section row" id="projectsContainer">
-      <!-- Cards will be inserted dynamically via JS -->
+    <!-- filter projects bar -->
+     <div id="projectFilters" 
+     style="margin-bottom:20px; display:none; gap:10px; flex-wrap:wrap;">
+
+    <input id="searchInput" 
+           type="text" 
+           placeholder="Zoek projecten..." 
+           style="padding:8px; border-radius:6px; border:1px solid #ccc; flex:1; min-width:200px;">
+
+    <select id="sortSelect" 
+            style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+        <option value="nameAsc">Naam (A → Z)</option>
+        <option value="nameDesc">Naam (Z → A)</option>
+        <option value="dateNewest">Nieuwste eerst</option>
+        <option value="dateOldest">Oudste eerst</option>
+    </select>
+
+    <input id="dateFrom" type="date" 
+           style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+
+    <input id="dateTo" type="date" 
+           style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+</div>
+
+
+
+
+    <section class="container project-section" id="projectsContainer">
+      <!-- Cards will be inserted dynamically -->
     </section>
+
+    <!-- Modal for uploading multiple traces -->
+    <div id="traceModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div class="modal-content" style="background:white; padding:20px; border-radius:8px; width:500px; position:relative; max-height:80vh; overflow-y:auto;">
+        <span id="closeModal" style="position:absolute; top:10px; right:15px; cursor:pointer; font-weight:bold;">&times;</span>
+        <h4>Upload Traces</h4>
+
+        <div id="traceEntriesContainer"></div>
+
+        <button id="addTraceEntryBtn" class="btn btn-primary mb-4">Voeg een trace toe</button>
+        <button id="uploadAllBtn" class="btn btn-secondary mb-3">Upload Alle Traces</button>
+
+        <p id="uploadStatus" style="color:red;"></p>
+    </div>
+    </div>
+
+
 
     <!-- Scripts -->
 
+    <!-- Leaflet core -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Proj4 (needed for RD / EPSG:28992) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.js"></script>
+
+    <!-- Proj4Leaflet (to use custom CRS in Leaflet) -->
+    <script src="https://unpkg.com/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>
+
+    <!-- Wicket (for WKT parsing) -->
     <script src="https://cdn.jsdelivr.net/npm/wicket@1.3.5/wicket.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wicket-leaflet@1.0.0/wicket-leaflet.min.js"></script>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Your custom script -->
     <script src="../scripts/project-overview.js"></script>
   </body>
 </html>

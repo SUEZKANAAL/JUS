@@ -1,13 +1,23 @@
-/* projects.css */
+/* Container for all projects */
+#projectsContainer {
+    display: flex;
+    flex-wrap: wrap;             /* wrap to next line */
+    gap: 20px;                   /* spacing between cards */
+    justify-content: center;     /* center the cards horizontally */
+    margin: 0 auto;              /* optional, ensures container is centered */
+    padding: 20px 0;             /* optional, add vertical spacing */
+}
 
-/* Center cards and set max width */
+/* Each project card */
 .project-card {
-    margin: 20px;
-    width: 350px;
+    flex: 0 1 calc(33.33% - 20px); /* 3 cards per row, minus gap */
+    max-width: 350px;              /* optional limit */
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card:hover {
@@ -22,7 +32,7 @@
     justify-content: space-between;
 }
 
-/* Map container inside card */
+/* Map inside card */
 .project-card .map {
     width: 100%;
     height: 200px;
@@ -30,14 +40,14 @@
     margin-bottom: 10px;
 }
 
-/* Project title */
+/* Title */
 .project-card .card-title {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 8px;
 }
 
-/* Buttons */
+/* Button */
 .project-card button {
     margin-top: 10px;
 }
