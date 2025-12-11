@@ -11,7 +11,11 @@ let filteredProjects = []; // filtered list for display
 // -------------------------
 async function fetchProjects() {
   const projectsContainer = document.getElementById("projectsContainer");
-  projectsContainer.innerHTML = ""; // clear previous
+  const spinnerWrapper = document.getElementById("loadingSpinnerWrapper");
+
+  // Show the loading overlay
+  spinnerWrapper.style.display = "flex";
+  projectsContainer.innerHTML = "";
 
   try {
     const token = localStorage.getItem("accessToken");
@@ -29,16 +33,21 @@ async function fetchProjects() {
     allProjects = projects;
     filteredProjects = projects;
 
-    // Show filter bar
+    // Show filters
     document.getElementById("projectFilters").style.display = "flex";
 
-    // Render projects
+    // Render
     renderProjects(filteredProjects);
+
   } catch (err) {
     console.error(err);
     projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;
+  } finally {
+    // Hide the loading overlay
+    spinnerWrapper.style.display = "none";
   }
 }
+
 
 // -------------------------
 // Render Projects
@@ -47,6 +56,8 @@ function renderProjects(projects) {
   const container = document.getElementById("projectsContainer");
   container.innerHTML = "";
 
+  const role = localStorage.getItem("role"); // "admin" or "user"
+
   projects.forEach((project) => {
     const card = document.createElement("div");
     card.classList.add("project-card", "card");
@@ -54,22 +65,22 @@ function renderProjects(projects) {
       ? new Date(project.created_at).toLocaleDateString("nl-NL")
       : "Onbekend";
 
-    card.innerHTML = `
-      <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll(
-          "_",
-          " "
-        )}</h5>
-        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
-        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-        <button class="btn btn-primary mb-2 create-trace-btn" data-project-id="${
-          project.id
-        }">
+    let uploadButtonHTML = "";
+    if (role === "admin") {
+      uploadButtonHTML = `
+        <button class="btn btn-primary mb-2 create-trace-btn" data-project-id="${project.id}">
           Upload Trace
         </button>
-        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${
-          project.id
-        }">
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="card-body">
+        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
+        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
+        ${uploadButtonHTML}
+        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${project.id}">
           Download Traces
         </button>
       </div>
@@ -77,6 +88,7 @@ function renderProjects(projects) {
     container.appendChild(card);
   });
 }
+
 
 // -------------------------
 // Apply Filters
