@@ -7,6 +7,31 @@
 // Scripts
 // 
 
+// Run on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("accessToken");
+  const navLogin = document.getElementById("navLogin");
+  const navLogout = document.getElementById("navLogout");
+
+  if (token) {
+    // User is logged in
+    navLogin.style.display = "none";
+    navLogout.style.display = "block";
+  } else {
+    // User is not logged in
+    navLogin.style.display = "block";
+    navLogout.style.display = "none";
+  }
+
+  // Logout action
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("role"); // optional, if you saved it
+    window.location.href = "/pages/login.html"; // redirect to login page
+  });
+});
+
+
 window.addEventListener('DOMContentLoaded', event => {
 
     // Navbar shrink function

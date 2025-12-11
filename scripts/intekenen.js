@@ -604,9 +604,6 @@ function sendAPIPostRequest() {
             .swal2-input { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
         </style>
         <div class="form-container">
-            <div class="form-row"><label for="apiKey">API Key:</label></div>
-            <div class="form-row"><input id="apiKey" type="password" class="swal2-input" placeholder="Voer API key in..."></div>
-
             <div class="form-row"><label for="projectName">Projectnaam:</label></div>
             <div class="form-row"><input id="projectName" class="swal2-input" placeholder="Projectnaam..."></div>
 
@@ -740,14 +737,13 @@ function sendAPIPostRequest() {
         `,
         showCancelButton: true,
         cancelButtonText: 'Annuleren',
-        confirmButtonText: 'Verstuur naar server',
+        confirmButtonText: 'Versturen',
         preConfirm: () => {
             const projectName = document.getElementById('projectName').value.trim();
             const projectNumber = document.getElementById('projectNumber').value.trim();
-            const apiKey = document.getElementById('apiKey').value.trim();
 
-            if (!projectName || !projectNumber || !apiKey) {
-                Swal.showValidationMessage('Projectnaam, Projectnummer en API Key zijn verplicht!');
+            if (!projectName || !projectNumber) {
+                Swal.showValidationMessage('Projectnaam en Projectnummer zijn verplicht!');
                 return null;
             }
 
@@ -755,7 +751,6 @@ function sendAPIPostRequest() {
             return {
                     projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
                     projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                    apiKey: apiKey,
                     klicFile: document.getElementById('klicFile').value,
                     PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
                     geulbreedte: document.getElementById('geulbreedte').value,
@@ -808,11 +803,13 @@ function sendAPIPostRequest() {
             };
 
         try {
+             // <-- HERE: get the JWT from localStorage
+            const token = localStorage.getItem("accessToken");
             const response = await fetch('https://sue-fastapi.onrender.com/create-project', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': data.apiKey
+                    'Authorization': `Bearer ${token}` 
                 },
                 body: JSON.stringify(geoJSONData)
             });

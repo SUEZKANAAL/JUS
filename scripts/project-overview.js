@@ -7,44 +7,38 @@ let allProjects = []; // original projects list
 let filteredProjects = []; // filtered list for display
 
 // -------------------------
-// Load Projects Button
+// Fetch Projects
 // -------------------------
-document
-  .getElementById("loadProjectsBtn")
-  .addEventListener("click", async () => {
-    const apiKey = document.getElementById("apiKeyInput").value.trim();
-    if (!apiKey) {
-      alert("Please enter your API key!");
+async function fetchProjects() {
+  const projectsContainer = document.getElementById("projectsContainer");
+  projectsContainer.innerHTML = ""; // clear previous
+
+  try {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      projectsContainer.innerHTML = `<p class="text-danger">Niet ingelogd.</p>`;
       return;
     }
 
-    const projectsContainer = document.getElementById("projectsContainer");
-    projectsContainer.innerHTML = ""; // clear previous
+    const response = await fetch(`https://sue-fastapi.onrender.com/projects`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error("Failed to fetch projects");
 
-    try {
-      const response = await fetch(
-        `https://sue-fastapi.onrender.com/projects`,
-        {
-          headers: { "x-api-key": apiKey },
-        }
-      );
-      if (!response.ok) throw new Error("Failed to fetch projects");
-      const projects = await response.json();
+    const projects = await response.json();
+    allProjects = projects;
+    filteredProjects = projects;
 
-      // Save projects for filtering
-      allProjects = projects;
-      filteredProjects = projects;
+    // Show filter bar
+    document.getElementById("projectFilters").style.display = "flex";
 
-      // Show filter bar
-      document.getElementById("projectFilters").style.display = "flex";
-
-      // Render projects
-      renderProjects(filteredProjects);
-    } catch (err) {
-      console.error(err);
-      projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Verifieer uw API key</p>`;
-    }
-  });
+    // Render projects
+    renderProjects(filteredProjects);
+  } catch (err) {
+    console.error(err);
+    projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;
+  }
+}
 
 // -------------------------
 // Render Projects
@@ -59,32 +53,33 @@ function renderProjects(projects) {
     const dateStr = project.created_at
       ? new Date(project.created_at).toLocaleDateString("nl-NL")
       : "Onbekend";
+
     card.innerHTML = `
-            <div class="card-body">
-                <h5 class="card-title text-center">${project.project_name.replaceAll(
-                  "_",
-                  " "
-                )}</h5>
-                <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
-                <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-                <button class="btn btn-primary mb-2 create-trace-btn" data-project-id="${
-                  project.id
-                }">
-                    Upload Trace
-                </button>
-                <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${
-                  project.id
-                }">
-                    Download Traces
-                </button>
-            </div>
-        `;
+      <div class="card-body">
+        <h5 class="card-title text-center">${project.project_name.replaceAll(
+          "_",
+          " "
+        )}</h5>
+        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
+        <button class="btn btn-primary mb-2 create-trace-btn" data-project-id="${
+          project.id
+        }">
+          Upload Trace
+        </button>
+        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${
+          project.id
+        }">
+          Download Traces
+        </button>
+      </div>
+    `;
     container.appendChild(card);
   });
 }
 
 // -------------------------
-// Filter Projects
+// Apply Filters
 // -------------------------
 function applyFilters() {
   let projects = [...allProjects];
@@ -104,13 +99,13 @@ function applyFilters() {
   const dateFromEl = document.getElementById("dateFrom");
   const dateToEl = document.getElementById("dateTo");
 
-  if (dateFromEl && dateFromEl.value) {
+  if (dateFromEl?.value) {
     const fromDate = new Date(dateFromEl.value);
     projects = projects.filter(
       (p) => p.created_at && new Date(p.created_at) >= fromDate
     );
   }
-  if (dateToEl && dateToEl.value) {
+  if (dateToEl?.value) {
     const toDate = new Date(dateToEl.value);
     projects = projects.filter(
       (p) => p.created_at && new Date(p.created_at) <= toDate
@@ -119,19 +114,18 @@ function applyFilters() {
 
   // Sorting
   const sort = document.getElementById("sortSelect").value;
-  if (sort === "nameAsc") {
+  if (sort === "nameAsc")
     projects.sort((a, b) => a.project_name.localeCompare(b.project_name));
-  } else if (sort === "nameDesc") {
+  else if (sort === "nameDesc")
     projects.sort((a, b) => b.project_name.localeCompare(a.project_name));
-  } else if (sort === "dateNewest") {
+  else if (sort === "dateNewest")
     projects.sort(
       (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
     );
-  } else if (sort === "dateOldest") {
+  else if (sort === "dateOldest")
     projects.sort(
       (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
     );
-  }
 
   filteredProjects = projects;
   renderProjects(filteredProjects);
@@ -142,13 +136,18 @@ function applyFilters() {
 // -------------------------
 document.getElementById("searchInput").addEventListener("input", applyFilters);
 document.getElementById("sortSelect").addEventListener("change", applyFilters);
-if (document.getElementById("dateFrom"))
-  document.getElementById("dateFrom").addEventListener("change", applyFilters);
-if (document.getElementById("dateTo"))
-  document.getElementById("dateTo").addEventListener("change", applyFilters);
+document.getElementById("dateFrom")?.addEventListener("change", applyFilters);
+document.getElementById("dateTo")?.addEventListener("change", applyFilters);
 
 // -------------------------
-// Open Trace Modal (Event Delegation)
+// Load projects automatically on page load
+// -------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  fetchProjects(); // Load projects if user is logged in
+});
+
+// -------------------------
+// Rest of your modal / trace upload logic remains unchanged
 // -------------------------
 
 // -------------------------
@@ -344,10 +343,20 @@ document
 // -------------------------
 document.getElementById("uploadAllBtn").addEventListener("click", async () => {
   const entries = document.querySelectorAll(".trace-entry");
-  const apiKey = document.getElementById("apiKeyInput").value.trim();
   const uploadStatus = document.getElementById("uploadStatus");
   uploadStatus.style.color = "black";
   uploadStatus.innerHTML = "Uploading...<br>";
+
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    uploadStatus.innerHTML = `<span style="color:red;">Niet ingelogd. Upload mislukt.</span>`;
+    return;
+  }
+
+  if (!currentProjectId) {
+    uploadStatus.innerHTML = `<span style="color:red;">Geen project geselecteerd. Upload mislukt.</span>`;
+    return;
+  }
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
@@ -390,14 +399,19 @@ document.getElementById("uploadAllBtn").addEventListener("click", async () => {
         `https://sue-fastapi.onrender.com/projects/${currentProjectId}/traces`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(body),
         }
       );
+
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.detail || "Failed to upload trace");
       }
+
       const result = await response.json();
       uploadStatus.innerHTML += `<span style="color:green;">${file.name}: Uploaded (ID: ${result.trace_id})</span><br>`;
     } catch (err) {

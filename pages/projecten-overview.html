@@ -43,9 +43,11 @@
     </script>
 
     <!-- Navigation -->
+         <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
       <div class="container">
         <h1 class="navbar-brand"><a href="../">Sue</a></h1>
+        <!-- <a class="navbar-brand" href="/"><img src="" alt="..." /></a> -->
         <button
           class="navbar-toggler"
           type="button"
@@ -61,30 +63,37 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="./intekenen.html">Intekenen</a>
+              <a class="nav-link" href="/pages/intekenen.html">Intekenen</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="./viewer.html">Viewer</a>
+              <a class="nav-link" href="/pages/viewer.html">Viewer</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="./projecten-overview.html">Projecten</a>
+              <a class="nav-link" href="/pages/projecten-overview.html">Porjecten</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../#services">Diensten</a>
+              <a class="nav-link" href="/#services">Diensten</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../#portfolio">Tools</a>
+              <a class="nav-link" href="/#portfolio">Tools</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../#about">Proces</a>
+              <a class="nav-link" href="/#about">Proces</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../#instructie">Instructie</a>
+              <a class="nav-link" href="/#instructie">Instructie</a>
+            </li>
+            <li class="nav-item" id="navLogin">
+              <a class="nav-link" href="/pages/login.html">Login</a>
+            </li>
+            <li class="nav-item" id="navLogout">
+              <a class="nav-link" href="#" id="logoutBtn">Logout</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+
 
     <!-- Page header -->
     <header class="masthead">
@@ -92,22 +101,6 @@
         <h1 class="masthead-heading text-uppercase">Projecten</h1>
       </div>
     </header>
-
-    <!-- API key input -->
-    <div class="container mt-4">
-      <div class="mb-3">
-        <label for="apiKeyInput" class="form-label">Voer uw API-key in:</label>
-        <input
-          type="password"
-          id="apiKeyInput"
-          class="form-control"
-          placeholder="API-Key"
-        />
-      </div>
-      <button id="loadProjectsBtn" class="btn btn-primary mb-4">
-        Projecten Laden
-      </button>
-    </div>
 
     <!-- filter projects bar -->
     <div
@@ -267,6 +260,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../js/scripts.js"></script>
 
     <!-- Leaflet core -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
