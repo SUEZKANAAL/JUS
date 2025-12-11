@@ -9,51 +9,63 @@ document.getElementById("loadProjectsBtn").addEventListener("click", async () =>
     projectsContainer.innerHTML = ""; // clear previous
 
     try {
-        // Fetch all projects
-        const projectsResponse = await fetch("https://sue-fastapi.onrender.com/projects", {
+        // Fetch all projects endpoint
+        const response = await fetch(`https://sue-fastapi.onrender.com/projects`, {
             headers: { "x-api-key": apiKey }
         });
+        if (!response.ok) throw new Error("Failed to fetch projects");
+        const projects = await response.json(); // expecting an array of projects
 
-        if (!projectsResponse.ok) throw new Error("Failed to fetch projects list");
-        const projects = await projectsResponse.json();
+        projects.forEach((data) => {
+            const card = document.createElement("div");
+            card.classList.add("project-card", "card");
 
-        if (projects.length === 0) {
-            projectsContainer.innerHTML = "<p class='text-muted'>No projects found.</p>";
-            return;
-        }
+            card.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${data.project.project_name}</h5>
+                    <div id="map-${data.project.id}" class="map"></div>
+                    <p><strong>Traces:</strong> ${data.traces.length}</p>
+                    <button class="btn btn-success create-trace-btn" data-project-id="${data.project.id}">Create Trace</button>
+                </div>
+            `;
 
-        // Fetch details for each project
-        for (let project of projects) {
-            try {
-                const detailResponse = await fetch(`https://sue-fastapi.onrender.com/projects/${project.id}`, {
-                    headers: { "x-api-key": apiKey }
-                });
-                if (!detailResponse.ok) throw new Error(`Failed to fetch project ${project.id}`);
+            projectsContainer.appendChild(card);
 
-                const data = await detailResponse.json();
+            // Initialize Leaflet map
+            const map = L.map(`map-${data.project.id}`, {
+                crs: L.CRS.EPSG28992, // RD projection
+                center: [52.1, 5.1],   // default center, will fit bounds
+                zoom: 12
+            });
 
-                const card = document.createElement("div");
-                card.classList.add("col-md-4", "project-card");
-                card.innerHTML = `
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">${data.project.project_name}</h5>
-                            <p class="card-text"><strong>ID:</strong> ${data.project.id}</p>
-                            <p class="card-text"><strong>Area:</strong> ${data.project.project_area}</p>
-                            <p class="card-text"><strong>Traces:</strong> ${data.traces.length}</p>
-                        </div>
-                    </div>
-                `;
-                projectsContainer.appendChild(card);
+            // Add RD base layer (you might need a tile server for RD)
+            L.tileLayer('https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:28992/{z}/{x}/{y}.png', {
+                attribution: 'Kadaster & PDOK',
+                maxZoom: 19,
+                minZoom: 1
+            }).addTo(map);
 
-            } catch (err) {
-                console.error(err);
-                projectsContainer.innerHTML += `<p class="text-danger">Error loading project ${project.id}</p>`;
+            // Add project area if available
+            if (data.project.project_area) {
+                const wkt = new Wkt.Wkt();
+                wkt.read(data.project.project_area);
+                const layer = wkt.toObject({ color: 'blue', fillOpacity: 0.3 });
+                layer.addTo(map);
+                map.fitBounds(layer.getBounds());
             }
-        }
+        });
 
     } catch (err) {
         console.error(err);
-        projectsContainer.innerHTML = `<p class="text-danger">Error fetching projects: ${err.message}</p>`;
+        projectsContainer.innerHTML = `<p class="text-danger">Error loading projects</p>`;
+    }
+});
+
+// Event delegation for Create Trace buttons
+document.getElementById("projectsContainer").addEventListener("click", (e) => {
+    if (e.target.classList.contains("create-trace-btn")) {
+        const projectId = e.target.getAttribute("data-project-id");
+        alert(`Create Trace clicked for Project ${projectId}`);
+        // Later: call the POST /projects/{id}/traces endpoint
     }
 });
