@@ -36,6 +36,13 @@
     <link href="../css/styles.css" rel="stylesheet" />
   </head>
   <body id="page-top" class="bg-dark">
+    <!-- only show page if logged in -->
+    <script>
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        window.location.replace("./login.html");
+      }
+    </script>
     <!-- Navigation-->
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
