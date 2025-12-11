@@ -1,0 +1,14 @@
+.project-card { 
+    margin-bottom: 20px; 
+}
+.project-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.project-header { 
+    font-weight: bold; 
+}
+.project-section { 
+    margin-top: 40px; 
+}
