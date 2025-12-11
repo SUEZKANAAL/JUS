@@ -2,6 +2,7 @@
 // Variables
 // -------------------------
 let currentProjectId = null;
+let currentProjectName = "";
 let allProjects = [];       // original projects list
 let filteredProjects = [];  // filtered list for display
 
@@ -19,12 +20,11 @@ document.getElementById("loadProjectsBtn").addEventListener("click", async () =>
     projectsContainer.innerHTML = ""; // clear previous
 
     try {
-        // Fetch all projects
         const response = await fetch(`https://sue-fastapi.onrender.com/projects`, {
             headers: { "x-api-key": apiKey },
         });
         if (!response.ok) throw new Error("Failed to fetch projects");
-        const projects = await response.json(); // array of projects
+        const projects = await response.json();
 
         // Save projects for filtering
         allProjects = projects;
@@ -51,10 +51,12 @@ function renderProjects(projects) {
     projects.forEach(project => {
         const card = document.createElement("div");
         card.classList.add("project-card", "card");
+        const dateStr = project.created_at ? new Date(project.created_at).toLocaleDateString("nl-NL") : "Onbekend";
         card.innerHTML = `
             <div class="card-body">
                 <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
-                <p><strong>Traces:</strong> ${project.traces.length}</p>
+                <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+                <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
                 <button class="btn btn-primary mb-4 create-trace-btn" data-project-id="${project.id}">
                     Upload Trace
                 </button>
@@ -70,23 +72,26 @@ function renderProjects(projects) {
 function applyFilters() {
     let projects = [...allProjects];
 
-    // 🔍 Search filter
+    // Search filter
     const searchValue = document.getElementById("searchInput").value.toLowerCase().replaceAll(" ","_");
     if (searchValue) {
         projects = projects.filter(p => p.project_name.toLowerCase().includes(searchValue));
     }
 
-    // 📅 Optional date filter (safe even if inputs don't exist)
+    // Date range filter
     const dateFromEl = document.getElementById("dateFrom");
     const dateToEl = document.getElementById("dateTo");
+
     if (dateFromEl && dateFromEl.value) {
-        projects = projects.filter(p => p.created_at && new Date(p.created_at) >= new Date(dateFromEl.value));
+        const fromDate = new Date(dateFromEl.value);
+        projects = projects.filter(p => p.created_at && new Date(p.created_at) >= fromDate);
     }
     if (dateToEl && dateToEl.value) {
-        projects = projects.filter(p => p.created_at && new Date(p.created_at) <= new Date(dateToEl.value));
+        const toDate = new Date(dateToEl.value);
+        projects = projects.filter(p => p.created_at && new Date(p.created_at) <= toDate);
     }
 
-    // 🔡 Sorting
+    // Sorting
     const sort = document.getElementById("sortSelect").value;
     if (sort === "nameAsc") {
         projects.sort((a, b) => a.project_name.localeCompare(b.project_name));
@@ -113,15 +118,33 @@ if (document.getElementById("dateTo")) document.getElementById("dateTo").addEven
 // -------------------------
 // Open Trace Modal (Event Delegation)
 // -------------------------
+
+// -------------------------
+// Open Trace Modal (Event Delegation)
+// -------------------------
 document.getElementById("projectsContainer").addEventListener("click", (e) => {
     const btn = e.target.closest(".create-trace-btn");
     if (!btn) return;
 
     currentProjectId = btn.getAttribute("data-project-id");
-    document.getElementById("traceModal").style.display = "flex";
+
+    // Find selected project from allProjects
+    const project = allProjects.find(p => p.id == currentProjectId);
+    const projectName = project ? project.project_name.replaceAll("_", " ") : "Onbekend";
+
+    // Show modal
+    const modal = document.getElementById("traceModal");
+    modal.style.display = "flex";
+
+    // Update project name in modal
+    const projectNameEl = document.getElementById("traceModalProjectName");
+    if (projectNameEl) projectNameEl.innerText = `Project: ${projectName}`;
+
+    // Clear previous entries and start fresh
     document.getElementById("traceEntriesContainer").innerHTML = "";
-    addTraceEntry(); // start with one entry
+    addTraceEntry();
 });
+
 
 // -------------------------
 // Close Modal
@@ -163,15 +186,15 @@ function addTraceEntry() {
     div.style.marginBottom = "10px";
     div.innerHTML = `
         <div>
-            <label>Name:</label>
+            <label>Trace Naam:</label>
             <input type="text" class="trace-name form-control" required/>
         </div>
         <div>
-            <label>Description:</label>
+            <label>Omschrijving:</label>
             <textarea class="trace-desc form-control" required></textarea>
         </div>
         <div>
-            <label>GeoJSON File:</label>
+            <label>GeoJSON Bestand:</label>
             <input type="file" class="trace-geojson" accept=".json,.geojson" required/>
         </div>
         <button type="button" class="btn btn-danger btn-sm remove-trace-entry mt-2">Remove</button>
