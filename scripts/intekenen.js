@@ -218,305 +218,305 @@ function toWKT(layer) {
     }
 }
 
-// Function to download GeoJSON
-function downloadGeoJSON() {
-    var projectgebiedWKT = null;
-    var startEindPuntWKT = [];
-    var nogoZonesWKT = [];
-    var hulplijnenWKT = [];
-    var boorlijnenWKT = [];
+// // Function to download GeoJSON
+// function downloadGeoJSON() {
+//     var projectgebiedWKT = null;
+//     var startEindPuntWKT = [];
+//     var nogoZonesWKT = [];
+//     var hulplijnenWKT = [];
+//     var boorlijnenWKT = [];
 
-    drawnItems.eachLayer(function (layer) {
-        var wkt = toWKT(layer);
-        if (layer.type === "projectgebiedWKT") {
-            projectgebiedWKT = wkt;
-        } else if (layer.type === "startEindPuntWKT") {
-            startEindPuntWKT.push(wkt);
-        } else if (layer.type === "nogoZonesWKT") {
-            nogoZonesWKT.push(wkt);
-        } else if (layer.type === "hulplijnenWKT") {
-            hulplijnenWKT.push(wkt);
-        } else if (layer.type === "boorlijnenWKT") {
-            boorlijnenWKT.push(wkt);
-        }
-    });
+//     drawnItems.eachLayer(function (layer) {
+//         var wkt = toWKT(layer);
+//         if (layer.type === "projectgebiedWKT") {
+//             projectgebiedWKT = wkt;
+//         } else if (layer.type === "startEindPuntWKT") {
+//             startEindPuntWKT.push(wkt);
+//         } else if (layer.type === "nogoZonesWKT") {
+//             nogoZonesWKT.push(wkt);
+//         } else if (layer.type === "hulplijnenWKT") {
+//             hulplijnenWKT.push(wkt);
+//         } else if (layer.type === "boorlijnenWKT") {
+//             boorlijnenWKT.push(wkt);
+//         }
+//     });
 
-    // Validate if necessary layers exist
-    if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Fout',
-            text: 'Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.',
-            confirmButtonText: 'Ok'
-        });
-        return;
-    }
+//     // Validate if necessary layers exist
+//     if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Fout',
+//             text: 'Het tekenen van een projectgebied en op zijn minst één start en één eindpunt is verplicht.',
+//             confirmButtonText: 'Ok'
+//         });
+//         return;
+//     }
 
-    // Ask for project name via SweetAlert modal
-    Swal.fire({
-        title: 'Projectinformatie invoeren',
-        width: '600px',
-        html: `
-        <style>
-            .form-container {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                max-width: 1600px;
-                margin: 0 auto;
-            }
-            .form-row {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            }
-            .form-row label {
-                flex: 3;
-                margin-right: 10px;
-                text-align: left;
-            }
-            .form-row input[type="range"] {
-                flex: 3;
-                margin: 0 10px;
-            }
-            .form-row span {
-                width: 40px;
-                text-align: center;
-            }
-            .swal2-input {
-                width: 100%;
-                margin-bottom: 10px;
-                padding: 8px;
-                box-sizing: border-box;
-            }
-        </style>
-        <div class="form-container">
-            <div class="form-row">
-                <label for="projectName">Projectnaam:</label>
-            </div>
-            <div class="form-row">
-                <input id="projectName" class="swal2-input" placeholder="Projectnaam...">
-            </div>
-            <div class="form-row">
-                <label for="projectNumber">Projectnummer:</label>
-            </div>
-            <div class="form-row">
-                <input id="projectNumber" class="swal2-input" placeholder="Projectnummer...">
-            </div>
-            <div class="form-row">
-                <label for="klicFile">KLIC-bestand:</label>
-                </div>
-                <div class="form-row">
-                <select id="klicFile" class="swal2-input">
-                    <option value="zelf opsturen">Zelf opsturen</option>
-                    <option value="aanvragen">Aanvragen</option>
-                </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <label for="PrivaatBedrijfWegen">Privaat en bedrijf wegen:</label>
-                </div>
-                <div class="form-row">
-                <select id="PrivaatBedrijfWegen" class="swal2-input">
-                    <option value="false">Niet gebruiken</option>
-                    <option value="true">Wel gebruiken</option>
-                </select>
-                </div>
-            </div>
-            <div>
-            <div class="form-row">
-                <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
-            </div>
-            <div class="form-row">
-                <input id="geulbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
-            </div>
+//     // Ask for project name via SweetAlert modal
+//     Swal.fire({
+//         title: 'Projectinformatie invoeren',
+//         width: '600px',
+//         html: `
+//         <style>
+//             .form-container {
+//                 display: flex;
+//                 flex-direction: column;
+//                 align-items: stretch;
+//                 max-width: 1600px;
+//                 margin: 0 auto;
+//             }
+//             .form-row {
+//                 display: flex;
+//                 align-items: center;
+//                 justify-content: space-between;
+//                 margin-bottom: 10px;
+//             }
+//             .form-row label {
+//                 flex: 3;
+//                 margin-right: 10px;
+//                 text-align: left;
+//             }
+//             .form-row input[type="range"] {
+//                 flex: 3;
+//                 margin: 0 10px;
+//             }
+//             .form-row span {
+//                 width: 40px;
+//                 text-align: center;
+//             }
+//             .swal2-input {
+//                 width: 100%;
+//                 margin-bottom: 10px;
+//                 padding: 8px;
+//                 box-sizing: border-box;
+//             }
+//         </style>
+//         <div class="form-container">
+//             <div class="form-row">
+//                 <label for="projectName">Projectnaam:</label>
+//             </div>
+//             <div class="form-row">
+//                 <input id="projectName" class="swal2-input" placeholder="Projectnaam...">
+//             </div>
+//             <div class="form-row">
+//                 <label for="projectNumber">Projectnummer:</label>
+//             </div>
+//             <div class="form-row">
+//                 <input id="projectNumber" class="swal2-input" placeholder="Projectnummer...">
+//             </div>
+//             <div class="form-row">
+//                 <label for="klicFile">KLIC-bestand:</label>
+//                 </div>
+//                 <div class="form-row">
+//                 <select id="klicFile" class="swal2-input">
+//                     <option value="zelf opsturen">Zelf opsturen</option>
+//                     <option value="aanvragen">Aanvragen</option>
+//                 </select>
+//                 </div>
+//             </div>
+//             <div class="form-row">
+//                 <label for="PrivaatBedrijfWegen">Privaat en bedrijf wegen:</label>
+//                 </div>
+//                 <div class="form-row">
+//                 <select id="PrivaatBedrijfWegen" class="swal2-input">
+//                     <option value="false">Niet gebruiken</option>
+//                     <option value="true">Wel gebruiken</option>
+//                 </select>
+//                 </div>
+//             </div>
+//             <div>
+//             <div class="form-row">
+//                 <label for="geulbreedte">Geulbreedte (max 10 meter):</label>
+//             </div>
+//             <div class="form-row">
+//                 <input id="geulbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8">
+//             </div>
             
-            <div class="form-row">
-                <label for="geslotenVerharding">Gesloten verharding:</label>
-                <input id="geslotenVerharding" type="range" min="0" max="100" value="34" step="1" 
-                    oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value">
-                <span id="geslotenVerhardingValue">34</span>%
-            </div>
-            <div class="form-row">
-                <label for="openVerharding">Open verharding:</label>
-                <input id="openVerharding" type="range" min="0" max="100" value="15" step="1" 
-                    oninput="document.getElementById('openVerhardingValue').textContent = this.value">
-                <span id="openVerhardingValue">15</span>%
-            </div>
-            <div class="form-row">
-                <label for="halfVerhard">Half verhard:</label>
-                <input id="halfVerhard" type="range" min="0" max="100" value="10" step="1" 
-                    oninput="document.getElementById('halfVerhardValue').textContent = this.value">
-                <span id="halfVerhardValue">10</span>%
-            </div>
-            <div class="form-row">
-                <label for="onverhard">Onverhard:</label>
-                <input id="onverhard" type="range" min="0" max="100" value="8" step="1" 
-                    oninput="document.getElementById('onverhardValue').textContent = this.value">
-                <span id="onverhardValue">8</span>%
-            </div>
-            <div class="form-row">
-                <label for="groenvoorzieningLaag">Groenvoorziening<br>(gras/lage beplanting):</label>
-                <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
-                    oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
-                <span id="groenvoorzieningLaagValue">8</span>%
-            </div>
-            <div class="form-row">
-                <label for="groenvoorzieningHoog">Groenvoorziening<br>(heesters/struiken):</label>
-                <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
-                    oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
-                <span id="groenvoorzieningHoogValue">12</span>%
-            </div>
-            <div class="form-row">
-                <label for="groenvoorzieningBos">Groenvoorziening<br>(bebossing):</label>
-                <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
-                    oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
-                <span id="groenvoorzieningBosValue">12</span>%
-            </div>
-            <div class="form-row">
-                <label for="nogo">Moeilijk Begaanbaar:</label>
-                <input id="nogo" type="range" min="0" max="100" value="4" step="1" 
-                    oninput="document.getElementById('nogoValue').textContent = this.value">
-                <span id="nogoValue">4</span>%
-            </div>
-            <div class="form-row">
-                <label for="klicDrukte">KLIC (kabeldrukte):</label>
-                <input id="klicDrukte" type="range" min="0" max="100" value="40" step="1" 
-                    oninput="document.getElementById('klicDrukteValue').textContent = this.value">
-                <span id="klicDrukteValue">40</span>%
-            </div>
-           <div class="form-row">
-                <label for="waterkering">Waterkering:</label>
-                <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
-                    oninput="document.getElementById('waterkeringValue').textContent = this.value">
-                <span id="waterkeringValue">45</span>%
-            </div>
-            <div class="form-row">
-                <label for="natura2000">Natura2000:</label>
-                <input id="natura2000" type="range" min="0" max="100" value="45" step="1" 
-                    oninput="document.getElementById('natura2000Value').textContent = this.value">
-                <span id="natura2000Value">45</span>%
-            </div>
-            <div class="form-row">
-                <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
-                <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
-                    oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
-                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>m
-            </div>
-            <div class="form-row">
-                <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
-                <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
-                    oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
-                <span id="GasHogeDrukValue">0.6</span>m
-            </div>
-             <div class="form-row">
-                <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
-                <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
-                    oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
-                <span id="GasLageDrukValue">0.6</span>m
-            </div>
-            <div class="form-row">
-                <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
-                <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
-                    oninput="document.getElementById('HoogspanningValue').textContent = this.value">
-                <span id="HoogspanningValue">0.6</span>m
-            </div>
-        </div>
-    `,
-        showCancelButton: true,
-        cancelButtonText: 'Annuleren',
-        confirmButtonText: 'Opslaan',
-        preConfirm: () => {
-            const projectName = document.getElementById('projectName').value.trim();
-            const projectNumber = document.getElementById('projectNumber').value.trim();
-            if (!projectName || !projectNumber) {
-                Swal.showValidationMessage('Projectnaamen Projectnummer zijn verplicht!');
-                return null;
-            }
+//             <div class="form-row">
+//                 <label for="geslotenVerharding">Gesloten verharding:</label>
+//                 <input id="geslotenVerharding" type="range" min="0" max="100" value="34" step="1" 
+//                     oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value">
+//                 <span id="geslotenVerhardingValue">34</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="openVerharding">Open verharding:</label>
+//                 <input id="openVerharding" type="range" min="0" max="100" value="15" step="1" 
+//                     oninput="document.getElementById('openVerhardingValue').textContent = this.value">
+//                 <span id="openVerhardingValue">15</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="halfVerhard">Half verhard:</label>
+//                 <input id="halfVerhard" type="range" min="0" max="100" value="10" step="1" 
+//                     oninput="document.getElementById('halfVerhardValue').textContent = this.value">
+//                 <span id="halfVerhardValue">10</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="onverhard">Onverhard:</label>
+//                 <input id="onverhard" type="range" min="0" max="100" value="8" step="1" 
+//                     oninput="document.getElementById('onverhardValue').textContent = this.value">
+//                 <span id="onverhardValue">8</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="groenvoorzieningLaag">Groenvoorziening<br>(gras/lage beplanting):</label>
+//                 <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
+//                     oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
+//                 <span id="groenvoorzieningLaagValue">8</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="groenvoorzieningHoog">Groenvoorziening<br>(heesters/struiken):</label>
+//                 <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
+//                     oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
+//                 <span id="groenvoorzieningHoogValue">12</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="groenvoorzieningBos">Groenvoorziening<br>(bebossing):</label>
+//                 <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
+//                     oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
+//                 <span id="groenvoorzieningBosValue">12</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="nogo">Moeilijk Begaanbaar:</label>
+//                 <input id="nogo" type="range" min="0" max="100" value="4" step="1" 
+//                     oninput="document.getElementById('nogoValue').textContent = this.value">
+//                 <span id="nogoValue">4</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="klicDrukte">KLIC (kabeldrukte):</label>
+//                 <input id="klicDrukte" type="range" min="0" max="100" value="40" step="1" 
+//                     oninput="document.getElementById('klicDrukteValue').textContent = this.value">
+//                 <span id="klicDrukteValue">40</span>%
+//             </div>
+//            <div class="form-row">
+//                 <label for="waterkering">Waterkering:</label>
+//                 <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
+//                     oninput="document.getElementById('waterkeringValue').textContent = this.value">
+//                 <span id="waterkeringValue">45</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="natura2000">Natura2000:</label>
+//                 <input id="natura2000" type="range" min="0" max="100" value="45" step="1" 
+//                     oninput="document.getElementById('natura2000Value').textContent = this.value">
+//                 <span id="natura2000Value">45</span>%
+//             </div>
+//             <div class="form-row">
+//                 <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
+//                 <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
+//                     oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
+//                 <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>m
+//             </div>
+//             <div class="form-row">
+//                 <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
+//                 <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+//                     oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
+//                 <span id="GasHogeDrukValue">0.6</span>m
+//             </div>
+//              <div class="form-row">
+//                 <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
+//                 <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+//                     oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
+//                 <span id="GasLageDrukValue">0.6</span>m
+//             </div>
+//             <div class="form-row">
+//                 <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
+//                 <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
+//                     oninput="document.getElementById('HoogspanningValue').textContent = this.value">
+//                 <span id="HoogspanningValue">0.6</span>m
+//             </div>
+//         </div>
+//     `,
+//         showCancelButton: true,
+//         cancelButtonText: 'Annuleren',
+//         confirmButtonText: 'Opslaan',
+//         preConfirm: () => {
+//             const projectName = document.getElementById('projectName').value.trim();
+//             const projectNumber = document.getElementById('projectNumber').value.trim();
+//             if (!projectName || !projectNumber) {
+//                 Swal.showValidationMessage('Projectnaamen Projectnummer zijn verplicht!');
+//                 return null;
+//             }
 
-            return {
-                projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                klicFile: document.getElementById('klicFile').value,
-                PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
-                geulbreedte: document.getElementById('geulbreedte').value,
-                geslotenVerharding: document.getElementById('geslotenVerharding').value,
-                openVerharding: document.getElementById('openVerharding').value,
-                halfVerhard: document.getElementById('halfVerhard').value,
-                onverhard: document.getElementById('onverhard').value,
-                groenvoorzieningLaag: document.getElementById('groenvoorzieningLaag').value,
-                groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog').value,
-                groenvoorzieningBos: document.getElementById('groenvoorzieningBos').value,
-                nogo: document.getElementById('nogo').value,
-                klicDrukte: document.getElementById('klicDrukte').value,
-                waterkering: document.getElementById('waterkering').value,
-                natura2000: document.getElementById('natura2000').value,
-                BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
-                GasHogeDruk: document.getElementById('GasHogeDruk').value,
-                GasLageDruk: document.getElementById('GasLageDruk').value,
-                Hoogspanning: document.getElementById('Hoogspanning').value,
-            };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // generate json and tigger download
-            const data = result.value;
+//             return {
+//                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
+//                 projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
+//                 klicFile: document.getElementById('klicFile').value,
+//                 PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
+//                 geulbreedte: document.getElementById('geulbreedte').value,
+//                 geslotenVerharding: document.getElementById('geslotenVerharding').value,
+//                 openVerharding: document.getElementById('openVerharding').value,
+//                 halfVerhard: document.getElementById('halfVerhard').value,
+//                 onverhard: document.getElementById('onverhard').value,
+//                 groenvoorzieningLaag: document.getElementById('groenvoorzieningLaag').value,
+//                 groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog').value,
+//                 groenvoorzieningBos: document.getElementById('groenvoorzieningBos').value,
+//                 nogo: document.getElementById('nogo').value,
+//                 klicDrukte: document.getElementById('klicDrukte').value,
+//                 waterkering: document.getElementById('waterkering').value,
+//                 natura2000: document.getElementById('natura2000').value,
+//                 BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud').value,
+//                 GasHogeDruk: document.getElementById('GasHogeDruk').value,
+//                 GasLageDruk: document.getElementById('GasLageDruk').value,
+//                 Hoogspanning: document.getElementById('Hoogspanning').value,
+//             };
+//         }
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             // generate json and tigger download
+//             const data = result.value;
 
-            // Create GeoJSON data
-            var geoJSONData = {
-                projectName : data.projectName + '_' + data.projectNumber,
-                geulbreedte: data.geulbreedte,
-                projectgebiedWKT: projectgebiedWKT,
-                startEindPuntWKT: startEindPuntWKT,
-                nogoZonesWKT: nogoZonesWKT,
-                hulplijnenWKT: hulplijnenWKT,
-                boorlijnenWKT: boorlijnenWKT,
-                klicFile: data.klicFile,
-                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
-                geslotenVerharding: data.geslotenVerharding,
-                openVerharding: data.openVerharding,
-                halfVerhard: data.halfVerhard,
-                onverhard: data.onverhard,
-                groenvoorzieningLaag: data.groenvoorzieningLaag,
-                groenvoorzieningHoog: data.groenvoorzieningHoog,
-                groenvoorzieningBos: data.groenvoorzieningBos,
-                nogo: data.nogo,
-                klicDrukte: data.klicDrukte,
-                waterkering: data.waterkering,
-                natura2000: data.natura2000,
-                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
-                GasHogeDruk: data.GasHogeDruk,
-                GasLageDruk: data.GasLageDruk,
-                Hoogspanning: data.Hoogspanning,                
-            };
+//             // Create GeoJSON data
+//             var geoJSONData = {
+//                 projectName : data.projectName + '_' + data.projectNumber,
+//                 geulbreedte: data.geulbreedte,
+//                 projectgebiedWKT: projectgebiedWKT,
+//                 startEindPuntWKT: startEindPuntWKT,
+//                 nogoZonesWKT: nogoZonesWKT,
+//                 hulplijnenWKT: hulplijnenWKT,
+//                 boorlijnenWKT: boorlijnenWKT,
+//                 klicFile: data.klicFile,
+//                 PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
+//                 geslotenVerharding: data.geslotenVerharding,
+//                 openVerharding: data.openVerharding,
+//                 halfVerhard: data.halfVerhard,
+//                 onverhard: data.onverhard,
+//                 groenvoorzieningLaag: data.groenvoorzieningLaag,
+//                 groenvoorzieningHoog: data.groenvoorzieningHoog,
+//                 groenvoorzieningBos: data.groenvoorzieningBos,
+//                 nogo: data.nogo,
+//                 klicDrukte: data.klicDrukte,
+//                 waterkering: data.waterkering,
+//                 natura2000: data.natura2000,
+//                 BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+//                 GasHogeDruk: data.GasHogeDruk,
+//                 GasLageDruk: data.GasLageDruk,
+//                 Hoogspanning: data.Hoogspanning,                
+//             };
 
-            // Create a Blob with the GeoJSON data
-            var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
-                type: "application/json",
-            });
+//             // Create a Blob with the GeoJSON data
+//             var blob = new Blob([JSON.stringify(geoJSONData, null, 2)], {
+//                 type: "application/json",
+//             });
 
-            // Download the file
-            saveAs(blob, data.projectName + '_' + data.projectNumber + ".json");
+//             // Download the file
+//             saveAs(blob, data.projectName + '_' + data.projectNumber + ".json");
 
-            // Show success message and ask if the user wants to send the JSON by email
-            Swal.fire({
-                icon: 'success',
-                title: 'Bestand gedownload!',
-                text: 'Het GeoJSON-bestand is succesvol gedownload.',
-                showCancelButton: true,
-                cancelButtonText: 'Annuleren',
-                confirmButtonText: 'Verstuur via e-mail',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Open a modal to send the email
-                    emailBody = generateEmailBody(data);
-                    sendEmailWithAttachment(data.projectName, blob, emailBody);
-                }
-            });
-        }
-    });
-}
+//             // Show success message and ask if the user wants to send the JSON by email
+//             Swal.fire({
+//                 icon: 'success',
+//                 title: 'Bestand gedownload!',
+//                 text: 'Het GeoJSON-bestand is succesvol gedownload.',
+//                 showCancelButton: true,
+//                 cancelButtonText: 'Annuleren',
+//                 confirmButtonText: 'Verstuur via e-mail',
+//             }).then((result) => {
+//                 if (result.isConfirmed) {
+//                     // Open a modal to send the email
+//                     emailBody = generateEmailBody(data);
+//                     sendEmailWithAttachment(data.projectName, blob, emailBody);
+//                 }
+//             });
+//         }
+//     });
+// }
 
 function generateEmailBody(data) {
     return `
@@ -550,6 +550,294 @@ function generateEmailBody(data) {
         `.replace(/\n/g, "%0A");
 }
 
+// Function to send GeoJSON via API POST request
+function sendAPIPostRequest() {
+    let projectgebiedWKT = null;
+    let startEindPuntWKT = [];
+    let nogoZonesWKT = [];
+    let hulplijnenWKT = [];
+    let boorlijnenWKT = [];
+
+    drawnItems.eachLayer(layer => {
+        const wkt = toWKT(layer);
+        switch(layer.type) {
+            case "projectgebiedWKT":
+                projectgebiedWKT = wkt;
+                break;
+            case "startEindPuntWKT":
+                startEindPuntWKT.push(wkt);
+                break;
+            case "nogoZonesWKT":
+                nogoZonesWKT.push(wkt);
+                break;
+            case "hulplijnenWKT":
+                hulplijnenWKT.push(wkt);
+                break;
+            case "boorlijnenWKT":
+                boorlijnenWKT.push(wkt);
+                break;
+        }
+    });
+
+    // Validate required layers
+    if (!projectgebiedWKT || startEindPuntWKT.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fout',
+            text: 'Het tekenen van een projectgebied en minimaal één start- en eindpunt is verplicht.',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
+
+    // SweetAlert modal for project info
+    Swal.fire({
+        title: 'Projectinformatie invoeren',
+        width: '600px',
+        html: `
+        <style>
+            .form-container { display: flex; flex-direction: column; align-items: stretch; max-width: 1600px; margin: 0 auto; }
+            .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+            .form-row label { flex: 3; margin-right: 10px; text-align: left; }
+            .form-row input[type="range"] { flex: 3; margin: 0 10px; }
+            .form-row span { width: 40px; text-align: center; }
+            .swal2-input { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
+        </style>
+        <div class="form-container">
+            <div class="form-row"><label for="apiKey">API Key:</label></div>
+            <div class="form-row"><input id="apiKey" type="password" class="swal2-input" placeholder="Voer API key in..."></div>
+
+            <div class="form-row"><label for="projectName">Projectnaam:</label></div>
+            <div class="form-row"><input id="projectName" class="swal2-input" placeholder="Projectnaam..."></div>
+
+            <div class="form-row"><label for="projectNumber">Projectnummer:</label></div>
+            <div class="form-row"><input id="projectNumber" class="swal2-input" placeholder="Projectnummer..."></div>
+
+            <div class="form-row"><label for="klicFile">KLIC-bestand:</label></div>
+            <div class="form-row">
+                <select id="klicFile" class="swal2-input">
+                    <option value="zelf opsturen">Zelf opsturen</option>
+                    <option value="aanvragen">Aanvragen</option>
+                </select>
+            </div>
+
+            <div class="form-row"><label for="PrivaatBedrijfWegen">Privaat en bedrijf wegen:</label></div>
+            <div class="form-row">
+                <select id="PrivaatBedrijfWegen" class="swal2-input">
+                    <option value="false">Niet gebruiken</option>
+                    <option value="true">Wel gebruiken</option>
+                </select>
+            </div>
+
+            <div class="form-row"><label for="geulbreedte">Geulbreedte (max 10 meter):</label></div>
+            <div class="form-row"><input id="geulbreedte" type="number" class="swal2-input" step="0.1" max="10" value="0.8"></div>
+
+            <div class="form-row">
+                <label for="geslotenVerharding">Gesloten verharding:</label>
+                <input id="geslotenVerharding" type="range" min="0" max="100" value="34" step="1" 
+                    oninput="document.getElementById('geslotenVerhardingValue').textContent = this.value">
+                <span id="geslotenVerhardingValue">34</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="openVerharding">Open verharding:</label>
+                <input id="openVerharding" type="range" min="0" max="100" value="15" step="1" 
+                    oninput="document.getElementById('openVerhardingValue').textContent = this.value">
+                <span id="openVerhardingValue">15</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="halfVerhard">Half verhard:</label>
+                <input id="halfVerhard" type="range" min="0" max="100" value="10" step="1" 
+                    oninput="document.getElementById('halfVerhardValue').textContent = this.value">
+                <span id="halfVerhardValue">10</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="onverhard">Onverhard:</label>
+                <input id="onverhard" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('onverhardValue').textContent = this.value">
+                <span id="onverhardValue">8</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="groenvoorzieningLaag">Groenvoorziening (gras/lage beplanting):</label>
+                <input id="groenvoorzieningLaag" type="range" min="0" max="100" value="8" step="1" 
+                    oninput="document.getElementById('groenvoorzieningLaagValue').textContent = this.value">
+                <span id="groenvoorzieningLaagValue">8</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="groenvoorzieningHoog">Groenvoorziening (heesters/struiken):</label>
+                <input id="groenvoorzieningHoog" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningHoogValue').textContent = this.value">
+                <span id="groenvoorzieningHoogValue">12</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="groenvoorzieningBos">Groenvoorziening (bebossing):</label>
+                <input id="groenvoorzieningBos" type="range" min="0" max="100" value="12" step="1" 
+                    oninput="document.getElementById('groenvoorzieningBosValue').textContent = this.value">
+                <span id="groenvoorzieningBosValue">12</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="nogo">Moeilijk Begaanbaar:</label>
+                <input id="nogo" type="range" min="0" max="100" value="4" step="1" 
+                    oninput="document.getElementById('nogoValue').textContent = this.value">
+                <span id="nogoValue">4</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="klicDrukte">KLIC (kabeldrukte):</label>
+                <input id="klicDrukte" type="range" min="0" max="100" value="40" step="1" 
+                    oninput="document.getElementById('klicDrukteValue').textContent = this.value">
+                <span id="klicDrukteValue">40</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="waterkering">Waterkering:</label>
+                <input id="waterkering" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('waterkeringValue').textContent = this.value">
+                <span id="waterkeringValue">45</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="natura2000">Natura2000:</label>
+                <input id="natura2000" type="range" min="0" max="100" value="45" step="1" 
+                    oninput="document.getElementById('natura2000Value').textContent = this.value">
+                <span id="natura2000Value">45</span>%
+            </div>
+
+            <div class="form-row">
+                <label for="BuisLeidingGevaarlijkeInhoud">Afstand tot Buisleiding Gevaarlijke inhoud:</label>
+                <input id="BuisLeidingGevaarlijkeInhoud" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('BuisLeidingGevaarlijkeInhoudValue').textContent = this.value">
+                <span id="BuisLeidingGevaarlijkeInhoudValue">0.6</span>m
+            </div>
+
+            <div class="form-row">
+                <label for="GasHogeDruk">Afstand tot Gas Hoge Druk:</label>
+                <input id="GasHogeDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasHogeDrukValue').textContent = this.value">
+                <span id="GasHogeDrukValue">0.6</span>m
+            </div>
+
+            <div class="form-row">
+                <label for="GasLageDruk">Afstand tot Gas Lage Druk:</label>
+                <input id="GasLageDruk" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('GasLageDrukValue').textContent = this.value">
+                <span id="GasLageDrukValue">0.6</span>m
+            </div>
+
+            <div class="form-row">
+                <label for="Hoogspanning">Afstand tot Hoogspanning:</label>
+                <input id="Hoogspanning" type="range" min="0" max="10" value="0.6" step="0.1" 
+                    oninput="document.getElementById('HoogspanningValue').textContent = this.value">
+                <span id="HoogspanningValue">0.6</span>m
+            </div>
+        </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Annuleren',
+        confirmButtonText: 'Verstuur naar server',
+        preConfirm: () => {
+            const projectName = document.getElementById('projectName').value.trim();
+            const projectNumber = document.getElementById('projectNumber').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!projectName || !projectNumber || !apiKey) {
+                Swal.showValidationMessage('Projectnaam, Projectnummer en API Key zijn verplicht!');
+                return null;
+            }
+
+            // Collect all form data
+            return {
+                    projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                    projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                    apiKey: apiKey,
+                    klicFile: document.getElementById('klicFile').value,
+                    PrivaatBedrijfWegen: document.getElementById('PrivaatBedrijfWegen').value,
+                    geulbreedte: document.getElementById('geulbreedte').value,
+                    geslotenVerharding: document.getElementById('geslotenVerharding')?.value || 0,
+                    openVerharding: document.getElementById('openVerharding')?.value || 0,
+                    halfVerhard: document.getElementById('halfVerhard')?.value || 0,
+                    onverhard: document.getElementById('onverhard')?.value || 0,
+                    groenvoorzieningLaag: document.getElementById('groenvoorzieningLaag')?.value || 0,
+                    groenvoorzieningHoog: document.getElementById('groenvoorzieningHoog')?.value || 0,
+                    groenvoorzieningBos: document.getElementById('groenvoorzieningBos')?.value || 0,
+                    nogo: document.getElementById('nogo')?.value || 0,
+                    klicDrukte: document.getElementById('klicDrukte')?.value || 0,
+                    waterkering: document.getElementById('waterkering')?.value || 0,
+                    natura2000: document.getElementById('natura2000')?.value || 0,
+                    BuisLeidingGevaarlijkeInhoud: document.getElementById('BuisLeidingGevaarlijkeInhoud')?.value || 0,
+                    GasHogeDruk: document.getElementById('GasHogeDruk')?.value || 0,
+                    GasLageDruk: document.getElementById('GasLageDruk')?.value || 0,
+                    Hoogspanning: document.getElementById('Hoogspanning')?.value || 0
+                };
+        }
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
+        const data = result.value;
+
+        const geoJSONData = {
+                projectName: data.projectName + '_' + data.projectNumber,
+                geulbreedte: data.geulbreedte,
+                projectgebiedWKT,
+                startEindPuntWKT,
+                nogoZonesWKT,
+                hulplijnenWKT,
+                boorlijnenWKT,
+                klicFile: data.klicFile,
+                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
+                geslotenVerharding: data.geslotenVerharding,
+                openVerharding: data.openVerharding,
+                halfVerhard: data.halfVerhard,
+                onverhard: data.onverhard,
+                groenvoorzieningLaag: data.groenvoorzieningLaag,
+                groenvoorzieningHoog: data.groenvoorzieningHoog,
+                groenvoorzieningBos: data.groenvoorzieningBos,
+                nogo: data.nogo,
+                klicDrukte: data.klicDrukte,
+                waterkering: data.waterkering,
+                natura2000: data.natura2000,
+                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+                GasHogeDruk: data.GasHogeDruk,
+                GasLageDruk: data.GasLageDruk,
+                Hoogspanning: data.Hoogspanning
+            };
+
+        try {
+            const response = await fetch('https://sue-fastapi.onrender.com/create-project', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': data.apiKey
+                },
+                body: JSON.stringify(geoJSONData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Er is een fout opgetreden bij het verzenden van het project.');
+            }
+
+            const resultData = await response.json();
+            Swal.fire({
+                icon: 'success',
+                title: 'Project succesvol aangemaakt!',
+                text: `Project ID: ${resultData.project_id}`
+            });
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Fout',
+                text: error.message
+            });
+        }
+    });
+}
+
 // Function to open an email modal
 function sendEmailWithAttachment(projectName, fileBlob, emailBody) {
     // Pre-fill email address
@@ -569,8 +857,11 @@ function sendEmailWithAttachment(projectName, fileBlob, emailBody) {
     fileReader.readAsDataURL(fileBlob);
 }
 
+// // Event listener to trigger downloadGeoJSON function
+// document.getElementById("downloadButton").addEventListener("click", downloadGeoJSON);
+
 // Event listener to trigger downloadGeoJSON function
-document.getElementById("downloadButton").addEventListener("click", downloadGeoJSON);
+document.getElementById("downloadButton").addEventListener("click", sendAPIPostRequest);
 
 // Handling popup close button (optional for visual purposes)
 document.getElementById("closePopup").addEventListener("click", function () {

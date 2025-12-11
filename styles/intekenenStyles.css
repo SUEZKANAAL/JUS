@@ -86,8 +86,9 @@ h1.navbar-brand a {
 
 #buttons #downloadButton {
     background-color: #ffb700;
-    /* Red */
 }
+
+
 
 #popup {
     display: none;
