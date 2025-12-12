@@ -38,7 +38,6 @@ async function fetchProjects() {
 
     // Render
     renderProjects(filteredProjects);
-
   } catch (err) {
     console.error(err);
     projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;
@@ -47,7 +46,6 @@ async function fetchProjects() {
     spinnerWrapper.style.display = "none";
   }
 }
-
 
 // -------------------------
 // Render Projects
@@ -76,11 +74,17 @@ function renderProjects(projects) {
 
     card.innerHTML = `
       <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
+        <h5 class="card-title text-center">${project.project_name.replaceAll(
+          "_",
+          " "
+        )}</h5>
         <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+        <p><strong>Rol:</strong> ${project.role}</p>
         <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
         ${uploadButtonHTML}
-        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${project.id}">
+        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${
+          project.id
+        }">
           Download Traces
         </button>
       </div>
@@ -88,7 +92,6 @@ function renderProjects(projects) {
     container.appendChild(card);
   });
 }
-
 
 // -------------------------
 // Apply Filters
