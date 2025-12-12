@@ -733,6 +733,86 @@ map.on('dblclick', function (evt) {
 });
 
 
+// add project data
+// Get project ID from URL query
+const urlParams = new URLSearchParams(window.location.search);
+const projectId = urlParams.get("project_id");
+
+if (projectId) {
+  const token = localStorage.getItem("accessToken");
+
+  fetch(`https://sue-fastapi.onrender.com/projects/${projectId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to fetch project");
+      return res.json();
+    })
+    .then((data) => {
+      const traces = data.traces || [];
+
+      traces.forEach((trace) => {
+        if (!trace.geometry) return; // Skip traces without geometry
+
+        const features = new ol.format.GeoJSON().readFeatures({
+          type: "FeatureCollection",
+          crs: { type: "name", properties: { name: "EPSG:28992" } },
+          features: [
+            {
+              type: "Feature",
+              id: trace.id,
+              geometry: trace.geometry,
+              properties: {
+                name: trace.name,
+                description: trace.description || "",
+              },
+            },
+          ],
+        }, {
+          dataProjection: "EPSG:28992",
+          featureProjection: map.getView().getProjection()
+        });
+
+        const vectorSource = new ol.source.Vector({ features });
+        const vectorLayer = new ol.layer.Vector({
+          source: vectorSource,
+          title: trace.name,
+          style: (feature) => getFeatureStyle(trace, feature, vectorSource)
+        });
+
+        // Add to default "Project Traces" group
+        if (!layerGroups["Project Traces"]) {
+          layerGroups["Project Traces"] = new ol.layer.Group({
+            layers: [],
+            title: "Project Traces",
+          });
+          map.addLayer(layerGroups["Project Traces"]);
+        }
+        layerGroups["Project Traces"].getLayers().push(vectorLayer);
+      });
+
+      // Zoom to all loaded traces
+      let combinedExtent = ol.extent.createEmpty();
+      Object.values(layerGroups).forEach(group => {
+        group.getLayers().forEach(layer => {
+          if (layer instanceof ol.layer.Vector) {
+            ol.extent.extend(combinedExtent, layer.getSource().getExtent());
+          }
+        });
+      });
+      if (isFinite(combinedExtent[0])) {
+        map.getView().fit(combinedExtent, { padding: [50,50,50,50], duration: 1000 });
+      }
+    })
+    .catch((err) => console.error("Error loading project traces:", err));
+}
+
+
+
 
 
 
