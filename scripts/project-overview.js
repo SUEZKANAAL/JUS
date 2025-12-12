@@ -92,12 +92,12 @@ function renderProjects(projects) {
         <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${
           project.id
         }">
-            Bekijk leden
+            Bekijk Leden
           </button>
           <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${
             project.id
           }">
-            Voeg lid toe
+            Voeg Lid Toe
           </button>
         <p>
         </p>
@@ -111,7 +111,7 @@ function renderProjects(projects) {
         <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${
           project.id
         }">
-          View Project
+          Bekijk Project
         </button>
       </div>
     `;
