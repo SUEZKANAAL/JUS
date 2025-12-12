@@ -231,6 +231,44 @@
     </div>
   </div>
 
+  <!-- modal to select and add a user -->
+  <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Voeg lid toe aan project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="user-search-input" class="form-control mb-2" placeholder="Zoek gebruiker">
+        <ul id="user-list" class="list-group"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Voeg lid toe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="newMemberUsername" class="form-control" placeholder="Username">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluit</button>
+        <button type="button" class="btn btn-primary" id="confirmAddMemberBtn">Voeg toe</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
   <!-- Scripts -->
   <script src="../js/scripts.js"></script>
 

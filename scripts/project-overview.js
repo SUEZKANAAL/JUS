@@ -6,6 +6,7 @@ let currentProjectName = "";
 let allProjects = []; // original projects list
 let filteredProjects = []; // filtered list for display
 
+
 // -------------------------
 // Fetch Projects
 // -------------------------
@@ -50,6 +51,8 @@ async function fetchProjects() {
 // -------------------------
 // Render Projects
 // -------------------------
+const addMemberModal = new bootstrap.Modal(document.getElementById("addMemberModal"));
+
 function renderProjects(projects) {
   const container = document.getElementById("projectsContainer");
   container.innerHTML = "";
@@ -59,6 +62,7 @@ function renderProjects(projects) {
   projects.forEach((project) => {
     const card = document.createElement("div");
     card.classList.add("project-card", "card");
+
     const dateStr = project.created_at
       ? new Date(project.created_at).toLocaleDateString("nl-NL")
       : "Onbekend";
@@ -73,44 +77,66 @@ function renderProjects(projects) {
     }
 
     card.innerHTML = `
-  <div class="card-body">
-    <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
-    <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
-    <p><strong>Rol:</strong> ${project.role}</p>
-    <p>
-      <strong>Aantal Leden:</strong> 
-      <span id="member-count-${project.id}">...</span>
-      <button class="btn btn-sm btn-primary mb-2 view-members-btn" data-project-id="${project.id}">
-        Bekijk leden
-      </button>
-    </p>
-    <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-    ${uploadButtonHTML}
-    <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${project.id}">
-      Download Traces
-    </button>
-  </div>
+      <div class="card-body">
+        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
+        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+        <p><strong>Rol:</strong> ${project.role}</p>
+        <p>
+          <strong>Aantal Leden:</strong> 
+          <span id="member-count-${project.id}">...</span>  
+        </p>
+        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${project.id}">
+            Bekijk leden
+          </button>
+          <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${project.id}">
+            Voeg lid toe
+          </button>
+        <p>
+        </p>
+        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
+        ${uploadButtonHTML}
+        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${project.id}">
+          Download Traces
+        </button>
+      </div>
     `;
+
     container.appendChild(card);
+
     // Fetch members count for this project
     fetchMembersCount(project.id);
-  });
-  // Attach click listeners to "view members" buttons
-  document.querySelectorAll(".view-members-btn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      const projectId = e.target.dataset.projectId;
-      await showMembersPopup(projectId);
-    });
+
+    // Attach click listener to "Bekijk leden" button
+    const viewBtn = card.querySelector(".view-members-btn");
+    if (viewBtn) {
+      viewBtn.addEventListener("click", async () => {
+        await showMembersPopup(project.id);
+      });
+    }
+
+    // Attach click listener to "Voeg lid toe" button
+    const addBtn = card.querySelector(".add-member-btn");
+    if (addBtn) {
+      addBtn.addEventListener("click", () => {
+        currentProjectId = project.id;
+        document.getElementById("newMemberUsername").value = "";
+        addMemberModal.show();
+      });
+    }
   });
 }
 
 
+// Get the amount of members in the group 
 async function fetchMembersCount(projectId) {
   const token = localStorage.getItem("accessToken");
   try {
-    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${projectId}/members`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `https://sue-fastapi.onrender.com/projects/${projectId}/members`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     if (!response.ok) throw new Error("Failed to fetch members");
 
     const members = await response.json();
@@ -125,14 +151,19 @@ async function fetchMembersCount(projectId) {
 async function showMembersPopup(projectId) {
   const token = localStorage.getItem("accessToken");
   try {
-    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${projectId}/members`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `https://sue-fastapi.onrender.com/projects/${projectId}/members`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     if (!response.ok) throw new Error("Failed to fetch members");
 
     const members = await response.json();
     const membersList = document.getElementById("membersList");
-    membersList.innerHTML = members.map(m => `<li class="list-group-item">${m.username} (${m.role})</li>`).join("");
+    membersList.innerHTML = members
+      .map((m) => `<li class="list-group-item">${m.username} (${m.role})</li>`)
+      .join("");
 
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById("membersModal"));
@@ -143,6 +174,36 @@ async function showMembersPopup(projectId) {
   }
 }
 
+// add members
+
+document.getElementById("confirmAddMemberBtn").addEventListener("click", async () => {
+  const username = document.getElementById("newMemberUsername").value.trim();
+  if (!username) return alert("Voer een username in!");
+
+  try {
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${currentProjectId}/add-user`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: username, role: "collaborator" })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || "Kon gebruiker niet toevoegen");
+
+    alert(`Gebruiker ${username} succesvol toegevoegd!`);
+    addMemberModal.hide();
+
+    // refresh members count
+    fetchMembersCount(currentProjectId);
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Er is iets misgegaan");
+  }
+});
 
 
 
