@@ -4,14 +4,14 @@
     flex-wrap: wrap;             /* wrap to next line */
     gap: 20px;                   /* spacing between cards */
     justify-content: center;     /* center the cards horizontally */
-    margin: 0 auto;              /* optional, ensures container is centered */
-    padding: 20px 0;             /* optional, add vertical spacing */
+    margin: 0 auto;
+    padding: 20px 0;
 }
 
 /* Each project card */
 .project-card {
-    flex: 0 1 calc(33.33% - 20px); /* 3 cards per row, minus gap */
-    max-width: 350px;              /* optional limit */
+    flex: 0 1 calc(33.33% - 20px); /* 3 cards per row on desktop */
+    max-width: 350px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border-radius: 12px;
     overflow: hidden;
@@ -72,4 +72,13 @@
   border-radius: 12px;
   text-align: center;
   box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Responsive: Mobile view (stack cards vertically) */
+@media (max-width: 767px) {
+    .project-card {
+        flex: 0 1 100%; /* Full width on mobile */
+        max-width: 100%;
+    }
 }
