@@ -6,7 +6,6 @@ let currentProjectName = "";
 let allProjects = []; // original projects list
 let filteredProjects = []; // filtered list for display
 
-
 // -------------------------
 // Fetch Projects
 // -------------------------
@@ -51,7 +50,9 @@ async function fetchProjects() {
 // -------------------------
 // Render Projects
 // -------------------------
-const addMemberModal = new bootstrap.Modal(document.getElementById("addMemberModal"));
+const addMemberModal = new bootstrap.Modal(
+  document.getElementById("addMemberModal")
+);
 
 function renderProjects(projects) {
   const container = document.getElementById("projectsContainer");
@@ -78,25 +79,39 @@ function renderProjects(projects) {
 
     card.innerHTML = `
       <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
+        <h5 class="card-title text-center">${project.project_name.replaceAll(
+          "_",
+          " "
+        )}</h5>
         <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
         <p><strong>Rol:</strong> ${project.role}</p>
         <p>
           <strong>Aantal Leden:</strong> 
           <span id="member-count-${project.id}">...</span>  
         </p>
-        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${project.id}">
+        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${
+          project.id
+        }">
             Bekijk leden
           </button>
-          <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${project.id}">
+          <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${
+            project.id
+          }">
             Voeg lid toe
           </button>
         <p>
         </p>
         <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
         ${uploadButtonHTML}
-        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${project.id}">
+        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${
+          project.id
+        }">
           Download Traces
+        </button>
+        <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${
+          project.id
+        }">
+          View Project
         </button>
       </div>
     `;
@@ -123,11 +138,20 @@ function renderProjects(projects) {
         addMemberModal.show();
       });
     }
+
+    // Attach click listener to "View Project" button
+    const viewProjectBtn = card.querySelector(".view-project-btn");
+    if (viewProjectBtn) {
+      viewProjectBtn.addEventListener("click", () => {
+        const projectId = viewProjectBtn.getAttribute("data-project-id");
+        // Open the viewer page and pass projectId as a query parameter
+        window.open(`/pages/viewer.html?project_id=${projectId}`, "_blank");
+      });
+    }
   });
 }
 
-
-// Get the amount of members in the group 
+// Get the amount of members in the group
 async function fetchMembersCount(projectId) {
   const token = localStorage.getItem("accessToken");
   try {
@@ -176,36 +200,40 @@ async function showMembersPopup(projectId) {
 
 // add members
 
-document.getElementById("confirmAddMemberBtn").addEventListener("click", async () => {
-  const username = document.getElementById("newMemberUsername").value.trim();
-  if (!username) return alert("Voer een username in!");
+document
+  .getElementById("confirmAddMemberBtn")
+  .addEventListener("click", async () => {
+    const username = document.getElementById("newMemberUsername").value.trim();
+    if (!username) return alert("Voer een username in!");
 
-  try {
-    const token = localStorage.getItem("accessToken");
-    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${currentProjectId}/add-user`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username: username, role: "collaborator" })
-    });
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(
+        `https://sue-fastapi.onrender.com/projects/${currentProjectId}/add-user`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username, role: "collaborator" }),
+        }
+      );
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "Kon gebruiker niet toevoegen");
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.detail || "Kon gebruiker niet toevoegen");
 
-    alert(`Gebruiker ${username} succesvol toegevoegd!`);
-    addMemberModal.hide();
+      alert(`Gebruiker ${username} succesvol toegevoegd!`);
+      addMemberModal.hide();
 
-    // refresh members count
-    fetchMembersCount(currentProjectId);
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Er is iets misgegaan");
-  }
-});
-
-
+      // refresh members count
+      fetchMembersCount(currentProjectId);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Er is iets misgegaan");
+    }
+  });
 
 // -------------------------
 // Apply Filters
