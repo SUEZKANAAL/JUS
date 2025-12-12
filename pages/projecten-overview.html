@@ -86,22 +86,20 @@
     </div>
   </nav>
 
-
   <!-- Page header -->
   <header class="masthead">
     <div class="container text-center">
       <h1 class="masthead-heading text-uppercase">Projecten</h1>
     </div>
   </header>
-  
-<!-- Loading Overlay -->
-<div id="loadingSpinnerWrapper">
-  <div class="spinner-box">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3">Projecten aan het laden...</p>
-  </div>
-</div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingSpinnerWrapper">
+    <div class="spinner-box">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3">Projecten aan het laden...</p>
+    </div>
+  </div>
 
   <!-- filter projects bar -->
   <div id="projectFilters" class="container mt-4"
@@ -210,6 +208,26 @@
         Project: Onbekend
       </p>
       <div id="downloadTraceList"></div>
+    </div>
+  </div>
+
+  <!-- Members Modal -->
+  <div class="modal fade" id="membersModal" tabindex="-1" aria-labelledby="membersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="membersModalLabel">Project Leden</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul id="membersList" class="list-group"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

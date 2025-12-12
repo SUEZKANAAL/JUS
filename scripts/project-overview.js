@@ -73,25 +73,78 @@ function renderProjects(projects) {
     }
 
     card.innerHTML = `
-      <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll(
-          "_",
-          " "
-        )}</h5>
-        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
-        <p><strong>Rol:</strong> ${project.role}</p>
-        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-        ${uploadButtonHTML}
-        <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${
-          project.id
-        }">
-          Download Traces
-        </button>
-      </div>
+  <div class="card-body">
+    <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
+    <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
+    <p><strong>Rol:</strong> ${project.role}</p>
+    <p>
+      <strong>Aantal Leden:</strong> 
+      <span id="member-count-${project.id}">...</span>
+      <button class="btn btn-sm btn-primary mb-2 view-members-btn" data-project-id="${project.id}">
+        Bekijk leden
+      </button>
+    </p>
+    <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
+    ${uploadButtonHTML}
+    <button class="btn btn-secondary mb-2 download-trace-btn" data-project-id="${project.id}">
+      Download Traces
+    </button>
+  </div>
     `;
     container.appendChild(card);
+    // Fetch members count for this project
+    fetchMembersCount(project.id);
+  });
+  // Attach click listeners to "view members" buttons
+  document.querySelectorAll(".view-members-btn").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const projectId = e.target.dataset.projectId;
+      await showMembersPopup(projectId);
+    });
   });
 }
+
+
+async function fetchMembersCount(projectId) {
+  const token = localStorage.getItem("accessToken");
+  try {
+    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${projectId}/members`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error("Failed to fetch members");
+
+    const members = await response.json();
+    const countSpan = document.getElementById(`member-count-${projectId}`);
+    if (countSpan) countSpan.textContent = `(${members.length})`;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Show members in modal
+async function showMembersPopup(projectId) {
+  const token = localStorage.getItem("accessToken");
+  try {
+    const response = await fetch(`https://sue-fastapi.onrender.com/projects/${projectId}/members`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error("Failed to fetch members");
+
+    const members = await response.json();
+    const membersList = document.getElementById("membersList");
+    membersList.innerHTML = members.map(m => `<li class="list-group-item">${m.username} (${m.role})</li>`).join("");
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById("membersModal"));
+    modal.show();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch members");
+  }
+}
+
+
+
 
 // -------------------------
 // Apply Filters
