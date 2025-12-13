@@ -718,27 +718,36 @@ map.on('singleclick', function (evt) {
 proj4.defs("EPSG:28992", "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725 +units=m +no_defs");
 ol.proj.proj4.register(proj4);
 
-map.on('dblclick', function (evt) {
-    evt.preventDefault(); // Prevent the default double-click zoom
+// Utility: style project features based on geometry type
+function getProjectFeatureStyle(feature, styleConfig) {
+  const geomType = feature.getGeometry().getType();
 
-    const coordinates = ol.proj.transform(evt.coordinate, "EPSG:28992", 'EPSG:4326');
-    const lon = coordinates[0];
-    const lat = coordinates[1];
+  if (geomType === "Point" || geomType === "MultiPoint") {
+    return new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: styleConfig.image?.radius || 5,
+        fill: new ol.style.Fill(styleConfig.image?.fill || { color: "red" }),
+      }),
+    });
+  } else if (geomType === "LineString" || geomType === "MultiLineString") {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke(styleConfig.stroke || { color: "blue", width: 2 }),
+    });
+  } else if (geomType === "Polygon" || geomType === "MultiPolygon") {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke(styleConfig.stroke || { color: "blue", width: 2 }),
+      fill: new ol.style.Fill(styleConfig.fill || { color: "rgba(0,0,255,0.2)" }),
+    });
+  }
+  return undefined;
+}
 
-    // Construct Google Street View URL
-    const streetViewUrl = `https://www.google.com/maps?layer=c&cbll=${lat},${lon}`;
+// Main function: load project + traces and add to map
+function loadProjectData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const projectId = urlParams.get("project_id");
+  if (!projectId) return;
 
-    // Open URL in a new tab
-    window.open(streetViewUrl, '_blank');
-});
-
-
-// add project data
-// Get project ID from URL query
-const urlParams = new URLSearchParams(window.location.search);
-const projectId = urlParams.get("project_id");
-
-if (projectId) {
   const token = localStorage.getItem("accessToken");
 
   fetch(`https://sue-fastapi.onrender.com/projects/${projectId}`, {
@@ -753,63 +762,90 @@ if (projectId) {
       return res.json();
     })
     .then((data) => {
+      const project = data.project || {};
       const traces = data.traces || [];
 
+      // --- 1️⃣ Add traces ---
+      if (!layerGroups["Project Traces"]) {
+        layerGroups["Project Traces"] = new ol.layer.Group({
+          layers: [],
+          title: "Project Traces",
+        });
+        map.addLayer(layerGroups["Project Traces"]);
+      }
+
       traces.forEach((trace) => {
-        if (!trace.geometry) return; // Skip traces without geometry
+        if (!trace.geometry) return;
 
         const features = new ol.format.GeoJSON().readFeatures({
           type: "FeatureCollection",
-          crs: { type: "name", properties: { name: "EPSG:28992" } },
-          features: [
-            {
-              type: "Feature",
-              id: trace.id,
-              geometry: trace.geometry,
-              properties: {
-                name: trace.name,
-                description: trace.description || "",
-              },
-            },
-          ],
+          features: [{ type: "Feature", geometry: trace.geometry, properties: { name: trace.name, description: trace.description || "" } }],
         }, {
           dataProjection: "EPSG:28992",
-          featureProjection: map.getView().getProjection()
+          featureProjection: map.getView().getProjection(),
         });
 
-        const vectorSource = new ol.source.Vector({ features });
         const vectorLayer = new ol.layer.Vector({
-          source: vectorSource,
+          source: new ol.source.Vector({ features }),
           title: trace.name,
-          style: (feature) => getFeatureStyle(trace, feature, vectorSource)
+          style: (feature) => getFeatureStyle(trace, feature, vectorLayer),
         });
 
-        // Add to default "Project Traces" group
-        if (!layerGroups["Project Traces"]) {
-          layerGroups["Project Traces"] = new ol.layer.Group({
-            layers: [],
-            title: "Project Traces",
-          });
-          map.addLayer(layerGroups["Project Traces"]);
-        }
         layerGroups["Project Traces"].getLayers().push(vectorLayer);
       });
 
-      // Zoom to all loaded traces
-      let combinedExtent = ol.extent.createEmpty();
-      Object.values(layerGroups).forEach(group => {
-        group.getLayers().forEach(layer => {
-          if (layer instanceof ol.layer.Vector) {
-            ol.extent.extend(combinedExtent, layer.getSource().getExtent());
-          }
+      // --- 2️⃣ Add project geometries ---
+      const projectFeatureConfigs = [
+        { key: "project_area", title: "Project Area", style: { stroke: { color: "#000000ff", width: 2 }, fill: { color: "rgba(0, 0, 0, 0.15)" } } },
+        { key: "start_end_points", title: "Start / End Points", style: { image: { radius: 6, fill: { color: "#ff0000ff" } } } },
+        { key: "nogo_zones", title: "No-Go Zones", style: { stroke: { color: "#d32f2f", width: 2 }, fill: { color: "rgba(211,47,47,0.3)" } } },
+        { key: "auxiliary_lines", title: "Auxiliary Lines", style: { stroke: { color: "#f9a825", width: 2, lineDash: [6, 4] } } },
+        { key: "bore_lines", title: "Bore Lines", style: { stroke: { color: "#000000ff", width: 2 } } },
+      ];
+
+      if (!layerGroups["Ingetekende Features"]) {
+        layerGroups["Ingetekende Features"] = new ol.layer.Group({
+          layers: [],
+          title: "Ingetekende Features",
         });
+        map.addLayer(layerGroups["Ingetekende Features"]);
+      }
+
+      projectFeatureConfigs.forEach(({ key, title, style }) => {
+        const geom = project[key];
+        if (!geom) return;
+
+        const features = new ol.format.GeoJSON().readFeatures({
+          type: "FeatureCollection",
+          features: [{ type: "Feature", geometry: geom, properties: { name: title } }],
+        }, {
+          dataProjection: "EPSG:28992",
+          featureProjection: map.getView().getProjection(),
+        });
+
+        const vectorLayer = new ol.layer.Vector({
+          source: new ol.source.Vector({ features }),
+          title,
+          style: (feature) => getProjectFeatureStyle(feature, style),
+        });
+
+        layerGroups["Ingetekende Features"].getLayers().push(vectorLayer);
       });
-      if (isFinite(combinedExtent[0])) {
-        map.getView().fit(combinedExtent, { padding: [50,50,50,50], duration: 1000 });
+
+      // --- 3️⃣ Zoom to project area ---
+      if (project.project_area) {
+        const feature = new ol.format.GeoJSON().readFeature(project.project_area, {
+          dataProjection: "EPSG:28992",
+          featureProjection: map.getView().getProjection(),
+        });
+        map.getView().fit(feature.getGeometry().getExtent(), { padding: [50, 50, 50, 50], duration: 1000 });
       }
     })
-    .catch((err) => console.error("Error loading project traces:", err));
+    .catch((err) => console.error("Error loading project data:", err));
 }
+
+// Call the function
+loadProjectData();
 
 
 
