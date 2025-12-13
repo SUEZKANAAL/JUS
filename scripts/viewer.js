@@ -796,7 +796,7 @@ function loadProjectData() {
 
       // --- 2️⃣ Add project geometries ---
       const projectFeatureConfigs = [
-        { key: "project_area", title: "Project Area", style: { stroke: { color: "#000000ff", width: 2 }, fill: { color: "rgba(0, 0, 0, 0.15)" } } },
+        { key: "project_area", title: "Project Area", style: { stroke: { color: "#000000ff", width: 2 }, fill: { color: "rgba(0, 0, 0, 0.1)" } } },
         { key: "start_end_points", title: "Start / End Points", style: { image: { radius: 6, fill: { color: "#ff0000ff" } } } },
         { key: "nogo_zones", title: "No-Go Zones", style: { stroke: { color: "#d32f2f", width: 2 }, fill: { color: "rgba(211,47,47,0.3)" } } },
         { key: "auxiliary_lines", title: "Auxiliary Lines", style: { stroke: { color: "#f9a825", width: 2, lineDash: [6, 4] } } },
