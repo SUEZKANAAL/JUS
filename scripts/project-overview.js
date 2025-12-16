@@ -553,7 +553,7 @@ document.getElementById("uploadAllBtn").addEventListener("click", async () => {
 
     try {
       const response = await fetch(
-        `https://sue-fastapi.onrender.com/projects/${currentProjectId}/traces`,
+        `https://sue-fastapi.onrender.com/projects/${currentProjectId}/add-trace`,
         {
           method: "POST",
           headers: {

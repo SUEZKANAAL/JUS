@@ -718,133 +718,232 @@ map.on('singleclick', function (evt) {
 proj4.defs("EPSG:28992", "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725 +units=m +no_defs");
 ol.proj.proj4.register(proj4);
 
-// Utility: style project features based on geometry type
-function getProjectFeatureStyle(feature, styleConfig) {
-  const geomType = feature.getGeometry().getType();
+// ================================
+// Styling
+// ================================
+function getFeatureStyle(feature, options = {}) {
+  const type = feature.getGeometry().getType();
 
-  if (geomType === "Point" || geomType === "MultiPoint") {
+  if (type === "Point" || type === "MultiPoint") {
     return new ol.style.Style({
       image: new ol.style.Circle({
-        radius: styleConfig.image?.radius || 5,
-        fill: new ol.style.Fill(styleConfig.image?.fill || { color: "red" }),
+        radius: options.radius || 5,
+        fill: new ol.style.Fill({ color: options.fillColor || "red" }),
       }),
     });
-  } else if (geomType === "LineString" || geomType === "MultiLineString") {
+  }
+
+  if (type === "LineString" || type === "MultiLineString") {
     return new ol.style.Style({
-      stroke: new ol.style.Stroke(styleConfig.stroke || { color: "blue", width: 2 }),
-    });
-  } else if (geomType === "Polygon" || geomType === "MultiPolygon") {
-    return new ol.style.Style({
-      stroke: new ol.style.Stroke(styleConfig.stroke || { color: "blue", width: 2 }),
-      fill: new ol.style.Fill(styleConfig.fill || { color: "rgba(0,0,255,0.2)" }),
+      stroke: new ol.style.Stroke({
+        color: options.strokeColor || "blue",
+        width: options.strokeWidth || 2,
+        lineDash: options.lineDash,
+      }),
     });
   }
+
+  if (type === "Polygon" || type === "MultiPolygon") {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: options.strokeColor || "blue",
+        width: options.strokeWidth || 2,
+      }),
+      fill: new ol.style.Fill({
+        color: options.fillColor || "rgba(0,0,255,0.2)",
+      }),
+    });
+  }
+
   return undefined;
 }
 
-// Main function: load project + traces and add to map
+// ================================
+// Extent handling (robust zoom)
+// ================================
+let combinedExtent = ol.extent.createEmpty();
+let hasExtent = false;
+
+function extendExtentFromFeatures(features) {
+  if (!features || features.length === 0) return;
+
+  const source = new ol.source.Vector({ features });
+  const extent = source.getExtent();
+
+  if (!ol.extent.isEmpty(extent)) {
+    ol.extent.extend(combinedExtent, extent);
+    hasExtent = true;
+  }
+}
+
+// ================================
+// Layer group helpers
+// ================================
+function getOrCreateLayerGroup(name) {
+  if (!layerGroups[name]) {
+    layerGroups[name] = new ol.layer.Group({
+      title: name,
+      layers: [],
+    });
+    map.addLayer(layerGroups[name]);
+  }
+  return layerGroups[name];
+}
+
+// ================================
+// Add layers
+// ================================
+function addVectorLayer(groupName, title, features, styleFn) {
+  if (!features || features.length === 0) return;
+
+  const layer = new ol.layer.Vector({
+    title,
+    source: new ol.source.Vector({ features }),
+    style: styleFn,
+  });
+
+  getOrCreateLayerGroup(groupName).getLayers().push(layer);
+  extendExtentFromFeatures(features);
+}
+
+// ================================
+// Main loader
+// ================================
 function loadProjectData() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const projectId = urlParams.get("project_id");
+  const projectId = new URLSearchParams(window.location.search).get("project_id");
   if (!projectId) return;
 
   const token = localStorage.getItem("accessToken");
 
   fetch(`https://sue-fastapi.onrender.com/projects/${projectId}`, {
-    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   })
     .then((res) => {
-      if (!res.ok) throw new Error("Failed to fetch project");
+      if (!res.ok) throw new Error("Failed to load project");
       return res.json();
     })
     .then((data) => {
-      const project = data.project || {};
-      const traces = data.traces || [];
+      const { project = {}, traces = [], features = [] } = data;
 
-      // --- 1️⃣ Add traces ---
-      if (!layerGroups["Project Traces"]) {
-        layerGroups["Project Traces"] = new ol.layer.Group({
-          layers: [],
-          title: "Project Traces",
-        });
-        map.addLayer(layerGroups["Project Traces"]);
-      }
+      // -------------------------------
+      // 1️⃣ Project geometries
+      // -------------------------------
+      const projectGeometries = [
+        {
+          key: "project_area",
+          title: "Project Area",
+          style: { strokeColor: "#000", strokeWidth: 2, fillColor: "rgba(0,0,0,0.1)" },
+        },
+        {
+          key: "start_end_points",
+          title: "Start / End Points",
+          style: { radius: 6, fillColor: "#ff0000" },
+        },
+        {
+          key: "nogo_zones",
+          title: "No-Go Zones",
+          style: { strokeColor: "#d32f2f", strokeWidth: 2, fillColor: "rgba(211,47,47,0.3)" },
+        },
+        {
+          key: "auxiliary_lines",
+          title: "Auxiliary Lines",
+          style: { strokeColor: "#f9a825", strokeWidth: 2, lineDash: [6, 4] },
+        },
+        {
+          key: "bore_lines",
+          title: "Bore Lines",
+          style: { strokeColor: "#000", strokeWidth: 2 },
+        },
+      ];
 
+      projectGeometries.forEach(({ key, title, style }) => {
+        if (!project[key]) return;
+
+        const features = new ol.format.GeoJSON().readFeatures(
+          {
+            type: "FeatureCollection",
+            features: [{ type: "Feature", geometry: project[key] }],
+          },
+          {
+            dataProjection: "EPSG:28992",
+            featureProjection: map.getView().getProjection(),
+          }
+        );
+
+        addVectorLayer(
+          "Project Geometries",
+          title,
+          features,
+          (f) => getFeatureStyle(f, style)
+        );
+      });
+
+      // -------------------------------
+      // 2️⃣ Traces
+      // -------------------------------
       traces.forEach((trace) => {
         if (!trace.geometry) return;
 
-        const features = new ol.format.GeoJSON().readFeatures({
-          type: "FeatureCollection",
-          features: [{ type: "Feature", geometry: trace.geometry, properties: { name: trace.name, description: trace.description || "" } }],
-        }, {
-          dataProjection: "EPSG:28992",
-          featureProjection: map.getView().getProjection(),
-        });
+        const features = new ol.format.GeoJSON().readFeatures(
+          {
+            type: "FeatureCollection",
+            features: [{ type: "Feature", geometry: trace.geometry }],
+          },
+          {
+            dataProjection: "EPSG:28992",
+            featureProjection: map.getView().getProjection(),
+          }
+        );
 
-        const vectorLayer = new ol.layer.Vector({
-          source: new ol.source.Vector({ features }),
-          title: trace.name,
-          style: (feature) => getFeatureStyle(trace, feature, vectorLayer),
-        });
-
-        layerGroups["Project Traces"].getLayers().push(vectorLayer);
+        addVectorLayer(
+          "Project Traces",
+          trace.name,
+          features,
+          (f) => getFeatureStyle(f, { strokeColor: "#2196f3", strokeWidth: 2 })
+        );
       });
 
-      // --- 2️⃣ Add project geometries ---
-      const projectFeatureConfigs = [
-        { key: "project_area", title: "Project Area", style: { stroke: { color: "#000000ff", width: 2 }, fill: { color: "rgba(0, 0, 0, 0.1)" } } },
-        { key: "start_end_points", title: "Start / End Points", style: { image: { radius: 6, fill: { color: "#ff0000ff" } } } },
-        { key: "nogo_zones", title: "No-Go Zones", style: { stroke: { color: "#d32f2f", width: 2 }, fill: { color: "rgba(211,47,47,0.3)" } } },
-        { key: "auxiliary_lines", title: "Auxiliary Lines", style: { stroke: { color: "#f9a825", width: 2, lineDash: [6, 4] } } },
-        { key: "bore_lines", title: "Bore Lines", style: { stroke: { color: "#000000ff", width: 2 } } },
-      ];
+      // -------------------------------
+      // 3️⃣ Stored project features (GeoJSON)
+      // -------------------------------
+      features.forEach((f) => {
+        if (!f.geojson) return;
 
-      if (!layerGroups["Ingetekende Features"]) {
-        layerGroups["Ingetekende Features"] = new ol.layer.Group({
-          layers: [],
-          title: "Ingetekende Features",
-        });
-        map.addLayer(layerGroups["Ingetekende Features"]);
-      }
-
-      projectFeatureConfigs.forEach(({ key, title, style }) => {
-        const geom = project[key];
-        if (!geom) return;
-
-        const features = new ol.format.GeoJSON().readFeatures({
-          type: "FeatureCollection",
-          features: [{ type: "Feature", geometry: geom, properties: { name: title } }],
-        }, {
+        const olFeatures = new ol.format.GeoJSON().readFeatures(f.geojson, {
           dataProjection: "EPSG:28992",
           featureProjection: map.getView().getProjection(),
         });
 
-        const vectorLayer = new ol.layer.Vector({
-          source: new ol.source.Vector({ features }),
-          title,
-          style: (feature) => getProjectFeatureStyle(feature, style),
-        });
-
-        layerGroups["Ingetekende Features"].getLayers().push(vectorLayer);
+        addVectorLayer(
+          "Project Features",
+          f.name,
+          olFeatures,
+          (feature) => getFeatureStyle(feature, {})
+        );
       });
 
-      // --- 3️⃣ Zoom to project area ---
-      if (project.project_area) {
-        const feature = new ol.format.GeoJSON().readFeature(project.project_area, {
-          dataProjection: "EPSG:28992",
-          featureProjection: map.getView().getProjection(),
+      // -------------------------------
+      // 4️⃣ Zoom (robust)
+      // -------------------------------
+      if (hasExtent) {
+        map.getView().fit(combinedExtent, {
+          padding: [50, 50, 50, 50],
+          duration: 800,
+          maxZoom: 18,
         });
-        map.getView().fit(feature.getGeometry().getExtent(), { padding: [50, 50, 50, 50], duration: 1000 });
+      } else {
+        console.warn("No geometries available to zoom");
       }
     })
-    .catch((err) => console.error("Error loading project data:", err));
+    .catch((err) => console.error("Error loading project:", err));
 }
 
-// Call the function
+// ================================
+// Run
+// ================================
 loadProjectData();
 
 
