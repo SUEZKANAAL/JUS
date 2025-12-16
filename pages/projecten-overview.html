@@ -88,7 +88,49 @@
     <div class="container text-center">
       <h1 class="masthead-heading text-uppercase">Projecten</h1>
     </div>
+    <div>
+      <button id="createTraceProjectBtn" class="btn btn-primary btn-lg mt-3">
+        Automatisch Tracé met tracéstudie Aanvragen
+      </button>
+    </div>
+    <div>
+      <button id="createStandaloneProjectBtn" class="btn btn-primary btn-lg mt-3">
+        Tracé Studie met Eigen Tracé Aanvragen
+      </button>
+    </div>
   </header>
+
+  <!-- Modal for creating a standalone project with trace -->
+  <!-- Modal for creating a standalone project with trace -->
+  <div id="createProjectModal" class="modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div class="modal-content"
+      style="background:white; padding:20px; border-radius:8px; width:500px; position:relative;">
+      <span id="closeCreateProjectModal"
+        style="position:absolute; top:10px; right:15px; cursor:pointer; font-weight:bold;">&times;</span>
+      <h4>Create Project & Upload Trace</h4>
+
+      <div>
+        <label>Project Name:</label>
+        <input type="text" id="newProjectName" class="form-control" placeholder="Enter project name" required />
+      </div>
+      <div class="mt-3">
+        <label>Trace Name:</label>
+        <input type="text" id="newTraceName" class="form-control" placeholder="Enter trace name" required />
+      </div>
+      <div class="mt-3">
+        <label>Trace Description:</label>
+        <textarea id="newTraceDesc" class="form-control" placeholder="Optional description"></textarea>
+      </div>
+      <div class="mt-3">
+        <label>Trace GeoJSON File:</label>
+        <input type="file" id="newTraceFile" accept=".json,.geojson" required />
+      </div>
+
+      <button id="createProjectWithTraceBtn" class="btn btn-primary mt-3">Create Project & Upload Trace</button>
+      <p id="createProjectStatus" style="margin-top:10px; color:red;"></p>
+    </div>
+  </div>
 
   <!-- Loading Overlay -->
   <div id="loadingSpinnerWrapper">
@@ -173,24 +215,50 @@
   </div>
 
   <!-- Modal for uploading multiple features -->
-  <div id="featureModal" class="modal"
-    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-    <div class="modal-content"
-      style="background:white; padding:20px; border-radius:8px; width:500px; position:relative; max-height:80vh; overflow-y:auto;">
-      <span id="closeFeatureModal"
-        style="position:absolute; top:10px; right:15px; cursor:pointer; font-weight:bold;">&times;</span>
+  <div id="featureModal" class="modal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      ">
+    <div class="modal-content" style="
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          width: 500px;
+          position: relative;
+          max-height: 80vh;
+          overflow-y: auto;
+        ">
+      <span id="closeFeatureModal" style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-weight: bold;
+          ">&times;</span>
       <h4>Upload Features</h4>
-      <p id="featureModalProjectName" style="font-weight:bold; margin-bottom:15px">Project: Onbekend</p>
+      <p id="featureModalProjectName" style="font-weight: bold; margin-bottom: 15px">
+        Project: Onbekend
+      </p>
 
       <div id="featureEntriesContainer"></div>
 
-      <button id="addFeatureEntryBtn" class="btn btn-primary mb-4">Voeg een feature toe</button>
-      <button id="uploadAllFeaturesBtn" class="btn btn-secondary mb-3">Upload Alle Features</button>
+      <button id="addFeatureEntryBtn" class="btn btn-primary mb-4">
+        Voeg een feature toe
+      </button>
+      <button id="uploadAllFeaturesBtn" class="btn btn-secondary mb-3">
+        Upload Alle Features
+      </button>
 
-      <p id="featureUploadStatus" style="color:red"></p>
+      <p id="featureUploadStatus" style="color: red"></p>
     </div>
   </div>
-
 
   <!-- Modal for downloading traces -->
   <div id="downloadModal" class="modal" style="
@@ -257,7 +325,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" id="user-search-input" class="form-control mb-2" placeholder="Zoek gebruiker">
+          <input type="text" id="user-search-input" class="form-control mb-2" placeholder="Zoek gebruiker" />
           <ul id="user-list" class="list-group"></ul>
         </div>
       </div>
@@ -273,18 +341,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" id="newMemberUsername" class="form-control" placeholder="Username">
+          <input type="text" id="newMemberUsername" class="form-control" placeholder="Username" />
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluit</button>
-          <button type="button" class="btn btn-primary" id="confirmAddMemberBtn">Voeg toe</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Sluit
+          </button>
+          <button type="button" class="btn btn-primary" id="confirmAddMemberBtn">
+            Voeg toe
+          </button>
         </div>
       </div>
     </div>
   </div>
-
-
-
 
   <!-- Scripts -->
   <script src="../js/scripts.js"></script>
