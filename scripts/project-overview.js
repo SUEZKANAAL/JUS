@@ -68,49 +68,44 @@ function renderProjects(projects) {
       ? new Date(project.created_at).toLocaleDateString("nl-NL")
       : "Onbekend";
 
-    let uploadButtonHTML = "";
+    let adminButtonsHTML = "";
     if (role === "admin") {
-      uploadButtonHTML = `
-        <button class="btn btn-primary mb-2 create-trace-btn" data-project-id="${project.id}">
+      adminButtonsHTML = `
+        <button class="btn btn-outline-primary mb-2 create-trace-btn" 
+                data-project-id="${project.id}" 
+                data-project-name="${project.project_name}">
           Upload Trace
+        </button>
+
+        <button class="btn btn-outline-primary mb-2 create-feature-btn" 
+                data-project-id="${project.id}" 
+                data-project-name="${project.project_name}">
+          Upload Features
         </button>
       `;
     }
 
     card.innerHTML = `
       <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll(
-          "_",
-          " "
-        )}</h5>
+        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
         <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
         <p><strong>Rol:</strong> ${project.role}</p>
         <p>
           <strong>Aantal Leden:</strong> 
           <span id="member-count-${project.id}">...</span>  
         </p>
-        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${
-          project.id
-        }">
-            Bekijk Leden
-          </button>
-          <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${
-            project.id
-          }">
-            Voeg Lid Toe
-          </button>
-        <p>
-        </p>
+        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${project.id}">
+          Bekijk Leden
+        </button>
+        <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${project.id}">
+          Voeg Lid Toe
+        </button>
         <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-        ${uploadButtonHTML}
-        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${
-          project.id
-        }">
+        ${adminButtonsHTML}
+        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${project.id}">
           Download Traces
         </button>
-        <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${
-          project.id
-        }">
+        <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${project.id}">
           Bekijk Project
         </button>
       </div>
@@ -118,36 +113,40 @@ function renderProjects(projects) {
 
     container.appendChild(card);
 
-    // Fetch members count for this project
+    // Fetch members count
     fetchMembersCount(project.id);
 
-    // Attach click listener to "Bekijk leden" button
-    const viewBtn = card.querySelector(".view-members-btn");
-    if (viewBtn) {
-      viewBtn.addEventListener("click", async () => {
-        await showMembersPopup(project.id);
-      });
-    }
+    // View members
+    card.querySelector(".view-members-btn")?.addEventListener("click", async () => {
+      await showMembersPopup(project.id);
+    });
 
-    // Attach click listener to "Voeg lid toe" button
-    const addBtn = card.querySelector(".add-member-btn");
-    if (addBtn) {
-      addBtn.addEventListener("click", () => {
-        currentProjectId = project.id;
-        document.getElementById("newMemberUsername").value = "";
-        addMemberModal.show();
-      });
-    }
+    // Add member
+    card.querySelector(".add-member-btn")?.addEventListener("click", () => {
+      currentProjectId = project.id;
+      document.getElementById("newMemberUsername").value = "";
+      addMemberModal.show();
+    });
 
-    // Attach click listener to "View Project" button
-    const viewProjectBtn = card.querySelector(".view-project-btn");
-    if (viewProjectBtn) {
-      viewProjectBtn.addEventListener("click", () => {
-        const projectId = viewProjectBtn.getAttribute("data-project-id");
-        // Open the viewer page and pass projectId as a query parameter
-        window.open(`/pages/viewer.html?project_id=${projectId}`, "_blank");
-      });
-    }
+    // View project
+    card.querySelector(".view-project-btn")?.addEventListener("click", () => {
+      const projectId = project.id;
+      window.open(`/pages/viewer.html?project_id=${projectId}`, "_blank");
+    });
+
+    // Upload Trace button
+    card.querySelector(".create-trace-btn")?.addEventListener("click", () => {
+      currentProjectId = project.id;
+      document.getElementById("traceModalProjectName").innerText = `Project: ${project.project_name}`;
+      traceModal.style.display = "flex";
+    });
+
+    // Upload Feature button
+    card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
+      currentProjectId = project.id;
+      document.getElementById("featureModalProjectName").innerText = `Project: ${project.project_name}`;
+      featureModal.style.display = "flex";
+    });
   });
 }
 
@@ -199,7 +198,6 @@ async function showMembersPopup(projectId) {
 }
 
 // add members
-
 document
   .getElementById("confirmAddMemberBtn")
   .addEventListener("click", async () => {
@@ -303,9 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchProjects(); // Load projects if user is logged in
 });
 
-// -------------------------
-// Rest of your modal / trace upload logic remains unchanged
-// -------------------------
 
 // -------------------------
 // Open Trace Modal (Event Delegation)
@@ -576,3 +571,130 @@ document.getElementById("uploadAllBtn").addEventListener("click", async () => {
     }
   }
 });
+
+
+
+
+// -------------------------
+// Add Feature Entry
+// -------------------------
+function addFeatureEntry() {
+  const container = document.getElementById("featureEntriesContainer");
+  const div = document.createElement("div");
+  div.classList.add("feature-entry");
+  div.style.border = "1px solid #ccc";
+  div.style.padding = "10px";
+  div.style.marginBottom = "10px";
+  div.innerHTML = `
+    <div>
+        <label>Feature Naam:</label>
+        <input type="text" class="feature-name form-control" required/>
+    </div>
+    <div>
+        <label>Omschrijving:</label>
+        <textarea class="feature-desc form-control"></textarea>
+    </div>
+    <div>
+        <label>GeoJSON Bestand:</label>
+        <input type="file" class="feature-geojson" accept=".json,.geojson" required/>
+    </div>
+    <button type="button" class="btn btn-danger btn-sm remove-feature-entry mt-2">Remove</button>
+  `;
+  container.appendChild(div);
+
+  div.querySelector(".remove-feature-entry").addEventListener("click", () => div.remove());
+}
+
+document.getElementById("addFeatureEntryBtn").addEventListener("click", addFeatureEntry);
+
+// -------------------------
+// Upload All Features
+// -------------------------
+document.getElementById("uploadAllFeaturesBtn").addEventListener("click", async () => {
+  const entries = document.querySelectorAll(".feature-entry");
+  const statusEl = document.getElementById("featureUploadStatus");
+  statusEl.style.color = "black";
+  statusEl.innerHTML = "Uploading...<br>";
+
+  const token = localStorage.getItem("accessToken");
+  if (!token || !currentProjectId) {
+    statusEl.innerHTML = `<span style="color:red;">Geen project geselecteerd of niet ingelogd.</span>`;
+    return;
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    const name = entry.querySelector(".feature-name").value.trim();
+    const desc = entry.querySelector(".feature-desc").value.trim();
+    const fileInput = entry.querySelector(".feature-geojson");
+
+    if (!name) {
+      statusEl.innerHTML += `<span style="color:red;">Entry ${i+1}: Name is required</span><br>`;
+      continue;
+    }
+    if (!fileInput.files.length) {
+      statusEl.innerHTML += `<span style="color:red;">Entry ${i+1}: No file selected</span><br>`;
+      continue;
+    }
+
+    const file = fileInput.files[0];
+    let geojson;
+    try {
+      geojson = JSON.parse(await file.text());
+    } catch {
+      statusEl.innerHTML += `<span style="color:red;">${file.name}: Invalid JSON</span><br>`;
+      continue;
+    }
+
+    const validationError = validateGeoJSON(geojson);
+    if (validationError) {
+      statusEl.innerHTML += `<span style="color:red;">${file.name}: ${validationError}</span><br>`;
+      continue;
+    }
+
+    const body = { name, description: desc, geojson };
+
+    try {
+      const response = await fetch(`https://sue-fastapi.onrender.com/projects/${currentProjectId}/add-features`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.detail || "Failed to upload feature");
+      }
+
+      const result = await response.json();
+      statusEl.innerHTML += `<span style="color:green;">${file.name}: Uploaded (ID: ${result.feature_id})</span><br>`;
+    } catch (err) {
+      statusEl.innerHTML += `<span style="color:red;">${file.name}: ${err.message}</span><br>`;
+    }
+  }
+});
+
+// Close Feature Modal when "×" is clicked
+const featureModal = document.getElementById("featureModal");
+const closeFeatureBtn = document.getElementById("closeFeatureModal");
+
+closeFeatureBtn.addEventListener("click", () => {
+  featureModal.style.display = "none";
+});
+
+// Optional: close modal when clicking outside the modal content
+window.addEventListener("click", (event) => {
+  if (event.target === featureModal) {
+    featureModal.style.display = "none";
+  }
+});
+
+
+
+
+
+
+
