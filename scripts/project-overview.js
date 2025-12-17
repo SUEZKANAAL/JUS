@@ -3,6 +3,8 @@
 // -------------------------
 let currentProjectId = null;
 let currentProjectName = "";
+let currentPage = 1;
+const projectsPerPage = 6;
 let allProjects = []; // original projects list
 let filteredProjects = []; // filtered list for display
 
@@ -64,13 +66,23 @@ const addMemberModal = new bootstrap.Modal(
   document.getElementById("addMemberModal")
 );
 
+
+
 function renderProjects(projects) {
   const container = document.getElementById("projectsContainer");
   container.innerHTML = "";
 
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * projectsPerPage;
+  const endIndex = startIndex + projectsPerPage;
+  const projectsToShow = projects.slice(startIndex, endIndex);
+
   const role = localStorage.getItem("role"); // "admin" or "user"
 
-  projects.forEach((project) => {
+  projectsToShow.forEach((project) => {
     const card = document.createElement("div");
     card.classList.add("project-card", "card");
 
@@ -140,8 +152,7 @@ function renderProjects(projects) {
 
     // View project
     card.querySelector(".view-project-btn")?.addEventListener("click", () => {
-      const projectId = project.id;
-      window.open(`/pages/viewer.html?project_id=${projectId}`, "_blank");
+      window.open(`/pages/viewer.html?project_id=${project.id}`, "_blank");
     });
 
     // Upload Trace button
@@ -158,7 +169,29 @@ function renderProjects(projects) {
       featureModal.style.display = "flex";
     });
   });
+
+  // -------------------------
+  // Update Pagination Controls
+  // -------------------------
+  const pagination = document.getElementById("paginationControls");
+  if (projects.length > projectsPerPage) {
+    pagination.style.display = "flex";
+    document.getElementById("currentPageInfo").innerText = `Pagina ${currentPage} van ${totalPages}`;
+
+    document.getElementById("firstPageBtn").disabled = currentPage === 1;
+    document.getElementById("prevPageBtn").disabled = currentPage === 1;
+    document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+    document.getElementById("lastPageBtn").disabled = currentPage === totalPages;
+  } else {
+    pagination.style.display = "none";
+  }
 }
+
+document.getElementById("firstPageBtn").addEventListener("click", () => { currentPage = 1; renderProjects(filteredProjects); });
+document.getElementById("prevPageBtn").addEventListener("click", () => { currentPage--; renderProjects(filteredProjects); });
+document.getElementById("nextPageBtn").addEventListener("click", () => { currentPage++; renderProjects(filteredProjects); });
+document.getElementById("lastPageBtn").addEventListener("click", () => { currentPage = Math.ceil(filteredProjects.length / projectsPerPage); renderProjects(filteredProjects); });
+
 
 // Get the amount of members in the group
 async function fetchMembersCount(projectId) {
@@ -292,7 +325,13 @@ function applyFilters() {
       (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
     );
 
+  // Update filteredProjects
   filteredProjects = projects;
+
+  // Reset to first page for new filter/sort
+  currentPage = 1;
+
+  // Render first page
   renderProjects(filteredProjects);
 }
 
