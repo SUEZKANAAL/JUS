@@ -634,32 +634,36 @@ function sendAPIPostRequest() {
 
         const payload = {
             projectName: `${data.projectName}_${data.projectNumber}`,
-            projectgebiedWKT,
-            startEindPuntWKT,
-            geulbreedte: data.geulbreedte,
-            klicFile: data.klicFile,
-            PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
-            geslotenVerharding: data.geslotenVerharding,
-            openVerharding: data.openVerharding,
-            halfVerhard: data.halfVerhard,
-            onverhard: data.onverhard,
-            groenvoorzieningLaag: data.groenvoorzieningLaag,
-            groenvoorzieningHoog: data.groenvoorzieningHoog,
-            groenvoorzieningBos: data.groenvoorzieningBos,
-            nogo: data.nogo,
-            klicDrukte: data.klicDrukte,
-            waterkering: data.waterkering,
-            natura2000: data.natura2000,
-            BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
-            GasHogeDruk: data.GasHogeDruk,
-            GasLageDruk: data.GasLageDruk,
-            Hoogspanning: data.Hoogspanning
+            traceInputFeatures:{
+                projectgebiedWKT: projectgebiedWKT,
+                startEindPuntWKT: startEindPuntWKT
+            },
+            parameters: {
+                geulbreedte: data.geulbreedte,
+                klicFile: data.klicFile,
+                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
+                geslotenVerharding: data.geslotenVerharding,
+                openVerharding: data.openVerharding,
+                halfVerhard: data.halfVerhard,
+                onverhard: data.onverhard,
+                groenvoorzieningLaag: data.groenvoorzieningLaag,
+                groenvoorzieningHoog: data.groenvoorzieningHoog,
+                groenvoorzieningBos: data.groenvoorzieningBos,
+                nogo: data.nogo,
+                klicDrukte: data.klicDrukte,
+                waterkering: data.waterkering,
+                natura2000: data.natura2000,
+                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+                GasHogeDruk: data.GasHogeDruk,
+                GasLageDruk: data.GasLageDruk,
+                Hoogspanning: data.Hoogspanning
+            }
         };
 
         try {
             const token = localStorage.getItem("accessToken");
             const response = await fetch(
-                "https://sue-fastapi.onrender.com/create-project",
+                "https://sue-fastapi.onrender.com/create-project-automatic-trace",
                 {
                     method: "POST",
                     headers: {
