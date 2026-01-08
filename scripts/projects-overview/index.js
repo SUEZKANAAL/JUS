@@ -13,20 +13,12 @@ import { addTraceEntry } from "./ui/traceEntries.js";
 import { initTraceUpload } from "./features/initTraceUpload.js";
 import { initFeatureEntries } from "./features/initFeatureEntries.js";
 import { initFeatureUpload } from "./features/initFeatureUpload.js";
+import { initFeatureModal } from "./features/initFeatureModal.js";
+import { initStandaloneProjectModal } from "./features/initStandaloneProjectModal.js";
 
 
-
-
-
-// REMOVE LATER
-window.__projectsOverviewState = projectsOverviewState;
-window.__projectsOverviewAddTraceEntry = addTraceEntry;
 
 document.addEventListener("DOMContentLoaded", () => {
-  window.__projectsOverviewServices = window.__projectsOverviewServices || {};
-  window.__projectsOverviewServices.fetchMembersCount = fetchMembersCount;
-  window.__projectsOverviewServices.showMembersPopup = showMembersPopup;
-
   bindCreateTraceProjectButton();
   initProjectsLoader();
   initPagination();
@@ -38,10 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initTraceUpload();
   initFeatureEntries();
   initFeatureUpload();
+  initFeatureModal();
+  initStandaloneProjectModal();
 
-  window.__projectsOverviewServices.openDownloadModal = (projectId) => {
-    const project = getAllProjects().find((p) => String(p.id) === String(projectId));
-    if (!project) return;
-    openDownloadModal(project);
-  };
+
 });

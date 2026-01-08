@@ -62,7 +62,11 @@ export function openDownloadModal(project) {
 }
 
 export function initDownloadModalClose() {
-  document.getElementById("closeDownloadModal")?.addEventListener("click", () => {
-    document.getElementById("downloadModal").style.display = "none";
-  });
+  document.getElementById("closeDownloadModal")?.addEventListener("click", closeDownloadModal);
 }
+
+export function closeDownloadModal() {
+  const modal = document.getElementById("downloadModal");
+  if (modal) modal.style.display = "none";
+}
+

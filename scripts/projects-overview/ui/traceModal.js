@@ -10,7 +10,15 @@ export function openTraceModal(projectName) {
 }
 
 export function closeTraceModal() {
-  document.getElementById("traceModal").style.display = "none";
-  document.getElementById("traceEntriesContainer").innerHTML = "";
-  document.getElementById("uploadStatus").innerText = "";
+  const modal = document.getElementById("traceModal");
+  if (!modal) return;
+
+  modal.style.display = "none";
+
+  // reset content
+  const entries = document.getElementById("traceEntriesContainer");
+  if (entries) entries.innerHTML = "";
+
+  const status = document.getElementById("uploadStatus");
+  if (status) status.innerText = "";
 }

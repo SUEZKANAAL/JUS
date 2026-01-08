@@ -1,11 +1,13 @@
 import { getProjectsPerPage, getCurrentPage, setCurrentPage, setCurrentProjectId  } from "../state.js";
 import { openTraceModal } from "./traceModal.js"
+import { openDownloadModal } from "../ui/downloadModal.js";
+import { fetchMembersCount, showMembersPopup } from "../features/initMembers.js";
+import { openAddMemberModal } from "../ui/addMemberModal.js";
+import { openFeatureModal } from "../ui/featureModal.js";
+
 
 
 export function renderProjects(projects) {
-  const services = window.__projectsOverviewServices;
-  if (!services) throw new Error("Missing window.__projectsOverviewServices");
-
   const container = document.getElementById("projectsContainer");
   container.innerHTML = "";
 
@@ -77,17 +79,17 @@ export function renderProjects(projects) {
     container.appendChild(card);
 
     // Fetch members count
-    services.fetchMembersCount(project.id);
+    fetchMembersCount(project.id);
 
     // View members
     card.querySelector(".view-members-btn")?.addEventListener("click", async () => {
-      await services.showMembersPopup(project.id);
+      await showMembersPopup(project.id);
     });
 
     // Add member
     card.querySelector(".add-member-btn")?.addEventListener("click", () => {
       setCurrentProjectId(project.id);
-      services.openAddMemberModal(project.id);
+      openAddMemberModal(project.id);
     });
 
     // View project
@@ -104,12 +106,12 @@ export function renderProjects(projects) {
     // Upload Feature button
     card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
       setCurrentProjectId(project.id);
-      services.openFeatureModal(project);
+      openFeatureModal(project);
     });
 
     // Download Traces
     card.querySelector(".download-trace-btn")?.addEventListener("click", () => {
-      services.openDownloadModal(project.id);
+      openDownloadModal(project);
     });
   });
 
