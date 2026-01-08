@@ -11,6 +11,10 @@ import { getAllProjects } from "./state.js";
 import { initTraceEntries } from "./features/initTraceEntries.js";
 import { addTraceEntry } from "./ui/traceEntries.js";
 import { initTraceUpload } from "./features/initTraceUpload.js";
+import { initFeatureEntries } from "./features/initFeatureEntries.js";
+import { initFeatureUpload } from "./features/initFeatureUpload.js";
+
+
 
 
 
@@ -32,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initDownloadModal();
   initTraceEntries();
   initTraceUpload();
+  initFeatureEntries();
+  initFeatureUpload();
 
   window.__projectsOverviewServices.openDownloadModal = (projectId) => {
     const project = getAllProjects().find((p) => String(p.id) === String(projectId));
