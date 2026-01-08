@@ -1,45 +1,28 @@
+import { fetchProjects } from "../api/projects.js";
 import { setProjects, getFilteredProjects } from "../state.js";
 import { renderProjects } from "../ui/renderProjects.js";
 
-
 export function initProjectsLoader() {
-  async function fetchProjects() {
+  async function load() {
     const projectsContainer = document.getElementById("projectsContainer");
     const spinnerWrapper = document.getElementById("loadingSpinnerWrapper");
 
-    // Show the loading overlay
     spinnerWrapper.style.display = "flex";
     projectsContainer.innerHTML = "";
 
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        projectsContainer.innerHTML = `<p class="text-danger">Niet ingelogd.</p>`;
-        return;
-      }
-
-      const response = await fetch(`https://sue-fastapi.onrender.com/projects`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch projects");
-
-      const projects = await response.json();
+      const projects = await fetchProjects();
 
       setProjects(projects);
-
-      // Show filters
       document.getElementById("projectFilters").style.display = "flex";
-      
       renderProjects(getFilteredProjects());
-
     } catch (err) {
       console.error(err);
-      projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;
+      projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten.</p>`;
     } finally {
-      // Hide the loading overlay
       spinnerWrapper.style.display = "none";
     }
   }
 
-  fetchProjects();
+  load();
 }

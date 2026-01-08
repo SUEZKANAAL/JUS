@@ -1,4 +1,6 @@
-import { getProjectsPerPage, getCurrentPage, setCurrentPage } from "../state.js";
+import { getProjectsPerPage, getCurrentPage, setCurrentPage, setCurrentProjectId  } from "../state.js";
+import { openTraceModal } from "./traceModal.js"
+
 
 export function renderProjects(projects) {
   const services = window.__projectsOverviewServices;
@@ -84,8 +86,8 @@ export function renderProjects(projects) {
 
     // Add member
     card.querySelector(".add-member-btn")?.addEventListener("click", () => {
-      services.setCurrentProjectId(project.id);
-      services.openAddMemberModal();
+      setCurrentProjectId(project.id);
+      services.openAddMemberModal(project.id);
     });
 
     // View project
@@ -95,14 +97,19 @@ export function renderProjects(projects) {
 
     // Upload Trace button
     card.querySelector(".create-trace-btn")?.addEventListener("click", () => {
-      services.setCurrentProjectId(project.id);
-      services.openTraceModal(project);
+      setCurrentProjectId(project.id);
+      openTraceModal(project.project_name.replaceAll("_", " "));
     });
 
     // Upload Feature button
     card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
-      services.setCurrentProjectId(project.id);
+      setCurrentProjectId(project.id);
       services.openFeatureModal(project);
+    });
+
+    // Download Traces
+    card.querySelector(".download-trace-btn")?.addEventListener("click", () => {
+      services.openDownloadModal(project.id);
     });
   });
 

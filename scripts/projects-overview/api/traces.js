@@ -1,0 +1,29 @@
+function getToken() {
+  return localStorage.getItem("accessToken");
+}
+
+export async function addTraceToProject(projectId, body) {
+  const token = getToken();
+
+  const response = await fetch(
+    `https://sue-fastapi.onrender.com/projects/${projectId}/add-trace`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const msg =
+      typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail ?? data);
+    throw new Error(msg || "Failed to upload trace");
+  }
+
+  return data; // expects { trace_id: ... }
+}
