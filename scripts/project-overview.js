@@ -8,56 +8,18 @@ const projectsPerPage = 6;
 let allProjects = []; // original projects list
 let filteredProjects = []; // filtered list for display
 
-// -------------------------
-// Nieuw project aanmaken
-// -------------------------
 
-
-document.getElementById("createTraceProjectBtn").addEventListener("click", () => {
-  // Leid de gebruiker naar de trace aanvragen pagina
-  window.location.href = "/pages/intekenen.html";
-});
-
-// -------------------------
-// Fetch Projects
-// -------------------------
-async function fetchProjects() {
-  const projectsContainer = document.getElementById("projectsContainer");
-  const spinnerWrapper = document.getElementById("loadingSpinnerWrapper");
-
-  // Show the loading overlay
-  spinnerWrapper.style.display = "flex";
-  projectsContainer.innerHTML = "";
-
-  try {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      projectsContainer.innerHTML = `<p class="text-danger">Niet ingelogd.</p>`;
-      return;
-    }
-
-    const response = await fetch(`https://sue-fastapi.onrender.com/projects`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error("Failed to fetch projects");
-
-    const projects = await response.json();
+// TEMP BRIDGE (for ES module migration)
+// Lets module code update the existing script's state safely.
+window.__projectsOverviewBridge = {
+  setProjects(projects) {
     allProjects = projects;
     filteredProjects = projects;
-
-    // Show filters
-    document.getElementById("projectFilters").style.display = "flex";
-
-    // Render
-    renderProjects(filteredProjects);
-  } catch (err) {
-    console.error(err);
-    projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;
-  } finally {
-    // Hide the loading overlay
-    spinnerWrapper.style.display = "none";
+  },
+  getFilteredProjects() {
+    return filteredProjects;
   }
-}
+};
 
 // -------------------------
 // Render Projects
@@ -67,130 +29,49 @@ const addMemberModal = new bootstrap.Modal(
 );
 
 
+// TEMP DEPS (for ES module migration)
+// Exposes ONLY what modules need, while old script still owns state/modals.
+window.__projectsOverviewDeps = {
+  getProjectsPerPage() {
+    return projectsPerPage;
+  },
+  getCurrentPage() {
+    return currentPage;
+  },
+  setCurrentPage(v) {
+    currentPage = v;
+  },
+  setCurrentProjectId(id) {
+    currentProjectId = id;
+  },
+
+  fetchMembersCount,
+  showMembersPopup,
+
+  openAddMemberModal() {
+    document.getElementById("newMemberUsername").value = "";
+    addMemberModal.show();
+  },
+
+  openTraceModal(project) {
+    document.getElementById("traceModalProjectName").innerText = `Project: ${project.project_name}`;
+    document.getElementById("traceModal").style.display = "flex";
+  },
+
+  openFeatureModal(project) {
+    document.getElementById("featureModalProjectName").innerText = `Project: ${project.project_name}`;
+    document.getElementById("featureModal").style.display = "flex";
+  },
+  getFilteredProjects() {
+  return filteredProjects;
+},
+};
+
 
 function renderProjects(projects) {
-  const container = document.getElementById("projectsContainer");
-  container.innerHTML = "";
-
-  const totalPages = Math.ceil(projects.length / projectsPerPage);
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  const startIndex = (currentPage - 1) * projectsPerPage;
-  const endIndex = startIndex + projectsPerPage;
-  const projectsToShow = projects.slice(startIndex, endIndex);
-
-  const role = localStorage.getItem("role"); // "admin" or "user"
-
-  projectsToShow.forEach((project) => {
-    const card = document.createElement("div");
-    card.classList.add("project-card", "card");
-
-    const dateStr = project.created_at
-      ? new Date(project.created_at).toLocaleDateString("nl-NL")
-      : "Onbekend";
-
-    let adminButtonsHTML = "";
-    if (role === "admin") {
-      adminButtonsHTML = `
-        <button class="btn btn-outline-primary mb-2 create-trace-btn" 
-                data-project-id="${project.id}" 
-                data-project-name="${project.project_name}">
-          Upload Trace
-        </button>
-
-        <button class="btn btn-outline-primary mb-2 create-feature-btn" 
-                data-project-id="${project.id}" 
-                data-project-name="${project.project_name}">
-          Upload Features
-        </button>
-      `;
-    }
-
-    card.innerHTML = `
-      <div class="card-body">
-        <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
-        <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
-        <p><strong>Rol:</strong> ${project.role}</p>
-        <p>
-          <strong>Aantal Leden:</strong> 
-          <span id="member-count-${project.id}">...</span>  
-        </p>
-        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${project.id}">
-          Bekijk Leden
-        </button>
-        <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${project.id}">
-          Voeg Lid Toe
-        </button>
-        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-        ${adminButtonsHTML}
-        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${project.id}">
-          Download Traces
-        </button>
-        <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${project.id}">
-          Bekijk Project
-        </button>
-      </div>
-    `;
-
-    container.appendChild(card);
-
-    // Fetch members count
-    fetchMembersCount(project.id);
-
-    // View members
-    card.querySelector(".view-members-btn")?.addEventListener("click", async () => {
-      await showMembersPopup(project.id);
-    });
-
-    // Add member
-    card.querySelector(".add-member-btn")?.addEventListener("click", () => {
-      currentProjectId = project.id;
-      document.getElementById("newMemberUsername").value = "";
-      addMemberModal.show();
-    });
-
-    // View project
-    card.querySelector(".view-project-btn")?.addEventListener("click", () => {
-      window.open(`/pages/viewer.html?project_id=${project.id}`, "_blank");
-    });
-
-    // Upload Trace button
-    card.querySelector(".create-trace-btn")?.addEventListener("click", () => {
-      currentProjectId = project.id;
-      document.getElementById("traceModalProjectName").innerText = `Project: ${project.project_name}`;
-      traceModal.style.display = "flex";
-    });
-
-    // Upload Feature button
-    card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
-      currentProjectId = project.id;
-      document.getElementById("featureModalProjectName").innerText = `Project: ${project.project_name}`;
-      featureModal.style.display = "flex";
-    });
-  });
-
-  // -------------------------
-  // Update Pagination Controls
-  // -------------------------
-  const pagination = document.getElementById("paginationControls");
-  if (projects.length > projectsPerPage) {
-    pagination.style.display = "flex";
-    document.getElementById("currentPageInfo").innerText = `Pagina ${currentPage} van ${totalPages}`;
-
-    document.getElementById("firstPageBtn").disabled = currentPage === 1;
-    document.getElementById("prevPageBtn").disabled = currentPage === 1;
-    document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
-    document.getElementById("lastPageBtn").disabled = currentPage === totalPages;
-  } else {
-    pagination.style.display = "none";
-  }
+  return window.__projectsOverviewRenderProjects(projects);
 }
 
-document.getElementById("firstPageBtn").addEventListener("click", () => { currentPage = 1; renderProjects(filteredProjects); });
-document.getElementById("prevPageBtn").addEventListener("click", () => { currentPage--; renderProjects(filteredProjects); });
-document.getElementById("nextPageBtn").addEventListener("click", () => { currentPage++; renderProjects(filteredProjects); });
-document.getElementById("lastPageBtn").addEventListener("click", () => { currentPage = Math.ceil(filteredProjects.length / projectsPerPage); renderProjects(filteredProjects); });
 
 
 // Get the amount of members in the group
@@ -343,12 +224,12 @@ document.getElementById("sortSelect").addEventListener("change", applyFilters);
 document.getElementById("dateFrom")?.addEventListener("change", applyFilters);
 document.getElementById("dateTo")?.addEventListener("change", applyFilters);
 
-// -------------------------
-// Load projects automatically on page load
-// -------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  fetchProjects(); // Load projects if user is logged in
-});
+// // -------------------------
+// // Load projects automatically on page load
+// // -------------------------
+// document.addEventListener("DOMContentLoaded", () => {
+//   fetchProjects(); // Load projects if user is logged in
+// });
 
 
 // -------------------------
