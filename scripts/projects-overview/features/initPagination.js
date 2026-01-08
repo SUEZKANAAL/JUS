@@ -1,26 +1,35 @@
+import { renderProjects } from "../ui/renderProjects.js";
+
+
+import {
+  getFilteredProjects,
+  getProjectsPerPage,
+  getCurrentPage,
+  setCurrentPage,
+} from "../state.js";
+
 export function initPagination() {
-  const deps = window.__projectsOverviewDeps;
-  if (!deps) throw new Error("Missing window.__projectsOverviewDeps");
+
 
   document.getElementById("firstPageBtn")?.addEventListener("click", () => {
-    deps.setCurrentPage(1);
-    window.renderProjects(deps.getFilteredProjects());
+    setCurrentPage(1);
+    renderProjects(getFilteredProjects());
   });
 
   document.getElementById("prevPageBtn")?.addEventListener("click", () => {
-    deps.setCurrentPage(deps.getCurrentPage() - 1);
-    window.renderProjects(deps.getFilteredProjects());
+    setCurrentPage(getCurrentPage() - 1);
+    renderProjects(getFilteredProjects());
   });
 
   document.getElementById("nextPageBtn")?.addEventListener("click", () => {
-    deps.setCurrentPage(deps.getCurrentPage() + 1);
-    window.renderProjects(deps.getFilteredProjects());
+    setCurrentPage(getCurrentPage() + 1);
+    renderProjects(getFilteredProjects());
   });
 
   document.getElementById("lastPageBtn")?.addEventListener("click", () => {
-    const projects = deps.getFilteredProjects();
-    const perPage = deps.getProjectsPerPage();
-    deps.setCurrentPage(Math.ceil(projects.length / perPage));
-    window.renderProjects(projects);
+    const projects = getFilteredProjects();
+    const perPage = getProjectsPerPage();
+    setCurrentPage(Math.ceil(projects.length / perPage));
+    renderProjects(projects);
   });
 }

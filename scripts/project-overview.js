@@ -3,23 +3,8 @@
 // -------------------------
 let currentProjectId = null;
 let currentProjectName = "";
-let currentPage = 1;
-const projectsPerPage = 6;
 let allProjects = []; // original projects list
-let filteredProjects = []; // filtered list for display
 
-
-// TEMP BRIDGE (for ES module migration)
-// Lets module code update the existing script's state safely.
-window.__projectsOverviewBridge = {
-  setProjects(projects) {
-    allProjects = projects;
-    filteredProjects = projects;
-  },
-  getFilteredProjects() {
-    return filteredProjects;
-  }
-};
 
 // -------------------------
 // Render Projects
@@ -29,22 +14,7 @@ const addMemberModal = new bootstrap.Modal(
 );
 
 
-// TEMP DEPS (for ES module migration)
-// Exposes ONLY what modules need, while old script still owns state/modals.
-window.__projectsOverviewDeps = {
-  getProjectsPerPage() {
-    return projectsPerPage;
-  },
-  getCurrentPage() {
-    return currentPage;
-  },
-  setCurrentPage(v) {
-    currentPage = v;
-  },
-  setCurrentProjectId(id) {
-    currentProjectId = id;
-  },
-
+window.__projectsOverviewServices = {
   fetchMembersCount,
   showMembersPopup,
 
@@ -62,16 +32,7 @@ window.__projectsOverviewDeps = {
     document.getElementById("featureModalProjectName").innerText = `Project: ${project.project_name}`;
     document.getElementById("featureModal").style.display = "flex";
   },
-  getFilteredProjects() {
-  return filteredProjects;
-},
 };
-
-
-function renderProjects(projects) {
-  return window.__projectsOverviewRenderProjects(projects);
-}
-
 
 
 // Get the amount of members in the group
@@ -157,72 +118,6 @@ document
     }
   });
 
-// -------------------------
-// Apply Filters
-// -------------------------
-function applyFilters() {
-  let projects = [...allProjects];
-
-  // Search filter
-  const searchValue = document
-    .getElementById("searchInput")
-    .value.toLowerCase()
-    .replaceAll(" ", "_");
-  if (searchValue) {
-    projects = projects.filter((p) =>
-      p.project_name.toLowerCase().includes(searchValue)
-    );
-  }
-
-  // Date range filter
-  const dateFromEl = document.getElementById("dateFrom");
-  const dateToEl = document.getElementById("dateTo");
-
-  if (dateFromEl?.value) {
-    const fromDate = new Date(dateFromEl.value);
-    projects = projects.filter(
-      (p) => p.created_at && new Date(p.created_at) >= fromDate
-    );
-  }
-  if (dateToEl?.value) {
-    const toDate = new Date(dateToEl.value);
-    projects = projects.filter(
-      (p) => p.created_at && new Date(p.created_at) <= toDate
-    );
-  }
-
-  // Sorting
-  const sort = document.getElementById("sortSelect").value;
-  if (sort === "nameAsc")
-    projects.sort((a, b) => a.project_name.localeCompare(b.project_name));
-  else if (sort === "nameDesc")
-    projects.sort((a, b) => b.project_name.localeCompare(a.project_name));
-  else if (sort === "dateNewest")
-    projects.sort(
-      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
-    );
-  else if (sort === "dateOldest")
-    projects.sort(
-      (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
-    );
-
-  // Update filteredProjects
-  filteredProjects = projects;
-
-  // Reset to first page for new filter/sort
-  currentPage = 1;
-
-  // Render first page
-  renderProjects(filteredProjects);
-}
-
-// -------------------------
-// Filter Event Listeners
-// -------------------------
-document.getElementById("searchInput").addEventListener("input", applyFilters);
-document.getElementById("sortSelect").addEventListener("change", applyFilters);
-document.getElementById("dateFrom")?.addEventListener("change", applyFilters);
-document.getElementById("dateTo")?.addEventListener("change", applyFilters);
 
 // // -------------------------
 // // Load projects automatically on page load

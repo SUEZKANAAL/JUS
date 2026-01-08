@@ -1,3 +1,7 @@
+import { setProjects, getFilteredProjects } from "../state.js";
+import { renderProjects } from "../ui/renderProjects.js";
+
+
 export function initProjectsLoader() {
   async function fetchProjects() {
     const projectsContainer = document.getElementById("projectsContainer");
@@ -21,15 +25,13 @@ export function initProjectsLoader() {
 
       const projects = await response.json();
 
-      // Update old script state via the bridge
-      window.__projectsOverviewBridge?.setProjects(projects);
+      setProjects(projects);
 
       // Show filters
       document.getElementById("projectFilters").style.display = "flex";
+      
+      renderProjects(getFilteredProjects());
 
-      // Render using existing renderProjects from old script
-      const filtered = window.__projectsOverviewBridge?.getFilteredProjects() ?? projects;
-      window.renderProjects(filtered);
     } catch (err) {
       console.error(err);
       projectsContainer.innerHTML = `<p class="text-danger">Error bij het laden van de projecten. Controleer uw login.</p>`;

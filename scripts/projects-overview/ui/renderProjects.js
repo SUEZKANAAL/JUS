@@ -1,17 +1,19 @@
+import { getProjectsPerPage, getCurrentPage, setCurrentPage } from "../state.js";
+
 export function renderProjects(projects) {
-  const deps = window.__projectsOverviewDeps;
-  if (!deps) throw new Error("Missing window.__projectsOverviewDeps");
+  const services = window.__projectsOverviewServices;
+  if (!services) throw new Error("Missing window.__projectsOverviewServices");
 
   const container = document.getElementById("projectsContainer");
   container.innerHTML = "";
 
-  const projectsPerPage = deps.getProjectsPerPage();
-  let currentPage = deps.getCurrentPage();
+  const projectsPerPage = getProjectsPerPage();
+  let currentPage = getCurrentPage();
 
   const totalPages = Math.ceil(projects.length / projectsPerPage);
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
-  deps.setCurrentPage(currentPage);
+  setCurrentPage(currentPage);
 
   const startIndex = (currentPage - 1) * projectsPerPage;
   const endIndex = startIndex + projectsPerPage;
@@ -73,17 +75,17 @@ export function renderProjects(projects) {
     container.appendChild(card);
 
     // Fetch members count
-    deps.fetchMembersCount(project.id);
+    services.fetchMembersCount(project.id);
 
     // View members
     card.querySelector(".view-members-btn")?.addEventListener("click", async () => {
-      await deps.showMembersPopup(project.id);
+      await services.showMembersPopup(project.id);
     });
 
     // Add member
     card.querySelector(".add-member-btn")?.addEventListener("click", () => {
-      deps.setCurrentProjectId(project.id);
-      deps.openAddMemberModal();
+      services.setCurrentProjectId(project.id);
+      services.openAddMemberModal();
     });
 
     // View project
@@ -93,14 +95,14 @@ export function renderProjects(projects) {
 
     // Upload Trace button
     card.querySelector(".create-trace-btn")?.addEventListener("click", () => {
-      deps.setCurrentProjectId(project.id);
-      deps.openTraceModal(project);
+      services.setCurrentProjectId(project.id);
+      services.openTraceModal(project);
     });
 
     // Upload Feature button
     card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
-      deps.setCurrentProjectId(project.id);
-      deps.openFeatureModal(project);
+      services.setCurrentProjectId(project.id);
+      services.openFeatureModal(project);
     });
   });
 
