@@ -1,11 +1,4 @@
-import { getProjectsPerPage, getCurrentPage, setCurrentPage, setCurrentProjectId  } from "../state.js";
-import { openTraceModal } from "./traceModal.js"
-import { openDownloadModal } from "../ui/downloadModal.js";
-import { fetchMembersCount, showMembersPopup } from "../features/initMembers.js";
-import { openAddMemberModal } from "../ui/addMemberModal.js";
-import { openFeatureModal } from "../ui/featureModal.js";
-
-
+import { getProjectsPerPage, getCurrentPage, setCurrentPage } from "../state.js";
 
 export function renderProjects(projects) {
   const container = document.getElementById("projectsContainer");
@@ -23,8 +16,6 @@ export function renderProjects(projects) {
   const endIndex = startIndex + projectsPerPage;
   const projectsToShow = projects.slice(startIndex, endIndex);
 
-  const role = localStorage.getItem("role"); // "admin" or "user"
-
   projectsToShow.forEach((project) => {
     const card = document.createElement("div");
     card.classList.add("project-card", "card");
@@ -33,85 +24,22 @@ export function renderProjects(projects) {
       ? new Date(project.created_at).toLocaleDateString("nl-NL")
       : "Onbekend";
 
-    let adminButtonsHTML = "";
-    if (role === "admin") {
-      adminButtonsHTML = `
-        <button class="btn btn-outline-primary mb-2 create-trace-btn" 
-                data-project-id="${project.id}" 
-                data-project-name="${project.project_name}">
-          Upload Trace
-        </button>
-
-        <button class="btn btn-outline-primary mb-2 create-feature-btn" 
-                data-project-id="${project.id}" 
-                data-project-name="${project.project_name}">
-          Upload Features
-        </button>
-      `;
-    }
-
     card.innerHTML = `
       <div class="card-body">
         <h5 class="card-title text-center">${project.project_name.replaceAll("_", " ")}</h5>
         <p><strong>Aangemaakt op:</strong> ${dateStr}</p>
         <p><strong>Rol:</strong> ${project.role}</p>
-        <p>
-          <strong>Aantal Leden:</strong> 
-          <span id="member-count-${project.id}">...</span>  
-        </p>
-        <button class="btn btn-sm btn-light ms-2 view-members-btn" data-project-id="${project.id}">
-          Bekijk Leden
-        </button>
-        <button class="btn btn-sm btn-light ms-2 add-member-btn" data-project-id="${project.id}">
-          Voeg Lid Toe
-        </button>
-        <p><strong>Aantal Traces:</strong> ${project.traces.length}</p>
-        ${adminButtonsHTML}
-        <button class="btn btn-primary mb-2 download-trace-btn" data-project-id="${project.id}">
-          Download Traces
-        </button>
-        <button class="btn btn-primary mb-2 view-project-btn" data-project-id="${project.id}">
-          Bekijk Project
+        <button class="btn btn-primary mt-3 go-to-project-btn" data-project-id="${project.id}">
+          Ga naar Project
         </button>
       </div>
     `;
 
     container.appendChild(card);
 
-    // Fetch members count
-    fetchMembersCount(project.id);
-
-    // View members
-    card.querySelector(".view-members-btn")?.addEventListener("click", async () => {
-      await showMembersPopup(project.id);
-    });
-
-    // Add member
-    card.querySelector(".add-member-btn")?.addEventListener("click", () => {
-      setCurrentProjectId(project.id);
-      openAddMemberModal(project.id);
-    });
-
-    // View project
-    card.querySelector(".view-project-btn")?.addEventListener("click", () => {
-      window.open(`/pages/viewer.html?project_id=${project.id}`, "_blank");
-    });
-
-    // Upload Trace button
-    card.querySelector(".create-trace-btn")?.addEventListener("click", () => {
-      setCurrentProjectId(project.id);
-      openTraceModal(project.project_name.replaceAll("_", " "));
-    });
-
-    // Upload Feature button
-    card.querySelector(".create-feature-btn")?.addEventListener("click", () => {
-      setCurrentProjectId(project.id);
-      openFeatureModal(project);
-    });
-
-    // Download Traces
-    card.querySelector(".download-trace-btn")?.addEventListener("click", () => {
-      openDownloadModal(project);
+    // Navigate to project detail page
+    card.querySelector(".go-to-project-btn")?.addEventListener("click", () => {
+      window.location.href = `/pages/project-detail.html?project_id=${project.id}`;
     });
   });
 

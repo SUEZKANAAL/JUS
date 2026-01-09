@@ -1,23 +1,17 @@
 import { fetchProjectMembers, addMemberToProject } from "../api/members.js";
 import { showMembersModal } from "../ui/membersModal.js";
-import { getCurrentProjectId } from "../state.js";
+import { getProjectId } from "../state.js";
+import { fetchProject } from "../api/project.js";
+import { setProject } from "../state.js";
+import { renderProjectInfo } from "../ui/renderProjectInfo.js";
 
-export async function fetchMembersCount(projectId) {
+export async function showMembersPopup() {
   try {
-    const members = await fetchProjectMembers(projectId);
-    const countSpan = document.getElementById(`member-count-${projectId}`);
-    if (countSpan) {
-      countSpan.textContent = members.length || 0;
+    const projectId = getProjectId();
+    if (!projectId) {
+      alert("Geen project ID beschikbaar");
+      return;
     }
-  } catch (err) {
-    console.error(err);
-    const countSpan = document.getElementById(`member-count-${projectId}`);
-    if (countSpan) countSpan.textContent = "?";
-  }
-}
-
-export async function showMembersPopup(projectId) {
-  try {
     const members = await fetchProjectMembers(projectId);
     showMembersModal(members);
   } catch (err) {
@@ -32,7 +26,7 @@ export function initAddMember() {
     if (!username) return alert("Voer een username in!");
 
     try {
-      const projectId = getCurrentProjectId();
+      const projectId = getProjectId();
       if (!projectId) return alert("Geen project geselecteerd.");
       await addMemberToProject(projectId, username);
 
@@ -43,11 +37,16 @@ export function initAddMember() {
       const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
       modal.hide();
 
-      await fetchMembersCount(projectId);
+      // Refresh member count
+      try {
+        const members = await fetchProjectMembers(projectId);
+        document.getElementById("projectMemberCount").textContent = members.length || 0;
+      } catch (err) {
+        console.error("Failed to refresh member count:", err);
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Er is iets misgegaan");
     }
   });
 }
-
