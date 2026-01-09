@@ -815,7 +815,7 @@ function loadProjectData() {
 
   const token = localStorage.getItem("accessToken");
 
-  fetch(`https://sue-fastapi.onrender.com/projects/${projectId}`, {
+  fetch(`${window.getApiBaseUrl ? window.getApiBaseUrl() : 'https://sue-fastapi.onrender.com'}/projects/${projectId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",

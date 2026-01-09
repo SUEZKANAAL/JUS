@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from "../../config/apiConfig.js";
+
 function getToken() {
   return localStorage.getItem("accessToken");
 }
@@ -5,7 +7,7 @@ function getToken() {
 export async function fetchProjectMembers(projectId) {
   const token = getToken();
   const response = await fetch(
-    `https://sue-fastapi.onrender.com/projects/${projectId}/members`,
+    `${getApiBaseUrl()}/projects/${projectId}/members`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
 
@@ -17,7 +19,7 @@ export async function addMemberToProject(projectId, username) {
   const token = getToken();
 
   const response = await fetch(
-    `https://sue-fastapi.onrender.com/projects/${projectId}/add-user`,
+    `${getApiBaseUrl()}/projects/${projectId}/add-user`,
     {
       method: "POST",
       headers: {

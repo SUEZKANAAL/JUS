@@ -1,69 +1,83 @@
-import { getAllProjects, setFilteredProjects, setCurrentPage } from "../state.js";
-import { renderProjects } from "../ui/renderProjects.js";
+import { 
+  setSearch, 
+  setDateFrom, 
+  setDateTo, 
+  setSort, 
+  setCurrentPage 
+} from "../state.js";
+import { loadProjects } from "./initProjectsLoader.js";
 
+// Map frontend sort values to backend sort values
+function mapSortValue(frontendSort) {
+  const mapping = {
+    "nameAsc": "name_asc",
+    "nameDesc": "name_desc",
+    "dateNewest": "date_newest",
+    "dateOldest": "date_oldest",
+  };
+  return mapping[frontendSort] || "date_newest";
+}
 
+// Debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 export function initFilters() {
   function applyFilters() {
-    let projects = [...getAllProjects()];
-
-    // Search filter
-    const searchValue = document
-      .getElementById("searchInput")
-      .value.toLowerCase()
-      .replaceAll(" ", "_");
-
-    if (searchValue) {
-      projects = projects.filter((p) =>
-        p.project_name.toLowerCase().includes(searchValue)
-      );
-    }
-
-    // Date range filter
+    // Get filter values from DOM
+    const searchInput = document.getElementById("searchInput");
     const dateFromEl = document.getElementById("dateFrom");
     const dateToEl = document.getElementById("dateTo");
+    const sortSelect = document.getElementById("sortSelect");
 
-    if (dateFromEl?.value) {
-      const fromDate = new Date(dateFromEl.value);
-      projects = projects.filter(
-        (p) => p.created_at && new Date(p.created_at) >= fromDate
-      );
-    }
+    // Update state with new filter values
+    setSearch(searchInput?.value || "");
+    setDateFrom(dateFromEl?.value || "");
+    setDateTo(dateToEl?.value || "");
+    
+    // Map frontend sort to backend sort
+    const frontendSort = sortSelect?.value || "dateNewest";
+    const backendSort = mapSortValue(frontendSort);
+    setSort(backendSort);
 
-    if (dateToEl?.value) {
-      const toDate = new Date(dateToEl.value);
-      projects = projects.filter(
-        (p) => p.created_at && new Date(p.created_at) <= toDate
-      );
-    }
-
-    // Sorting
-    const sort = document.getElementById("sortSelect").value;
-    if (sort === "nameAsc")
-      projects.sort((a, b) => a.project_name.localeCompare(b.project_name));
-    else if (sort === "nameDesc")
-      projects.sort((a, b) => b.project_name.localeCompare(a.project_name));
-    else if (sort === "dateNewest")
-      projects.sort(
-        (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
-      );
-    else if (sort === "dateOldest")
-      projects.sort(
-        (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
-      );
-
-    // Update filteredProjects (legacy state)
-    setFilteredProjects(projects);
-
-    // Reset to first page
+    // Reset to first page when filters change
     setCurrentPage(1);
 
-    // Render
-    renderProjects(projects);
+    // Reload projects with new filters
+    loadProjects();
   }
 
-  document.getElementById("searchInput")?.addEventListener("input", applyFilters);
-  document.getElementById("sortSelect")?.addEventListener("change", applyFilters);
-  document.getElementById("dateFrom")?.addEventListener("change", applyFilters);
-  document.getElementById("dateTo")?.addEventListener("change", applyFilters);
+  // Debounced version for search input (300ms delay)
+  const debouncedApplyFilters = debounce(applyFilters, 300);
+
+  // Search input: use debounced version
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", debouncedApplyFilters);
+  }
+
+  // Other filters: apply immediately
+  const sortSelect = document.getElementById("sortSelect");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", applyFilters);
+  }
+
+  const dateFromEl = document.getElementById("dateFrom");
+  if (dateFromEl) {
+    dateFromEl.addEventListener("change", applyFilters);
+  }
+
+  const dateToEl = document.getElementById("dateTo");
+  if (dateToEl) {
+    dateToEl.addEventListener("change", applyFilters);
+  }
 }

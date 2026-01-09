@@ -1,5 +1,6 @@
 import { getMap } from "../state.js";
 import { getFeatureStyle } from "../styles/geojsonStyles.js";
+import { getApiBaseUrl } from "../../config/apiConfig.js";
 
 let combinedExtent = ol.extent.createEmpty();
 let hasExtent = false;
@@ -65,7 +66,7 @@ export function loadProjectData() {
     return;
   }
 
-  fetch(`https://sue-fastapi.onrender.com/projects/${projectId}`, {
+  fetch(`${getApiBaseUrl()}/projects/${projectId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",

@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from "../../config/apiConfig.js";
+
 function getToken() {
   return localStorage.getItem("accessToken");
 }
@@ -6,7 +8,7 @@ export async function createStandaloneProjectWithTrace(body) {
   const token = getToken();
 
   const response = await fetch(
-    "https://sue-fastapi.onrender.com/create-project-standalone-with-trace",
+    `${getApiBaseUrl()}/create-project-standalone-with-trace`,
     {
       method: "POST",
       headers: {

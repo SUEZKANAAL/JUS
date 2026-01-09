@@ -1,35 +1,51 @@
-import { renderProjects } from "../ui/renderProjects.js";
-
-
 import {
-  getFilteredProjects,
-  getProjectsPerPage,
+  getTotalPages,
   getCurrentPage,
   setCurrentPage,
 } from "../state.js";
+import { loadProjects } from "./initProjectsLoader.js";
 
 export function initPagination() {
+  const firstPageBtn = document.getElementById("firstPageBtn");
+  const prevPageBtn = document.getElementById("prevPageBtn");
+  const nextPageBtn = document.getElementById("nextPageBtn");
+  const lastPageBtn = document.getElementById("lastPageBtn");
 
+  if (firstPageBtn) {
+    firstPageBtn.addEventListener("click", () => {
+      setCurrentPage(1);
+      loadProjects();
+    });
+  }
 
-  document.getElementById("firstPageBtn")?.addEventListener("click", () => {
-    setCurrentPage(1);
-    renderProjects(getFilteredProjects());
-  });
+  if (prevPageBtn) {
+    prevPageBtn.addEventListener("click", () => {
+      const currentPage = getCurrentPage();
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+        loadProjects();
+      }
+    });
+  }
 
-  document.getElementById("prevPageBtn")?.addEventListener("click", () => {
-    setCurrentPage(getCurrentPage() - 1);
-    renderProjects(getFilteredProjects());
-  });
+  if (nextPageBtn) {
+    nextPageBtn.addEventListener("click", () => {
+      const currentPage = getCurrentPage();
+      const totalPages = getTotalPages();
+      if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+        loadProjects();
+      }
+    });
+  }
 
-  document.getElementById("nextPageBtn")?.addEventListener("click", () => {
-    setCurrentPage(getCurrentPage() + 1);
-    renderProjects(getFilteredProjects());
-  });
-
-  document.getElementById("lastPageBtn")?.addEventListener("click", () => {
-    const projects = getFilteredProjects();
-    const perPage = getProjectsPerPage();
-    setCurrentPage(Math.ceil(projects.length / perPage));
-    renderProjects(projects);
-  });
+  if (lastPageBtn) {
+    lastPageBtn.addEventListener("click", () => {
+      const totalPages = getTotalPages();
+      if (totalPages > 0) {
+        setCurrentPage(totalPages);
+        loadProjects();
+      }
+    });
+  }
 }

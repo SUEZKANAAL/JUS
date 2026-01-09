@@ -1,9 +1,10 @@
+import { getApiBaseUrl } from "../../config/apiConfig.js";
 
 export async function createAutomaticTrace(payload) {
   const token = localStorage.getItem("accessToken");
 
   const response = await fetch(
-    "https://sue-fastapi.onrender.com/create-project-automatic-trace",
+    `${getApiBaseUrl()}/create-project-automatic-trace`,
     {
       method: "POST",
       headers: {

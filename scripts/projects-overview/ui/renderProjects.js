@@ -1,22 +1,29 @@
-import { getProjectsPerPage, getCurrentPage, setCurrentPage } from "../state.js";
+import { 
+  getProjects, 
+  getCurrentPage, 
+  getTotalPages,
+  getProjectsPerPage 
+} from "../state.js";
 
-export function renderProjects(projects) {
+export function renderProjects() {
   const container = document.getElementById("projectsContainer");
+  if (!container) return;
+
   container.innerHTML = "";
 
+  const projects = getProjects();
+  const currentPage = getCurrentPage();
+  const totalPages = getTotalPages();
   const projectsPerPage = getProjectsPerPage();
-  let currentPage = getCurrentPage();
 
-  const totalPages = Math.ceil(projects.length / projectsPerPage);
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-  setCurrentPage(currentPage);
+  // Show message if no projects
+  if (projects.length === 0) {
+    container.innerHTML = `<p class="text-muted text-center">Geen projecten gevonden.</p>`;
+    return;
+  }
 
-  const startIndex = (currentPage - 1) * projectsPerPage;
-  const endIndex = startIndex + projectsPerPage;
-  const projectsToShow = projects.slice(startIndex, endIndex);
-
-  projectsToShow.forEach((project) => {
+  // Render project cards (projects are already paginated from backend)
+  projects.forEach((project) => {
     const card = document.createElement("div");
     card.classList.add("project-card", "card");
 
@@ -45,14 +52,25 @@ export function renderProjects(projects) {
 
   // Update Pagination Controls
   const pagination = document.getElementById("paginationControls");
-  if (projects.length > projectsPerPage) {
-    pagination.style.display = "flex";
-    document.getElementById("currentPageInfo").innerText = `Pagina ${currentPage} van ${totalPages}`;
+  if (!pagination) return;
 
-    document.getElementById("firstPageBtn").disabled = currentPage === 1;
-    document.getElementById("prevPageBtn").disabled = currentPage === 1;
-    document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
-    document.getElementById("lastPageBtn").disabled = currentPage === totalPages;
+  if (totalPages > 1) {
+    pagination.style.display = "flex";
+    
+    const currentPageInfo = document.getElementById("currentPageInfo");
+    if (currentPageInfo) {
+      currentPageInfo.innerText = `Pagina ${currentPage} van ${totalPages}`;
+    }
+
+    const firstPageBtn = document.getElementById("firstPageBtn");
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+    const lastPageBtn = document.getElementById("lastPageBtn");
+
+    if (firstPageBtn) firstPageBtn.disabled = currentPage === 1;
+    if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+    if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+    if (lastPageBtn) lastPageBtn.disabled = currentPage === totalPages;
   } else {
     pagination.style.display = "none";
   }

@@ -1,11 +1,12 @@
 // scripts/login/api/auth.js
+import { getApiBaseUrl } from "../../config/apiConfig.js";
 
 export async function login(username, password, { timeoutMs = 12000 } = {}) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch("https://sue-fastapi.onrender.com/login", {
+    const response = await fetch(`${getApiBaseUrl()}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
