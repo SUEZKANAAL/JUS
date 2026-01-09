@@ -75,27 +75,11 @@
 
     <section class="page-section">
       <div id="viewer-map" class="map"></div>
-
-      <div id="jsonFileInputContainer" class="menu">
-        <h3>Upload GeoJSON</h3>
-        <div class="input-container">
-          <!-- <input
-            type="file"
-            id="jsonFileInput"
-            multiple="true"
-            accept=".geojson"
-          /> -->
-          <input type="file" id="jsonFileInput" multiple webkitdirectory />
-        </div>
-      </div>
-
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer">&#x2715;</a>
         <div id="popup-content"></div>
       </div>
     </section>
-
-    <script src="../js/scripts.js"></script>
 
     <!-- Load OpenLayers JavaScript first (this defines 'ol') -->
     <script src="../libs/v10.0.0-package/dist/ol.js"></script>
@@ -107,13 +91,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.js"></script>
 
-    <!-- Your custom scripts (after external libraries) -->
     <script src="../js/scripts.js"></script>
 
-    <!-- Form handling script -->
-    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    <script type="module" src="../scripts/viewer/index.js"></script>
 
-    <!-- Finally, load your own viewer.js (which depends on ol.js) -->
-    <script src="../scripts/viewer.js"></script>
   </body>
 </html>
