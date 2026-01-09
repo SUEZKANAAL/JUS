@@ -16,20 +16,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (token) {
     // User is logged in
-    navLogin.style.display = "none";
-    navLogout.style.display = "block";
+    if (navLogin) navLogin.style.display = "none";
+    if (navLogout) navLogout.style.display = "block";
   } else {
     // User is not logged in
-    navLogin.style.display = "block";
-    navLogout.style.display = "none";
+    if (navLogin) navLogin.style.display = "block";
+    if (navLogout) navLogout.style.display = "none";
   }
 
   // Logout action
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("role"); // optional, if you saved it
-    window.location.href = "/pages/login.html"; // redirect to login page
-  });
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("role"); // optional, if you saved it
+      window.location.href = "/pages/login.html"; // redirect to login page
+    });
+  }
 });
 
 
