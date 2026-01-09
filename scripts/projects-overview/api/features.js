@@ -22,8 +22,18 @@ export async function addFeaturesToProject(projectId, body) {
   const data = await response.json();
 
   if (!response.ok) {
-    const msg =
-      typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail ?? data);
+    let msg;
+    if (typeof data.detail === "string") {
+      msg = data.detail;
+    } else if (Array.isArray(data.detail)) {
+      // Handle Pydantic validation errors
+      msg = data.detail.map(err => {
+        const field = err.loc ? err.loc.join(".") : "unknown";
+        return `${field}: ${err.msg}`;
+      }).join("; ");
+    } else {
+      msg = JSON.stringify(data.detail ?? data);
+    }
     throw new Error(msg || "Failed to upload feature");
   }
 
