@@ -4,6 +4,7 @@ import { setMap } from "./state.js";
 import { initDraw } from "./draw/initDraw.js";
 import { initProj4Defs } from "./draw/wkt.js";
 import { bindTraceAanvragenButton } from "./actions/bindTraceAanvragenButton.js";
+import { initCurrentUser } from "../auth/ui/currentUser.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initToggleHulplijnButton();
@@ -13,4 +14,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initDraw();
   initProj4Defs();
   bindTraceAanvragenButton();
+  initCurrentUser();
 });

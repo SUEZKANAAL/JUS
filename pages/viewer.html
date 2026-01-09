@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="../css/styles.css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="../css/styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" />
+
   </head>
   <body id="page-top" class="bg-dark">
     <!-- only show page if logged in -->
@@ -28,50 +31,9 @@
     </script>
 
     <!-- Navigation-->
-         <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-      <div class="container">
-        <h1 class="navbar-brand"><a href="../">Sue</a></h1>
-        <!-- <a class="navbar-brand" href="/"><img src="" alt="..." /></a> -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          Menu
-          <i class="fas fa-bars ms-1"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="/pages/projecten-overview.html">Porjecten</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/#services">Diensten</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/#portfolio">Tools</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/#about">Proces</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/#instructie">Instructie</a>
-            </li>
-            <li class="nav-item" id="navLogin">
-              <a class="nav-link" href="/pages/login.html">Login</a>
-            </li>
-            <li class="nav-item" id="navLogout">
-              <a class="nav-link" href="#" id="logoutBtn">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <!-- Navigation -->
+    <div id="app-navbar"></div>
+    <script type="module" src="../scripts/layout/bootstrapLayout.js"></script>
 
     <section class="page-section">
       <div id="viewer-map" class="map"></div>
@@ -94,6 +56,5 @@
     <script src="../js/scripts.js"></script>
 
     <script type="module" src="../scripts/viewer/index.js"></script>
-
   </body>
 </html>

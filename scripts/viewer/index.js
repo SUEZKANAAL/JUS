@@ -6,6 +6,7 @@ import { initLayerSwitcher } from "./ui/layerswitcher.js";
 import { initPopup } from "./ui/popup.js";
 import { bindStreetViewOnDoubleClick } from "./actions/streetViewOnDoubleClick.js";
 import { loadProjectData } from "./features/projectLoader.js";
+import { initCurrentUser } from "../auth/ui/currentUser.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initProj4();
@@ -19,4 +20,5 @@ document.addEventListener("DOMContentLoaded", () => {
   bindStreetViewOnDoubleClick();
 
   loadProjectData();
+  initCurrentUser();
 });

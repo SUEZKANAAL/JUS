@@ -15,6 +15,7 @@ import { initFeatureEntries } from "./features/initFeatureEntries.js";
 import { initFeatureUpload } from "./features/initFeatureUpload.js";
 import { initFeatureModal } from "./features/initFeatureModal.js";
 import { initStandaloneProjectModal } from "./features/initStandaloneProjectModal.js";
+import { initCurrentUser } from "../auth/ui/currentUser.js";
 
 
 
@@ -32,6 +33,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeatureUpload();
   initFeatureModal();
   initStandaloneProjectModal();
-
-
+  initCurrentUser();
 });
