@@ -6,40 +6,9 @@ import { openAddMemberModal } from "../ui/addMemberModal.js";
 import { showMembersPopup } from "./initMembers.js";
 import { getProjectId } from "../state.js";
 
-// Helper function to check if user can upload (only global admin)
-// Global admins always have upload permissions, regardless of project role
-function canUpload() {
-  const globalRole = localStorage.getItem("role"); // "admin" or "user"
-  
-  // If global admin, always allow
-  if (globalRole === "admin") {
-    return true;
-  }
-  
-  // For non-admins, check if API returned "admin" role (shouldn't happen, but be safe)
-  const project = getProject();
-  if (project && project.role === "admin") {
-    return true;
-  }
-  
-  return false;
-}
-
-// Update button visibility based on permissions
-export function updateButtonVisibility() {
-  const uploadTraceBtn = document.getElementById("uploadTraceBtn");
-  const uploadFeatureBtn = document.getElementById("uploadFeatureBtn");
-  
-  if (uploadTraceBtn) {
-    uploadTraceBtn.style.display = canUpload() ? "inline-block" : "none";
-  }
-  
-  if (uploadFeatureBtn) {
-    uploadFeatureBtn.style.display = canUpload() ? "inline-block" : "none";
-  }
-}
-
 export function initActions() {
+  const role = localStorage.getItem("role"); // "admin" or "user"
+
   // View members button
   document.querySelector(".view-members-btn")?.addEventListener("click", async () => {
     await showMembersPopup();
@@ -50,36 +19,39 @@ export function initActions() {
     openAddMemberModal();
   });
 
-  // Upload Trace button (only for global admin)
+  // Upload Trace button (only for admin)
   const uploadTraceBtn = document.getElementById("uploadTraceBtn");
   if (uploadTraceBtn) {
-    uploadTraceBtn.addEventListener("click", () => {
-      const project = getProject();
-      if (project) {
-        const projectData = project.project || project;
-        openTraceModal(projectData.project_name?.replaceAll("_", " ") || "Project");
-      }
-    });
-    // Initially hide, will be shown after project loads
-    uploadTraceBtn.style.display = "none";
+    if (role === "admin") {
+      uploadTraceBtn.style.display = "inline-block";
+      uploadTraceBtn.addEventListener("click", () => {
+        const project = getProject();
+        if (project) {
+          const projectData = project.project || project;
+          openTraceModal(projectData.project_name?.replaceAll("_", " ") || "Project");
+        }
+      });
+    } else {
+      uploadTraceBtn.style.display = "none";
+    }
   }
 
-  // Upload Feature button (only for global admin)
+  // Upload Feature button (only for admin)
   const uploadFeatureBtn = document.getElementById("uploadFeatureBtn");
   if (uploadFeatureBtn) {
-    uploadFeatureBtn.addEventListener("click", () => {
-      const project = getProject();
-      if (project) {
-        const projectData = project.project || project;
-        openFeatureModal(projectData);
-      }
-    });
-    // Initially hide, will be shown after project loads
-    uploadFeatureBtn.style.display = "none";
+    if (role === "admin") {
+      uploadFeatureBtn.style.display = "inline-block";
+      uploadFeatureBtn.addEventListener("click", () => {
+        const project = getProject();
+        if (project) {
+          const projectData = project.project || project;
+          openFeatureModal(projectData);
+        }
+      });
+    } else {
+      uploadFeatureBtn.style.display = "none";
+    }
   }
-  
-  // Update visibility immediately in case project is already loaded
-  updateButtonVisibility();
 
   // Download Traces button
   document.getElementById("downloadTracesBtn")?.addEventListener("click", () => {
