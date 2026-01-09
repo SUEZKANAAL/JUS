@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("role"); // optional, if you saved it
-      window.location.href = "/pages/login.html"; // redirect to login page
+      window.location.href = "./pages/login.html"; // redirect to login page
     });
   }
 });

@@ -39,7 +39,7 @@ export function renderProjects(projects) {
 
     // Navigate to project detail page
     card.querySelector(".go-to-project-btn")?.addEventListener("click", () => {
-      window.location.href = `/pages/project-detail.html?project_id=${project.id}`;
+      window.location.href = `./project-detail.html?project_id=${project.id}`;
     });
   });
 

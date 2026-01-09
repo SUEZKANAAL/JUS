@@ -18,8 +18,22 @@ async function loadNavbar() {
   const host = document.getElementById("app-navbar");
   if (!host) return;
 
-  const res = await fetch("/scripts/layout/navbar.html");
-  host.innerHTML = await res.text();
+  // Determine the correct path to navbar.html based on current page location
+  const isInPagesFolder = window.location.pathname.includes('/pages/');
+  const navbarPath = isInPagesFolder ? '../scripts/layout/navbar.html' : './scripts/layout/navbar.html';
+  
+  const res = await fetch(navbarPath);
+  let navbarHtml = await res.text();
+
+  // Fix paths in navbar based on current page location
+  const pathPrefix = isInPagesFolder ? '../' : './';
+
+  // Replace navbar links with correct relative paths
+  navbarHtml = navbarHtml
+    .replace(/href="pages\//g, `href="${pathPrefix}pages/`)
+    .replace(/href="index\.html/g, `href="${pathPrefix}index.html`);
+
+  host.innerHTML = navbarHtml;
 
   applyNavbarShrinkBehavior();
 

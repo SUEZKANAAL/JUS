@@ -16,7 +16,10 @@ export function initLogout() {
   if (btn) {
     btn.onclick = () => {
       localStorage.clear();
-      window.location.href = "/pages/login.html";
+      // Determine correct path based on current location
+      const isInPagesFolder = window.location.pathname.includes('/pages/');
+      const loginPath = isInPagesFolder ? './login.html' : './pages/login.html';
+      window.location.href = loginPath;
     };
   }
 }

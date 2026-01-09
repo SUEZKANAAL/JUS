@@ -5,6 +5,6 @@ export function bindCreateTraceProjectButton() {
 
   btn.addEventListener("click", () => {
     // Leid de gebruiker naar de trace aanvragen pagina
-    window.location.href = "/pages/intekenen.html";
+    window.location.href = "./intekenen.html";
   });
 }

@@ -60,7 +60,7 @@ export function initLoginForm() {
       loginBtn.textContent = "Success ✓";
       localStorage.setItem("username", username);
 
-      window.location.href = "/pages/projecten-overview.html";
+      window.location.href = "./projecten-overview.html";
     } catch (err) {
       showError(err?.message || "Login failed");
       setLoading(false);

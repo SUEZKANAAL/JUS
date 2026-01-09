@@ -65,12 +65,12 @@ export function initActions() {
   document.getElementById("viewProjectBtn")?.addEventListener("click", () => {
     const projectId = getProjectId();
     if (projectId) {
-      window.open(`/pages/viewer.html?project_id=${projectId}`, "_blank");
+      window.open(`./viewer.html?project_id=${projectId}`, "_blank");
     }
   });
 
   // Back to overview button
   document.getElementById("backToOverviewBtn")?.addEventListener("click", () => {
-    window.location.href = "/pages/projecten-overview.html";
+    window.location.href = "./projecten-overview.html";
   });
 }
