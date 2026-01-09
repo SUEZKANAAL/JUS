@@ -3,6 +3,7 @@ import { setProject, setProjectId, getProject } from "../state.js";
 import { renderProjectInfo } from "../ui/renderProjectInfo.js";
 import { fetchProjectMembers } from "../api/members.js";
 import { parseJsonWebToken } from "../../login/utils/jsonWebToken.js";
+import { updateButtonVisibility } from "./initActions.js";
 
 export function initProjectLoader() {
   async function load() {
@@ -32,28 +33,13 @@ export function initProjectLoader() {
       
       renderProjectInfo();
       
-      // Fetch and update member count and role
+      // Update button visibility based on project role
+      updateButtonVisibility();
+      
+      // Fetch and update member count (role is already set by renderProjectInfo from API response)
       try {
         const members = await fetchProjectMembers(projectId);
         document.getElementById("projectMemberCount").textContent = members.length || 0;
-        
-        // Find current user's role in the project
-        const token = localStorage.getItem("accessToken");
-        const storedUsername = localStorage.getItem("username");
-        let currentUsername = storedUsername;
-        if (token) {
-          const decoded = parseJsonWebToken(token);
-          currentUsername = decoded?.username || decoded?.sub || storedUsername;
-        }
-        
-        if (currentUsername && Array.isArray(members)) {
-          const currentUserMember = members.find(m => m.username === currentUsername);
-          if (currentUserMember && currentUserMember.role) {
-            // Capitalize first letter for display
-            const role = currentUserMember.role.charAt(0).toUpperCase() + currentUserMember.role.slice(1);
-            document.getElementById("projectRole").textContent = role;
-          }
-        }
       } catch (err) {
         console.error("Failed to fetch members count:", err);
         document.getElementById("projectMemberCount").textContent = "?";
