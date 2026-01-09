@@ -1,13 +1,4 @@
-var toggleButton = document.getElementById("toggleButton");
-var drawHulplijn = document.getElementById("drawHulplijn");
 
-toggleButton.addEventListener("click", function () {
-    if (drawHulplijn.style.display === "none") {
-        drawHulplijn.style.display = "block";
-    } else {
-        drawHulplijn.style.display = "none";
-    }
-});
 
 // Initialize the map
 
@@ -19,204 +10,204 @@ toggleButton.addEventListener("click", function () {
 //     }
 // ).addTo(map);
 
-var RD = new L.Proj.CRS(
-    "EPSG:28992",
-    "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs",
-    {
-        origin: [-285401.92, 903401.92],
-        resolutions: [
-            // Levels of Detail: 17
-            3251.206502413005, 1625.6032512065026, 812.8016256032513,
-            406.40081280162565, 203.20040640081282, 101.60020320040641,
-            50.800101600203206, 25.400050800101603, 12.700025400050801,
-            6.350012700025401, 3.1750063500127004, 1.5875031750063502,
-            0.7937515875031751, 0.39687579375158755, 0.19843789687579377,
-            0.09921894843789688, 0.04960947421894844,
-        ],
-    }
-);
+// var RD = new L.Proj.CRS(
+//     "EPSG:28992",
+//     "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs",
+//     {
+//         origin: [-285401.92, 903401.92],
+//         resolutions: [
+//             // Levels of Detail: 17
+//             3251.206502413005, 1625.6032512065026, 812.8016256032513,
+//             406.40081280162565, 203.20040640081282, 101.60020320040641,
+//             50.800101600203206, 25.400050800101603, 12.700025400050801,
+//             6.350012700025401, 3.1750063500127004, 1.5875031750063502,
+//             0.7937515875031751, 0.39687579375158755, 0.19843789687579377,
+//             0.09921894843789688, 0.04960947421894844,
+//         ],
+//     }
+// );
 
-var defaultBaseMap = L.tileLayer(
-    "https://services.arcgisonline.nl/arcgis/rest/services/Basiskaarten/Topo/MapServer/tile/{z}/{y}/{x}",
-    {
-        attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>',
-    }
-);
+// var defaultBaseMap = L.tileLayer(
+//     "https://services.arcgisonline.nl/arcgis/rest/services/Basiskaarten/Topo/MapServer/tile/{z}/{y}/{x}",
+//     {
+//         attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>',
+//     }
+// );
 
-var secondBaseMap = L.tileLayer(
-    "https://services.arcgisonline.nl/arcgis/rest/services/Luchtfoto/Luchtfoto/MapServer/tile/{z}/{y}/{x}",
-    {
-        attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>',
-    }
-);
+// var secondBaseMap = L.tileLayer(
+//     "https://services.arcgisonline.nl/arcgis/rest/services/Luchtfoto/Luchtfoto/MapServer/tile/{z}/{y}/{x}",
+//     {
+//         attribution: 'Map data &copy; <a href="https://www.arcgis.com/">ArcGIS</a>',
+//     }
+// );
 
-var map = L.map("map", {
-    layers: [defaultBaseMap],
-    crs: RD,
-    maxZoom: 14.4,
-}).setView([52.2354, 5.3751], 3);
+// var map = L.map("map", {
+//     layers: [defaultBaseMap],
+//     crs: window.RD,
+//     maxZoom: 14.4,
+// }).setView([52.2354, 5.3751], 3);
 
-var baseMaps = {
-    Topo: defaultBaseMap,
-    Luchtfoto: secondBaseMap,
-};
+// var baseMaps = {
+//     Topo: defaultBaseMap,
+//     Luchtfoto: secondBaseMap,
+// };
 
-L.control.layers(baseMaps).addTo(map);
+// L.control.layers(baseMaps).addTo(map);
 
-// add search bar
-L.Control.geocoder().addTo(map);
+// // add search bar
+// L.Control.geocoder().addTo(map);
 
-// FeatureGroup to store editable layers
-var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
+// // FeatureGroup to store editable layers
+// var drawnItems = new L.FeatureGroup();
+// map.addLayer(drawnItems);
 
-// Initialize the draw control and pass it the FeatureGroup of editable layers
-var drawControl = new L.Control.Draw({
-    edit: {
-        featureGroup: drawnItems,
-    },
-    draw: false, // Disable default draw tools
-});
-map.addControl(drawControl);
+// // Initialize the draw control and pass it the FeatureGroup of editable layers
+// var drawControl = new L.Control.Draw({
+//     edit: {
+//         featureGroup: drawnItems,
+//     },
+//     draw: false, // Disable default draw tools
+// });
+// map.addControl(drawControl);
 
-// Add created layers to the map
-map.on(L.Draw.Event.CREATED, function (event) {
-    var layer = event.layer;
-    drawnItems.addLayer(layer);
-    layer.type = currentDrawingType; // Set type to distinguish different drawing types
-});
+// // Add created layers to the map
+// map.on(L.Draw.Event.CREATED, function (event) {
+//     var layer = event.layer;
+//     drawnItems.addLayer(layer);
+//     layer.type = currentDrawingType; // Set type to distinguish different drawing types
+// });
 
-var redIcon = new L.Icon({
-    iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-    shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-});
+// var redIcon = new L.Icon({
+//     iconUrl:
+//         "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+//     shadowUrl:
+//         "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+//     iconSize: [25, 41],
+//     iconAnchor: [12, 41],
+//     popupAnchor: [1, -34],
+//     shadowSize: [41, 41],
+// });
 
-var currentDrawingType = null;
-var drawControlProjectArea = new L.Draw.Polygon(map, {
-    shapeOptions: {
-        color: "blue",
-        fill: false,
-    },
-});
+// var currentDrawingType = null;
+// var drawControlProjectArea = new L.Draw.Polygon(map, {
+//     shapeOptions: {
+//         color: "blue",
+//         fill: false,
+//     },
+// });
 
-var drawControlStartEndPoint = new L.Draw.Marker(map, {
-    icon: redIcon,
-});
-var drawControlNoGoZone = new L.Draw.Polygon(map, {
-    shapeOptions: {
-        color: "red",
-    },
-});
-var drawControlHulplijn = new L.Draw.Polyline(map, {
-    shapeOptions: {
-        color: "orange",
-    },
-});
+// var drawControlStartEndPoint = new L.Draw.Marker(map, {
+//     icon: redIcon,
+// });
+// var drawControlNoGoZone = new L.Draw.Polygon(map, {
+//     shapeOptions: {
+//         color: "red",
+//     },
+// });
+// var drawControlHulplijn = new L.Draw.Polyline(map, {
+//     shapeOptions: {
+//         color: "orange",
+//     },
+// });
 
-var drawControlBoorlijn = new L.Draw.Polyline(map, {
-    shapeOptions: {
-        color: "black",
-    },
-});
+// var drawControlBoorlijn = new L.Draw.Polyline(map, {
+//     shapeOptions: {
+//         color: "black",
+//     },
+// });
 
-var currentDrawControl = null;
+// var currentDrawControl = null;
 
-document
-    .getElementById("drawProjectArea")
-    .addEventListener("click", function () {
-        if (currentDrawControl) {
-            currentDrawControl.disable();
-        }
-        currentDrawingType = "projectgebiedWKT";
-        drawControlProjectArea.enable();
-        currentDrawControl = drawControlProjectArea;
-    });
+// document
+//     .getElementById("drawProjectArea")
+//     .addEventListener("click", function () {
+//         if (currentDrawControl) {
+//             currentDrawControl.disable();
+//         }
+//         currentDrawingType = "projectgebiedWKT";
+//         drawControlProjectArea.enable();
+//         currentDrawControl = drawControlProjectArea;
+//     });
 
-document
-    .getElementById("drawStartEndPoint")
-    .addEventListener("click", function () {
-        if (currentDrawControl) {
-            currentDrawControl.disable();
-        }
-        currentDrawingType = "startEindPuntWKT";
-        drawControlStartEndPoint.enable();
-        currentDrawControl = drawControlStartEndPoint;
-    });
+// document
+//     .getElementById("drawStartEndPoint")
+//     .addEventListener("click", function () {
+//         if (currentDrawControl) {
+//             currentDrawControl.disable();
+//         }
+//         currentDrawingType = "startEindPuntWKT";
+//         drawControlStartEndPoint.enable();
+//         currentDrawControl = drawControlStartEndPoint;
+//     });
 
-document.getElementById("drawNoGoZone").addEventListener("click", function () {
-    if (currentDrawControl) {
-        currentDrawControl.disable();
-    }
-    currentDrawingType = "nogoZonesWKT";
-    drawControlNoGoZone.enable();
-    currentDrawControl = drawControlNoGoZone;
-});
+// document.getElementById("drawNoGoZone").addEventListener("click", function () {
+//     if (currentDrawControl) {
+//         currentDrawControl.disable();
+//     }
+//     currentDrawingType = "nogoZonesWKT";
+//     drawControlNoGoZone.enable();
+//     currentDrawControl = drawControlNoGoZone;
+// });
 
-document.getElementById("drawHulplijn").addEventListener("click", function () {
-    if (currentDrawControl) {
-        currentDrawControl.disable();
-    }
-    currentDrawingType = "hulplijnenWKT";
-    drawControlHulplijn.enable();
-    currentDrawControl = drawControlHulplijn;
-});
+// document.getElementById("drawHulplijn").addEventListener("click", function () {
+//     if (currentDrawControl) {
+//         currentDrawControl.disable();
+//     }
+//     currentDrawingType = "hulplijnenWKT";
+//     drawControlHulplijn.enable();
+//     currentDrawControl = drawControlHulplijn;
+// });
 
-document.getElementById("drawBoorlijn").addEventListener("click", function () {
-    if (currentDrawControl) {
-        currentDrawControl.disable();
-    }
-    currentDrawingType = "boorlijnenWKT";
-    drawControlBoorlijn.enable();
-    currentDrawControl = drawControlBoorlijn;
-});
+// document.getElementById("drawBoorlijn").addEventListener("click", function () {
+//     if (currentDrawControl) {
+//         currentDrawControl.disable();
+//     }
+//     currentDrawingType = "boorlijnenWKT";
+//     drawControlBoorlijn.enable();
+//     currentDrawControl = drawControlBoorlijn;
+// });
 
-// Coordinate transformation
-proj4.defs([
-    ["EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"],
-    // ['EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4171,50.3319,465.5524,0.398957,0.343988,-1.8774,4.0725 +no_defs'],
-    [
-        "EPSG:28992",
-        "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs",
-    ],
-]);
+// // Coordinate transformation
+// proj4.defs([
+//     ["EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"],
+//     // ['EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4171,50.3319,465.5524,0.398957,0.343988,-1.8774,4.0725 +no_defs'],
+//     [
+//         "EPSG:28992",
+//         "+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs",
+//     ],
+// ]);
 
-function toRDNew(lat, lng) {
-    return proj4("EPSG:4326", "EPSG:28992", [lng, lat]);
-}
+// function toRDNew(lat, lng) {
+//     return proj4("EPSG:4326", "EPSG:28992", [lng, lat]);
+// }
 
-// Function to convert coordinates to WKT format in RD New
-function toWKT(layer) {
-    if (layer instanceof L.Polygon) {
-        var coords = layer
-            .getLatLngs()[0]
-            .map(function (latLng) {
-                var rdCoords = toRDNew(latLng.lat, latLng.lng);
-                return rdCoords[0] + " " + rdCoords[1];
-            })
-            .join(", ");
-        // Ensure the polygon is closed
-        coords += ", " + coords.split(", ")[0];
-        return "POLYGON ((" + coords + "))";
-    } else if (layer instanceof L.Polyline) {
-        var coords = layer
-            .getLatLngs()
-            .map(function (latLng) {
-                var rdCoords = toRDNew(latLng.lat, latLng.lng);
-                return rdCoords[0] + " " + rdCoords[1];
-            })
-            .join(", ");
-        return "LINESTRING (" + coords + ")";
-    } else if (layer instanceof L.Marker) {
-        var rdCoords = toRDNew(layer.getLatLng().lat, layer.getLatLng().lng);
-        return "POINT (" + rdCoords[0] + " " + rdCoords[1] + ")";
-    }
-}
+// // Function to convert coordinates to WKT format in RD New
+// function toWKT(layer) {
+//     if (layer instanceof L.Polygon) {
+//         var coords = layer
+//             .getLatLngs()[0]
+//             .map(function (latLng) {
+//                 var rdCoords = toRDNew(latLng.lat, latLng.lng);
+//                 return rdCoords[0] + " " + rdCoords[1];
+//             })
+//             .join(", ");
+//         // Ensure the polygon is closed
+//         coords += ", " + coords.split(", ")[0];
+//         return "POLYGON ((" + coords + "))";
+//     } else if (layer instanceof L.Polyline) {
+//         var coords = layer
+//             .getLatLngs()
+//             .map(function (latLng) {
+//                 var rdCoords = toRDNew(latLng.lat, latLng.lng);
+//                 return rdCoords[0] + " " + rdCoords[1];
+//             })
+//             .join(", ");
+//         return "LINESTRING (" + coords + ")";
+//     } else if (layer instanceof L.Marker) {
+//         var rdCoords = toRDNew(layer.getLatLng().lat, layer.getLatLng().lng);
+//         return "POINT (" + rdCoords[0] + " " + rdCoords[1] + ")";
+//     }
+// }
 
 // // Function to download GeoJSON
 // function downloadGeoJSON() {
@@ -550,148 +541,148 @@ function generateEmailBody(data) {
         `.replace(/\n/g, "%0A");
 }
 
-function sendAPIPostRequest() {
-    let projectgebiedWKT = null;
-    let startEindPuntWKT = [];
+// function sendAPIPostRequest() {
+//     let projectgebiedWKT = null;
+//     let startEindPuntWKT = [];
 
-    drawnItems.eachLayer(layer => {
-        const wkt = toWKT(layer);
-        if (layer.type === "projectgebiedWKT") projectgebiedWKT = wkt;
-        if (layer.type === "startEindPuntWKT") startEindPuntWKT.push(wkt);
-    });
+//     drawnItems.eachLayer(layer => {
+//         const wkt = toWKT(layer);
+//         if (layer.type === "projectgebiedWKT") projectgebiedWKT = wkt;
+//         if (layer.type === "startEindPuntWKT") startEindPuntWKT.push(wkt);
+//     });
 
-    if (!projectgebiedWKT || startEindPuntWKT.length < 2) {
-        Swal.fire({
-            icon: "error",
-            title: "Fout",
-            text: "Projectgebied en start en eindpunt zijn verplicht."
-        });
-        return;
-    }
+//     if (!projectgebiedWKT || startEindPuntWKT.length < 2) {
+//         Swal.fire({
+//             icon: "error",
+//             title: "Fout",
+//             text: "Projectgebied en start en eindpunt zijn verplicht."
+//         });
+//         return;
+//     }
 
-    const modalContent = document
-        .getElementById("project-modal-content")
-        .cloneNode(true);
-    modalContent.style.display = "block";
+//     const modalContent = document
+//         .getElementById("project-modal-content")
+//         .cloneNode(true);
+//     modalContent.style.display = "block";
 
-    // Attach slider listeners dynamically
-    modalContent.querySelectorAll("input[type=range]").forEach(slider => {
-        const span = modalContent.querySelector(`#${slider.id}Value`);
-        if (span) {
-            slider.addEventListener("input", () => {
-                span.textContent = slider.value;
-            });
-        }
-    });
+//     // Attach slider listeners dynamically
+//     modalContent.querySelectorAll("input[type=range]").forEach(slider => {
+//         const span = modalContent.querySelector(`#${slider.id}Value`);
+//         if (span) {
+//             slider.addEventListener("input", () => {
+//                 span.textContent = slider.value;
+//             });
+//         }
+//     });
 
-    Swal.fire({
-        html: modalContent,
-        width: 600,
-        showCancelButton: true,
-        confirmButtonText: "Versturen",
-        cancelButtonText: "Annuleren",
-        focusConfirm: false,
-        preConfirm: () => {
-            const getValue = id => modalContent.querySelector(`#${id}`).value;
+//     Swal.fire({
+//         html: modalContent,
+//         width: 600,
+//         showCancelButton: true,
+//         confirmButtonText: "Versturen",
+//         cancelButtonText: "Annuleren",
+//         focusConfirm: false,
+//         preConfirm: () => {
+//             const getValue = id => modalContent.querySelector(`#${id}`).value;
 
-            const projectName = getValue("projectName").trim();
-            const projectNumber = getValue("projectNumber").trim();
+//             const projectName = getValue("projectName").trim();
+//             const projectNumber = getValue("projectNumber").trim();
 
-            if (!projectName || !projectNumber) {
-                Swal.showValidationMessage(
-                    "Projectnaam en projectnummer zijn verplicht"
-                );
-                return false;
-            }
+//             if (!projectName || !projectNumber) {
+//                 Swal.showValidationMessage(
+//                     "Projectnaam en projectnummer zijn verplicht"
+//                 );
+//                 return false;
+//             }
 
-            return {
-                projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                klicFile: getValue("klicFile"),
-                PrivaatBedrijfWegen: getValue("PrivaatBedrijfWegen"),
-                geulbreedte: getValue("geulbreedte"),
-                geslotenVerharding: getValue("geslotenVerharding"),
-                openVerharding: getValue("openVerharding"),
-                halfVerhard: getValue("halfVerhard"),
-                onverhard: getValue("onverhard"),
-                groenvoorzieningLaag: getValue("groenvoorzieningLaag"),
-                groenvoorzieningHoog: getValue("groenvoorzieningHoog"),
-                groenvoorzieningBos: getValue("groenvoorzieningBos"),
-                nogo: getValue("nogo"),
-                klicDrukte: getValue("klicDrukte"),
-                waterkering: getValue("waterkering"),
-                natura2000: getValue("natura2000"),
-                BuisLeidingGevaarlijkeInhoud: getValue("BuisLeidingGevaarlijkeInhoud"),
-                GasHogeDruk: getValue("GasHogeDruk"),
-                GasLageDruk: getValue("GasLageDruk"),
-                Hoogspanning: getValue("Hoogspanning")
-            };
-        }
-    }).then(async result => {
-        if (!result.isConfirmed) return;
+//             return {
+//                 projectName: projectName.replace(/[^a-zA-Z0-9_-]/g, "_"),
+//                 projectNumber: projectNumber.replace(/[^a-zA-Z0-9_-]/g, "_"),
+//                 klicFile: getValue("klicFile"),
+//                 PrivaatBedrijfWegen: getValue("PrivaatBedrijfWegen"),
+//                 geulbreedte: getValue("geulbreedte"),
+//                 geslotenVerharding: getValue("geslotenVerharding"),
+//                 openVerharding: getValue("openVerharding"),
+//                 halfVerhard: getValue("halfVerhard"),
+//                 onverhard: getValue("onverhard"),
+//                 groenvoorzieningLaag: getValue("groenvoorzieningLaag"),
+//                 groenvoorzieningHoog: getValue("groenvoorzieningHoog"),
+//                 groenvoorzieningBos: getValue("groenvoorzieningBos"),
+//                 nogo: getValue("nogo"),
+//                 klicDrukte: getValue("klicDrukte"),
+//                 waterkering: getValue("waterkering"),
+//                 natura2000: getValue("natura2000"),
+//                 BuisLeidingGevaarlijkeInhoud: getValue("BuisLeidingGevaarlijkeInhoud"),
+//                 GasHogeDruk: getValue("GasHogeDruk"),
+//                 GasLageDruk: getValue("GasLageDruk"),
+//                 Hoogspanning: getValue("Hoogspanning")
+//             };
+//         }
+//     }).then(async result => {
+//         if (!result.isConfirmed) return;
 
-        const data = result.value;
+//         const data = result.value;
 
-        const payload = {
-            projectName: `${data.projectName}_${data.projectNumber}`,
-            traceInputFeatures:{
-                projectgebiedWKT: projectgebiedWKT,
-                startEindPuntWKT: startEindPuntWKT
-            },
-            parameters: {
-                geulbreedte: data.geulbreedte,
-                klicFile: data.klicFile,
-                PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
-                geslotenVerharding: data.geslotenVerharding,
-                openVerharding: data.openVerharding,
-                halfVerhard: data.halfVerhard,
-                onverhard: data.onverhard,
-                groenvoorzieningLaag: data.groenvoorzieningLaag,
-                groenvoorzieningHoog: data.groenvoorzieningHoog,
-                groenvoorzieningBos: data.groenvoorzieningBos,
-                nogo: data.nogo,
-                klicDrukte: data.klicDrukte,
-                waterkering: data.waterkering,
-                natura2000: data.natura2000,
-                BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
-                GasHogeDruk: data.GasHogeDruk,
-                GasLageDruk: data.GasLageDruk,
-                Hoogspanning: data.Hoogspanning
-            }
-        };
+//         const payload = {
+//             projectName: `${data.projectName}_${data.projectNumber}`,
+//             traceInputFeatures:{
+//                 projectgebiedWKT: projectgebiedWKT,
+//                 startEindPuntWKT: startEindPuntWKT
+//             },
+//             parameters: {
+//                 geulbreedte: data.geulbreedte,
+//                 klicFile: data.klicFile,
+//                 PrivaatBedrijfWegen: data.PrivaatBedrijfWegen,
+//                 geslotenVerharding: data.geslotenVerharding,
+//                 openVerharding: data.openVerharding,
+//                 halfVerhard: data.halfVerhard,
+//                 onverhard: data.onverhard,
+//                 groenvoorzieningLaag: data.groenvoorzieningLaag,
+//                 groenvoorzieningHoog: data.groenvoorzieningHoog,
+//                 groenvoorzieningBos: data.groenvoorzieningBos,
+//                 nogo: data.nogo,
+//                 klicDrukte: data.klicDrukte,
+//                 waterkering: data.waterkering,
+//                 natura2000: data.natura2000,
+//                 BuisLeidingGevaarlijkeInhoud: data.BuisLeidingGevaarlijkeInhoud,
+//                 GasHogeDruk: data.GasHogeDruk,
+//                 GasLageDruk: data.GasLageDruk,
+//                 Hoogspanning: data.Hoogspanning
+//             }
+//         };
 
-        try {
-            const token = localStorage.getItem("accessToken");
-            const response = await fetch(
-                "https://sue-fastapi.onrender.com/create-project-automatic-trace",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(payload)
-                }
-            );
+//         try {
+//             const token = localStorage.getItem("accessToken");
+//             const response = await fetch(
+//                 "https://sue-fastapi.onrender.com/create-project-automatic-trace",
+//                 {
+//                     method: "POST",
+//                     headers: {
+//                         "Content-Type": "application/json",
+//                         "Authorization": `Bearer ${token}`
+//                     },
+//                     body: JSON.stringify(payload)
+//                 }
+//             );
 
-            if (!response.ok) throw new Error("API fout");
+//             if (!response.ok) throw new Error("API fout");
 
-            const resultData = await response.json();
+//             const resultData = await response.json();
 
-            Swal.fire({
-                icon: "success",
-                title: "Project aangemaakt",
-                text: `Project ID: ${resultData.project_id}`
-            });
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                title: "Fout",
-                text: err.message
-            });
-        }
-    });
-}
+//             Swal.fire({
+//                 icon: "success",
+//                 title: "Project aangemaakt",
+//                 text: `Project ID: ${resultData.project_id}`
+//             });
+//         } catch (err) {
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Fout",
+//                 text: err.message
+//             });
+//         }
+//     });
+// }
 
 // Function to open an email modal
 function sendEmailWithAttachment(projectName, fileBlob, emailBody) {
